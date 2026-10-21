@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Atelier Tide — Design Tokens
+   Extracted from the prototype (index.html). Translate these into the target
+   codebase's own token layer; this file exists so no value is retyped by hand.
+   ========================================================================== */
+
+:root {
+  /* ---- Color ------------------------------------------------------------
+     One accent only. Restraint is the design. */
+  --paper: #f5f1ea;        /* page bg, card bg, text on ink */
+  --ink: #1f1c17;          /* primary text, borders, dark section bg */
+  --rust: #a8542a;         /* sole accent: italics, rules, dots, shadows, hover */
+  --warm: #928466;         /* warm stone — placeholder gradients only */
+  --ink-muted: #65604f;    /* meta, nav, labels, legal */
+  --body: #3a342a;         /* body copy, softer than ink */
+
+  /* Ink alphas */
+  --ink-a06: rgba(31, 28, 23, 0.06);   /* scrollbar track */
+  --ink-a10: rgba(31, 28, 23, 0.10);   /* header bottom border */
+  --ink-a15: rgba(31, 28, 23, 0.15);   /* section borders, card border, dividers */
+  --ink-a20: rgba(31, 28, 23, 0.20);   /* card spec dashed divider */
+
+  /* Paper alphas */
+  --paper-a70: rgba(245, 241, 234, 0.70); /* timeline descriptions */
+  --paper-a92: rgba(245, 241, 234, 0.92); /* header background */
+
+  --scrim: rgba(0, 0, 0, 0.40);           /* card image overlay terminus */
+
+  /* Gradient stops used as image placeholders */
+  --grad-stone-deep: #5a4f3a;
+  --grad-ink-soft: #3a342a;
+
+  /* ---- Typography ------------------------------------------------------- */
+  --font-display: 'Syne', sans-serif;      /* 500, 700, 800 */
+  --font-body: 'Inter', sans-serif;        /* 400, 500 */
+  --font-mono: 'DM Mono', monospace;       /* 400, 500 */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* Display scale */
+  --type-hero: clamp(60px, 8.5vw, 128px);
+  --type-cta: clamp(56px, 8vw, 108px);
+  --type-h2: 64px;         /* strip + timeline headings */
+  --type-h3: 60px;         /* philosophy heading */
+  --type-brand-foot: 32px;
+  --type-card-title: 28px;
+  --type-year: 24px;
+  --type-lede: 24px;
+  --type-numeral: 22px;
+  --type-brand: 22px;
+
+  /* Text scale */
+  --type-hero-body: 18px;
+  --type-body-lg: 17px;
+  --type-body-md: 15px;
+  --type-card-body: 14px;
+  --type-ui: 13px;
+  --type-label: 12px;
+  --type-meta: 11px;
+
+  /* Leading */
+  --leading-display: 0.96;
+  --leading-tight: 1.0;
+  --leading-title: 1.05;
+  --leading-lede: 1.35;
+  --leading-ui: 1.5;
+  --leading-body: 1.55;
+  --leading-prose: 1.65;
+
+  /* Tracking */
+  --tracking-display: -0.03em;
+  --tracking-headline: -0.025em;
+  --tracking-title: -0.015em;
+  --tracking-brand: -0.01em;
+  --tracking-mono: 0.06em;
+  --tracking-mono-wide: 0.18em;
+  --tracking-button: 0.10em;
+
+  /* ---- Spacing (4px-based; page uses an informal scale) ------------------
+     2 4 6 8 10 12 14 16 18 20 22 24 28 30 32 36 40 48 60 80 100 120 140 160
+     Map to the codebase's nearest step. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-9: 40px;
+  --space-10: 48px;
+  --space-12: 60px;
+  --space-14: 80px;
+  --space-16: 120px;
+  --space-18: 140px;
+  --space-20: 160px;
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --content-max: 1480px;
+  --cta-max: 1100px;
+  --page-gutter: 32px;
+  --page-gutter-sm: 18px;
+  --header-pad-y: 18px;
+  --header-pad-x: 28px;
+  --header-height: 58px;        /* measured; used for scroll-margin-top */
+  --anchor-offset: 80px;
+
+  /* ---- Component geometry ---------------------------------------------- */
+  --strip-card-w: 460px;
+  --strip-card-w-sm: 88vw;
+  --strip-gap: 24px;
+  --strip-step: 500px;          /* button scroll delta = card + gap, rounded */
+  --control-size: 44px;
+  --hero-shadow: 24px 24px 0 var(--rust);
+  --border-hairline: 1px;
+
+  /* ---- Radii ------------------------------------------------------------
+     Zero everywhere except the strip scrollbar and timeline dots. */
+  --radius-none: 0;
+  --radius-pill: 99px;
+  --radius-circle: 50%;
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --ease-default: ease;
+  --dur-fast: 0.2s;      /* nav + footer links */
+  --dur-control: 0.25s;  /* strip buttons */
+  --dur-button: 0.3s;    /* all CTA / bordered links */
+  --dur-card: 0.4s;      /* card hover lift */
+  --dur-reveal: 0.8s;    /* scroll reveal */
+  --reveal-offset: 28px;
+
+  /* ---- Focus (to be added during implementation) ------------------------ */
+  --focus-ring: 2px solid var(--rust);
+  --focus-offset: 3px;
+}
+
+/* Reference: dashed rail pattern used by the strip divider and timeline rail */
+:root {
+  --rail-dash: repeating-linear-gradient(90deg, var(--rust) 0 8px, transparent 8px 14px);
+  --rail-color: var(--rust);
+}

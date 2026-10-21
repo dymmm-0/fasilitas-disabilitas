@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelier Tide — A studio, walked through sideways.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Inter:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Minimal reset */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;overflow-x:hidden}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+::selection{background:currentColor;color:#fff}
+
+:root{ --paper:#f5f1ea; --warm:#928466; --ink:#1f1c17; --rust:#a8542a; }
+html{background:var(--paper);scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-weight:400;line-height:1.5;overflow-x:hidden}
+
+/* Top bar (fixed) */
+.top{position:fixed;top:0;left:0;right:0;z-index:50;display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:18px 28px;background:rgba(245,241,234,.92);backdrop-filter:blur(10px);border-bottom:1px solid rgba(31,28,23,.1)}
+.br-t{font-family:'Syne';font-weight:700;font-size:22px;letter-spacing:-.01em}
+.br-t em{font-style:italic;color:var(--rust)}
+.top nav{display:flex;gap:24px;justify-self:center;font-family:'DM Mono';font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#65604f}
+.top nav a{transition:.2s}.top nav a:hover{color:var(--rust)}
+.top .lang{font-family:'DM Mono';font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#65604f}
+
+/* Hero — full-bleed intro */
+.hero{padding:120px 32px 60px;min-height:90vh;display:grid;grid-template-columns:1.3fr 1fr;align-items:center;gap:60px;max-width:1480px;margin:0 auto}
+.hero-l .label{font-family:'DM Mono';font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.hero-l .label::before{content:"";width:48px;height:1px;background:var(--rust)}
+.hero h1{font-family:'Syne';font-weight:500;font-size:clamp(60px,8.5vw,128px);line-height:.96;letter-spacing:-.025em;margin-bottom:24px;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--rust);font-weight:500}
+.hero p{font-size:18px;line-height:1.55;color:#3a342a;max-width:520px;margin-bottom:32px;text-wrap:pretty}
+.hero .nav-hint{display:inline-flex;align-items:center;gap:14px;padding:14px 22px;border:1px solid var(--ink);font-family:'DM Mono';font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:.3s}
+.hero .nav-hint:hover{background:var(--ink);color:var(--paper)}
+.hero .nav-hint .a{display:inline-block;font-family:'Syne';font-size:18px;font-weight:700}
+.hero-r{position:relative}
+.hero-r .img-main{aspect-ratio:3/4;background:url('assets/img/15-tide-hall.jpg') center/cover;box-shadow:24px 24px 0 var(--rust)}
+.hero-r .stamp{position:absolute;top:-20px;right:-20px;background:var(--ink);color:var(--paper);padding:14px 18px;font-family:'DM Mono';font-size:11px;letter-spacing:.18em;text-transform:uppercase;line-height:1.4}
+.hero-r .stamp b{font-family:'Syne';font-size:28px;font-weight:700;letter-spacing:-.02em;display:block;color:var(--paper)}
+
+/* Horizontal filmstrip */
+.strip-section{padding:60px 0 100px;border-top:1px solid rgba(31,28,23,.15);position:relative}
+.strip-header{padding:0 32px 36px;display:grid;grid-template-columns:1fr auto;align-items:end;max-width:1480px;margin:0 auto}
+.strip-header h2{font-family:'Syne';font-weight:500;font-size:64px;line-height:1;letter-spacing:-.025em;text-wrap:balance;max-width:780px}
+.strip-header h2 em{font-style:italic;color:var(--rust)}
+.strip-header .controls{display:flex;gap:8px}
+.strip-header .controls button{width:44px;height:44px;border:1px solid var(--ink);background:var(--paper);font-family:'Syne';font-size:18px;font-weight:700;cursor:pointer;transition:.25s}
+.strip-header .controls button:hover{background:var(--ink);color:var(--paper)}
+
+.strip{display:flex;gap:24px;padding:0 32px 24px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:32px;scrollbar-width:thin;scrollbar-color:var(--rust) transparent}
+.strip::-webkit-scrollbar{height:8px}
+.strip::-webkit-scrollbar-thumb{background:var(--rust);border-radius:99px}
+.strip::-webkit-scrollbar-track{background:rgba(31,28,23,.06)}
+
+.frame{flex:0 0 460px;scroll-snap-align:start;display:grid;grid-template-rows:auto 1fr;background:var(--paper);border:1px solid rgba(31,28,23,.15);position:relative;transition:.4s}
+.frame:hover{transform:translateY(-6px);border-color:var(--ink)}
+.frame .ph{aspect-ratio:4/3;background-size:cover;background-position:center;position:relative}
+.frame .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.4));pointer-events:none}
+.frame .yr{position:absolute;top:18px;left:18px;background:var(--paper);color:var(--ink);padding:6px 12px;font-family:'DM Mono';font-size:11px;letter-spacing:.18em;font-weight:500}
+.frame .body{padding:28px 24px}
+.frame .body .meta{font-family:'DM Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#65604f;margin-bottom:10px;display:flex;justify-content:space-between}
+.frame h3{font-family:'Syne';font-weight:700;font-size:28px;line-height:1.05;letter-spacing:-.015em;margin-bottom:10px;text-wrap:balance}
+.frame h3 em{font-style:italic;color:var(--rust);font-weight:500}
+.frame p{font-size:14px;line-height:1.55;color:#3a342a;margin-bottom:14px}
+.frame .specs{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-family:'DM Mono';font-size:11px;color:#65604f;margin-top:18px;padding-top:14px;border-top:1px dashed rgba(31,28,23,.2);text-transform:uppercase;letter-spacing:.06em}
+.frame .specs b{display:block;font-family:'Inter';font-weight:500;color:var(--ink);text-transform:none;letter-spacing:0;font-size:13px;margin-top:2px}
+
+/* Connecting line */
+.strip-line{height:1px;background:repeating-linear-gradient(90deg,var(--rust) 0 8px,transparent 8px 14px);margin:0 32px 60px;position:relative;max-width:1480px;margin-left:auto;margin-right:auto}
+.strip-line::before,.strip-line::after{content:"●";position:absolute;top:50%;transform:translateY(-50%);color:var(--rust);font-size:14px}
+.strip-line::before{left:0}.strip-line::after{right:0}
+
+/* Philosophy split */
+.philosophy{padding:140px 32px;border-top:1px solid rgba(31,28,23,.15);display:grid;grid-template-columns:1fr 1fr;gap:80px;max-width:1480px;margin:0 auto;align-items:center}
+.philosophy .img{aspect-ratio:5/4;background:url('assets/img/15-tide-gallery.jpg') center/cover}
+.philosophy .txt h3{font-family:'Syne';font-weight:500;font-size:60px;line-height:1;letter-spacing:-.025em;margin-bottom:24px;text-wrap:balance}
+.philosophy .txt h3 em{font-style:italic;color:var(--rust)}
+.philosophy .txt p{font-size:17px;line-height:1.65;margin-bottom:18px;max-width:520px;text-wrap:pretty;color:#3a342a}
+.philosophy .txt p.lede{font-family:'Syne';font-style:italic;font-size:24px;font-weight:500;color:var(--ink);margin-bottom:24px;line-height:1.35;letter-spacing:-.005em}
+.philosophy .principles{margin-top:36px;padding-top:24px;border-top:1px solid var(--ink)}
+.philosophy .principles .r{display:grid;grid-template-columns:60px 1fr;padding:16px 0;border-bottom:1px solid rgba(31,28,23,.15);font-size:15px;line-height:1.5;align-items:start}
+.philosophy .principles .r b{font-family:'Syne';font-weight:700;font-size:22px;color:var(--rust);letter-spacing:-.01em;line-height:1}
+.philosophy .principles .r span{color:#3a342a}
+
+/* Timeline */
+.timeline{padding:80px 32px;border-top:1px solid rgba(31,28,23,.15);background:var(--ink);color:var(--paper);overflow-x:auto}
+.timeline-h{font-family:'Syne';font-weight:500;font-size:64px;line-height:1;letter-spacing:-.025em;text-wrap:balance;margin-bottom:48px;max-width:1480px;margin-left:auto;margin-right:auto}
+.timeline-h em{font-style:italic;color:var(--rust)}
+.timeline-rail{max-width:1480px;margin:0 auto;display:grid;grid-template-columns:repeat(8,1fr);gap:18px;position:relative}
+.timeline-rail::before{content:"";position:absolute;top:14px;left:0;right:0;height:1px;background:repeating-linear-gradient(90deg,var(--rust) 0 8px,transparent 8px 14px)}
+.tn{padding-top:36px;font-size:13px;line-height:1.5;position:relative}
+.tn::before{content:"";position:absolute;top:9px;left:0;width:12px;height:12px;background:var(--rust);border-radius:50%}
+.tn b{display:block;font-family:'Syne';font-weight:700;font-size:24px;color:var(--paper);margin-bottom:4px;letter-spacing:-.01em}
+.tn b em{font-style:italic;color:var(--rust)}
+.tn span{color:rgba(245,241,234,.7);font-size:13px}
+
+/* CTA / contact */
+.cta-s{padding:160px 32px;text-align:center;border-top:1px solid rgba(31,28,23,.15);max-width:1100px;margin:0 auto}
+.cta-s h2{font-family:'Syne';font-weight:500;font-size:clamp(56px,8vw,108px);line-height:.96;letter-spacing:-.03em;margin-bottom:36px;text-wrap:balance}
+.cta-s h2 em{font-style:italic;color:var(--rust)}
+.cta-s .row{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn-t{padding:16px 28px;background:var(--ink);color:var(--paper);font-family:'DM Mono';font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:.3s;border:1px solid var(--ink)}
+.btn-t:hover{background:var(--rust);border-color:var(--rust)}
+.btn-tg{padding:16px 24px;border:1px solid var(--ink);color:var(--ink);font-family:'DM Mono';font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:.3s}
+.btn-tg:hover{background:var(--ink);color:var(--paper)}
+
+footer{padding:60px 32px 30px;border-top:1px solid var(--ink);font-size:13px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;max-width:1480px;margin:0 auto}
+.foot-grid .lead .br-t{font-size:32px;margin-bottom:14px;display:block}
+.foot-grid .lead p{line-height:1.55;max-width:300px;color:#3a342a}
+.foot-grid h5{font-family:'DM Mono';font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#65604f;margin-bottom:14px;font-weight:500}
+.foot-grid a{display:block;padding:4px 0;color:#3a342a;transition:.2s}
+.foot-grid a:hover{color:var(--rust)}
+.copy-foot{max-width:1480px;margin:48px auto 0;padding-top:20px;border-top:1px solid rgba(31,28,23,.15);display:flex;justify-content:space-between;font-family:'DM Mono';font-size:11px;letter-spacing:.06em;color:#65604f;flex-wrap:wrap;gap:8px}
+
+.reveal{opacity:0;transform:translateY(28px);transition:.8s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:880px){
+  .top{grid-template-columns:1fr auto;padding:14px 18px}.top nav{display:none}
+  .hero{grid-template-columns:1fr;padding:100px 18px 60px;gap:40px}
+  .hero-r .img-main{aspect-ratio:4/5}
+  .strip-header,.philosophy,.cta-s,footer{padding-left:18px;padding-right:18px}
+  .strip-header{grid-template-columns:1fr;gap:18px}
+  .strip-header h2{font-size:42px}
+  .strip{padding:0 18px 24px}.frame{flex-basis:88vw}
+  .strip-line{margin:0 18px 60px}
+  .philosophy{grid-template-columns:1fr;gap:40px}
+  .philosophy .txt h3{font-size:42px}
+  .timeline{padding:60px 18px}
+  .timeline-h{font-size:36px}
+  .timeline-rail{grid-template-columns:1fr 1fr}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="br-t" href="#">Atelier <em>Tide</em></a>
+  <nav><a href="#strip">Projects</a><a href="#philosophy">Atelier</a><a href="#philosophy">Process</a><a href="#">Journal</a><a href="#cta">Contact</a></nav>
+  <span class="lang">EN · IT · ES</span>
+</div>
+
+<section class="hero">
+  <div class="hero-l">
+    <div class="label">An architecture practice / Est. 2014</div>
+    <h1>A studio, walked through <em>sideways.</em></h1>
+    <p>Atelier Tide builds slowly, between Lisbon and Naples, on commissions of which we accept four per year. This site is, deliberately, a hallway — scroll right to walk it.</p>
+    <a class="nav-hint" href="#strip">scroll right →<span class="a">↳</span></a>
+  </div>
+  <div class="hero-r reveal">
+    <div class="stamp">14 projects<b>since 2014</b></div>
+    <div class="img-main"></div>
+  </div>
+</section>
+
+<section class="strip-section" id="strip">
+  <div class="strip-header">
+    <h2>The <em>filmstrip</em><br>— fourteen projects in twelve years.</h2>
+    <div class="controls"><button id="sL" aria-label="Scroll left">←</button><button id="sR" aria-label="Scroll right">→</button></div>
+  </div>
+
+  <div class="strip" id="filmstrip">
+    <article class="frame">
+      <div class="ph" style="background-image:url('assets/img/15-tide-hall.jpg')"><span class="yr">2014 / 01</span></div>
+      <div class="body">
+        <div class="meta"><span>Cultural · Civic</span><span>Lisbon, PT</span></div>
+        <h3>Casa do <em>Eco</em></h3>
+        <p>A 240 m² civic chamber for an old olive press in Alfama, rebuilt as a small chamber-music hall. Our first built project.</p>
+        <div class="specs"><span>Programme<b>240 m² · Civic</b></span><span>Completion<b>March 2014</b></span></div>
+      </div>
+    </article>
+    <article class="frame">
+      <div class="ph" style="background-image:url('assets/img/15-tide-gallery.jpg')"><span class="yr">2016 / 03</span></div>
+      <div class="body">
+        <div class="meta"><span>Exhibition · Pavilion</span><span>Venice, IT</span></div>
+        <h3>Pavilion <em>delle Maree</em></h3>
+        <p>Our entry for the Venice Architecture Biennale — a five-room timber pavilion sited on the Arsenale that filled and emptied with the lagoon's twelve-hour cycle.</p>
+        <div class="specs"><span>Programme<b>180 m² · Exhibition</b></span><span>Open<b>Jun–Nov 2016</b></span></div>
+      </div>
+    </article>
+    <article class="frame">
+      <div class="ph" style="background:linear-gradient(135deg,#928466,#5a4f3a);"><span class="yr">2019 / 06</span></div>
+      <div class="body">
+        <div class="meta"><span>Residence · Single-family</span><span>Sintra, PT</span></div>
+        <h3>Casa <em>Onda</em></h3>
+        <p>A 320 m² private house drawn around a single olive tree the client refused to remove. The plan, in a manner of speaking, drew itself.</p>
+        <div class="specs"><span>Programme<b>320 m² · Private</b></span><span>Completion<b>October 2019</b></span></div>
+      </div>
+    </article>
+    <article class="frame">
+      <div class="ph" style="background:linear-gradient(180deg,#3a342a,#1f1c17);"><span class="yr">2022 / 10</span></div>
+      <div class="body">
+        <div class="meta"><span>Education · Refurbishment</span><span>Naples, IT</span></div>
+        <h3>Scuola <em>San Paolo</em></h3>
+        <p>The refurbishment of a 1950s school in Quartieri Spagnoli, restored to its original 1953 daylighting drawings. Wallpaper House of the Year, 2023.</p>
+        <div class="specs"><span>Programme<b>1,820 m² · Education</b></span><span>Completion<b>Sept 2022</b></span></div>
+      </div>
+    </article>
+    <article class="frame">
+      <div class="ph" style="background:linear-gradient(135deg,#a8542a,#65604f);"><span class="yr">2024 / 13</span></div>
+      <div class="body">
+        <div class="meta"><span>Office · Adaptive reuse</span><span>Porto, PT</span></div>
+        <h3>Sede <em>do Cinque</em></h3>
+        <p>The headquarters of Aperture° Type Foundry — a former tannery, opened up around a single 14-metre concrete table.</p>
+        <div class="specs"><span>Programme<b>820 m² · Office</b></span><span>Completion<b>April 2024</b></span></div>
+      </div>
+    </article>
+    <article class="frame">
+      <div class="ph" style="background:linear-gradient(135deg,#f5f1ea,#928466);"><span class="yr">2026 / 14</span></div>
+      <div class="body">
+        <div class="meta"><span>Cultural · Library · ongoing</span><span>Mendrisio, CH</span></div>
+        <h3>Library, <em>Mendrisio</em></h3>
+        <p>A public library for the Canton of Ticino, currently in construction. The drawings have been on display in Mendrisio since June.</p>
+        <div class="specs"><span>Programme<b>1,420 m² · Civic</b></span><span>Completion<b>Q4 2027</b></span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="strip-line"></div>
+
+<section class="philosophy" id="philosophy">
+  <div class="img reveal"></div>
+  <div class="txt reveal">
+    <div class="label" style="font-family:'DM Mono';font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);margin-bottom:24px;display:flex;align-items:center;gap:14px"><span style="width:48px;height:1px;background:var(--rust)"></span>How we work</div>
+    <h3>Four projects a year. <em>One studio, two cities.</em></h3>
+    <p class="lede">A practice run from a former boatyard in Lisbon and a small apartment above a bakery in Naples, by eight architects who insist on detailing every corner themselves.</p>
+    <p>We accept commissions on a rolling basis through May 31 each year — four per cycle, by partner preference. We do not enter open competitions. We do not, with apologies, do "concept" work.</p>
+    <div class="principles">
+      <div class="r"><b>i.</b><span>One partner leads each project from brief to last screw.</span></div>
+      <div class="r"><b>ii.</b><span>We build, when possible, within 200 km of the site.</span></div>
+      <div class="r"><b>iii.</b><span>Two materials per project. Three is a compromise.</span></div>
+      <div class="r"><b>iv.</b><span>We don't publish renderings — only photographs, of the built thing.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="timeline">
+  <h2 class="timeline-h">A studio, walked <em>year by year.</em></h2>
+  <div class="timeline-rail">
+    <div class="tn"><b>2014</b><span>Founded · Lisbon</span></div>
+    <div class="tn"><b>2016</b><span>Venice Biennale, Pavilion delle Maree</span></div>
+    <div class="tn"><b>2018</b><span>Mies van der Rohe Award · Emerging</span></div>
+    <div class="tn"><b>2019</b><span>Casa Onda · House of the Year, AJ</span></div>
+    <div class="tn"><b>2021</b><span>Naples studio opens</span></div>
+    <div class="tn"><b>2022</b><span>Scuola San Paolo · Wallpaper HOY '23</span></div>
+    <div class="tn"><b>2024</b><span>Sede do Cinque · DAM Prize shortlist</span></div>
+    <div class="tn"><b>2026</b><span><em>Library, Mendrisio</em> under construction</span></div>
+  </div>
+</section>
+
+<section class="cta-s" id="cta">
+  <h2>Briefs for 2027 <em>open in May.</em></h2>
+  <div class="row"><a class="btn-t" href="#">Send a brief →</a><a class="btn-tg" href="#">Subscribe to the journal</a></div>
+</section>
+
+<footer>
+  <div class="foot-grid">
+    <div class="lead">
+      <span class="br-t">Atelier <em>Tide</em></span>
+      <p>An architecture studio based in Lisbon &amp; Naples. Founded 2014. Eight architects. Four projects a year.</p>
+    </div>
+    <div><h5>Projects</h5><a href="#">Built 2014–24</a><a href="#">Ongoing</a><a href="#">Publications</a><a href="#">Press</a></div>
+    <div><h5>Atelier</h5><a href="#">About</a><a href="#">Process</a><a href="#">Journal</a><a href="#">Lectures</a></div>
+    <div><h5>Reach</h5><a href="mailto:studio@ateliertide.example">studio@ateliertide.example</a><a href="#">Lisbon · +351 22 0000</a><a href="#">Naples · +39 081 0000</a></div>
+  </div>
+  <div class="copy-foot"><span>© Atelier Tide, Lda · 2014–2026 · All rights reserved</span><span>Privacy · Imprint · Reg. Lda 514 220 220</span></div>
+</footer>
+
+<script>
+const strip=document.getElementById('filmstrip');
+document.getElementById('sL').onclick=()=>strip.scrollBy({left:-500,behavior:'smooth'});
+document.getElementById('sR').onclick=()=>strip.scrollBy({left:500,behavior:'smooth'});
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('in')),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
