@@ -100,7 +100,7 @@ moderasi masih harus dibangun.
 | Kontribusi masyarakat | `/kontribusi` | Usulan fasilitas baru atau koreksi data, lengkap dengan validasi (belum tersimpan) |
 | Masuk admin | `/masuk` | Login sesi Laravel dengan proteksi CSRF dan pembatasan percobaan |
 | Dashboard verifikasi | `/verifikasi` | Antrean pengajuan, detail, setujui/tolak/minta perbaikan, riwayat (perlu masuk) |
-| Dashboard administrasi | `/admin` | Statistik, tabel fasilitas, kelengkapan data per kategori, jumlah per kategori, daftar akun (perlu masuk) |
+| Dashboard administrasi | `/admin` | Statistik, tabel fasilitas berhalaman (5 atau 10 baris per halaman), kelengkapan data per kategori, jumlah per kategori, daftar akun (perlu masuk) |
 | Tentang dan panduan | `/tentang` | Latar belakang, panduan penggunaan, mekanisme kontribusi dan verifikasi |
 | Halaman 404 | `*` | Rute tidak dikenal tetap memakai shell SPA |
 
@@ -214,7 +214,7 @@ bersama memakai composable singleton (`useFacilities`, `useSubmissions`, `useAut
 | Kontribusi | Dua jenis formulir, pemilih lokasi di peta, pratinjau foto, daftar kesalahan |
 | Masuk | Formulir surel + kata sandi dengan pesan kesalahan yang terbaca pembaca layar |
 | Verifikasi | Antrean kiri, detail pengajuan, aksi keputusan, riwayat keputusan |
-| Administrasi | Kartu statistik, tabel fasilitas, diagram kelengkapan, kelola kategori, daftar akun |
+| Administrasi | Kartu statistik, tabel fasilitas dengan pagination, diagram kelengkapan, kelola kategori, daftar akun |
 | Tentang | Latar belakang, panduan langkah demi langkah, mekanisme kontribusi dan verifikasi |
 
 Repositori ini **belum** menyimpan tangkapan layar. Daripada menampilkan gambar yang
@@ -488,7 +488,8 @@ CSRF dikirim lewat cookie `XSRF-TOKEN`.
 | `POST /api/logout` | `auth` | Mengakhiri sesi |
 | `GET /api/me` | — | Profil pengguna yang sedang masuk, atau `null` untuk pengunjung |
 | `GET /api/users` | `auth` | Daftar akun (hanya untuk admin) |
-| `GET /api/facilities` | — | Seluruh fasilitas untuk peta, daftar, dan dashboard |
+| `GET /api/facilities` | — | Seluruh fasilitas (1.117 baris) untuk peta dan agregat dashboard |
+| `GET /api/facilities?page=1&per_page=10` | — | Satu halaman untuk tabel Pengelolaan fasilitas di `/admin` (maks. 100 baris per permintaan) |
 
 Tamu yang membuka `/admin` atau `/verifikasi` diarahkan ke `/masuk`, sedangkan admin
 yang sudah masuk dan membuka `/masuk` diarahkan ke `/admin`. Penjaga rute Vue hanya
@@ -531,7 +532,7 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 
 - [x] Impor dataset 1.117 fasilitas ke tabel `facilities` dengan perintah idempoten
 - [x] API `GET /api/facilities` + integrasi peta, daftar, dan dashboard ke basis data
-- [x] Pemuatan bertahap pada daftar kartu dan pembatasan baris tabel dashboard
+- [x] Pemuatan bertahap pada daftar kartu dan pagination tabel Pengelolaan fasilitas (5/10 baris per halaman, di sisi server)
 - [x] Autentikasi sesi untuk admin dan proteksi `/admin` serta `/verifikasi`
 - [x] Peta Leaflet + OpenStreetMap dengan penanda berkode kategori
 - [x] Pencarian, filter kategori, status verifikasi, dan kombinasi atribut
@@ -550,8 +551,8 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 - [ ] Riwayat perubahan data fasilitas dan jejak audit keputusan
 - [ ] Pemeriksaan lapangan atas 1.117 fasilitas sehingga indikator `belum diketahui`
       berubah menjadi `tersedia` atau `tidak`
-- [ ] Paginasi `GET /api/facilities` bila jumlah fasilitas tumbuh jauh lebih besar
-- [ ] Tes komponen Vue, tes end-to-end, dan CI
+- [ ] Agregat dashboard dihitung di server supaya `/admin` tidak lagi mengunduh seluruh baris
+- [ ] Tes Vue, tes end-to-end, dan CI
 - [ ] Audit aksesibilitas WCAG 2.2 AA dan perbaikan temuan
 - [ ] Tangkapan layar di `docs/screenshots/`
 

@@ -26,6 +26,9 @@ const stale = (facility) => daysSince(facility.lastChecked) > STALE_DAYS;
                 </tr>
             </thead>
             <tbody>
+                <tr v-if="!facilities.length">
+                    <td colspan="6" class="help">Tidak ada fasilitas pada halaman ini.</td>
+                </tr>
                 <tr v-for="facility in facilities" :key="facility.id">
                     <td>
                         <b>{{ facility.name }}</b>
