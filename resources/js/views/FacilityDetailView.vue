@@ -29,7 +29,8 @@ const facility = computed(() => byId(route.params.id));
                 <div class="stack--sm">
                     <p class="label">{{ categoryLabel(facility.category) }} · {{ facility.city }}</p>
                     <h1 class="display-lg">{{ facility.name }}</h1>
-                    <p class="body-copy">{{ facility.address }}</p>
+                    <p class="body-copy">{{ facility.address || 'Alamat jalan belum ada di sumber data.' }}</p>
+                    <p class="meta">{{ [facility.village, facility.subdistrict, facility.city].filter(Boolean).join(' · ') }}</p>
                 </div>
                 <div class="stack--sm">
                     <StatusPill kind="verification" :value="facility.verification" />
@@ -47,7 +48,7 @@ const facility = computed(() => byId(route.params.id));
                         :label="`Peta lokasi ${facility.name}`"
                     />
 
-                    <div class="detail-media">Foto dokumentasi (data dummy)</div>
+                    <div class="detail-media">Belum ada foto dokumentasi dari sumber data ini</div>
 
                     <div class="panel stack--sm">
                         <h2 class="display-sm">Kondisi aksesibilitas</h2>
@@ -94,7 +95,7 @@ const facility = computed(() => byId(route.params.id));
                                 <span class="kv__note">{{ facility.id }}</span>
                             </div>
                             <div class="kv__row">
-                                <span class="kv__label">Pemeriksaan terakhir</span>
+                                <span class="kv__label">Data dikumpulkan</span>
                                 <span>{{ formatDate(facility.lastChecked) }}</span>
                                 <span class="kv__note">{{ facility.id }}</span>
                             </div>
@@ -104,9 +105,16 @@ const facility = computed(() => byId(route.params.id));
                                 <span class="kv__note">{{ facility.city }}</span>
                             </div>
                             <div class="kv__row">
-                                <span class="kv__label">Kontributor</span>
+                                <span class="kv__label">Sumber data</span>
                                 <span>{{ facility.contributor }}</span>
-                                <span class="kv__note">Data dummy</span>
+                                <a
+                                    v-if="facility.source.url"
+                                    class="kv__note"
+                                    :href="facility.source.url"
+                                    target="_blank"
+                                    rel="noopener"
+                                >{{ facility.source.ref }}</a>
+                                <span v-else class="kv__note">{{ facility.source.ref || 'Tanpa ID sumber' }}</span>
                             </div>
                         </div>
                     </div>
@@ -130,7 +138,7 @@ const facility = computed(() => byId(route.params.id));
     <section v-else class="container section">
         <div class="empty-state">
             <span class="label">Tidak ditemukan</span>
-            <h1 class="display-md">Fasilitas tidak ada di data demonstrasi.</h1>
+            <h1 class="display-md">Fasilitas tidak ditemukan.</h1>
             <p class="body-copy">Periksa kembali tautan, atau kembali ke peta untuk memilih fasilitas lain.</p>
             <RouterLink class="btn btn--primary" to="/">Kembali ke peta</RouterLink>
         </div>

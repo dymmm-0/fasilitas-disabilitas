@@ -32,7 +32,7 @@
 
         <div class="container site-footer__legal">
             <span>© AksesKita 2026 · Prototipe kompetisi Fundev</span>
-            <span>Data dummy untuk demonstrasi · belum tersambung basis data</span>
+            <span>Fasilitas dari impor dataset OpenStreetMap · sisanya data demonstrasi</span>
         </div>
     </footer>
 </template>

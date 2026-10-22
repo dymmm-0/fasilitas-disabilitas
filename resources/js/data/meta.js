@@ -9,6 +9,7 @@ export const CATEGORIES = [
     { id: 'pendidikan', label: 'Pendidikan', glyph: 'PD' },
     { id: 'pemerintahan', label: 'Pemerintahan', glyph: 'PK' },
     { id: 'perbelanjaan', label: 'Perbelanjaan', glyph: 'PB' },
+    { id: 'penginapan', label: 'Penginapan', glyph: 'PN' },
     { id: 'rekreasi', label: 'Rekreasi', glyph: 'RK' },
     { id: 'ibadah', label: 'Ibadah', glyph: 'IB' },
     { id: 'olahraga', label: 'Olahraga', glyph: 'OL' },

@@ -120,10 +120,11 @@
             </div>
 
             <div class="notice">
-                <b>Catatan demonstrasi</b>
+                <b>Catatan sumber data</b>
                 <span>
-                    Seluruh fasilitas, pengguna, dan pengajuan pada versi ini adalah data dummy untuk keperluan
-                    demonstrasi kompetisi. Belum ada basis data, autentikasi, maupun API produksi yang terhubung.
+                    Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan ke basis data AksesKita.
+                    Status aksesibilitasnya belum diverifikasi lapangan: sebagian besar masih "belum diketahui".
+                    Pengguna, pengajuan, dan verifikasi masih berupa data dummy demonstrasi tanpa autentikasi.
                 </span>
             </div>
 

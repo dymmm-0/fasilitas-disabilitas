@@ -7,7 +7,7 @@ import FacilityMap from '../components/map/FacilityMap.vue';
 import MapLegend from '../components/map/MapLegend.vue';
 import Reveal from '../components/common/Reveal.vue';
 
-const { filters, facilities, results, selectedId, select } = useFacilities();
+const { filters, facilities, results, selectedId, select, status, loadError } = useFacilities();
 
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size);
@@ -83,8 +83,14 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
 
                 <div>
                     <div class="results-head">
-                        <h3 class="display-sm">{{ results.length }} fasilitas</h3>
+                        <h3 class="display-sm">
+                            {{ status === 'memuat' ? 'Memuat data fasilitas…' : `${results.length} fasilitas` }}
+                        </h3>
                         <RouterLink class="btn btn--sm" to="/kontribusi">Usulkan fasilitas baru</RouterLink>
+                    </div>
+                    <div v-if="status === 'gagal'" class="notice" role="alert">
+                        <b>Gagal memuat data</b>
+                        <span>Server tidak mengirim daftar fasilitas ({{ loadError }}). Muat ulang halaman untuk mencoba lagi.</span>
                     </div>
                     <FacilityList :facilities="results" :selected-id="selectedId" @select="select" />
                 </div>

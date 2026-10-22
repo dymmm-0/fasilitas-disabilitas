@@ -1,12 +1,32 @@
 import { computed, reactive, ref } from 'vue';
-import { FACILITIES, completeness } from '../data/facilities';
 import { ATTRIBUTES, categoryLabel } from '../data/meta';
 
 /**
  * State fasilitas bersama untuk peta, daftar kartu, dan dashboard.
- * Singleton modul: semua komponen membaca sumber yang sama.
+ * Singleton modul: semua komponen membaca sumber yang sama, diisi dari `/api/facilities`.
  */
-const facilities = ref([...FACILITIES]);
+const facilities = ref([]);
+const status = ref('memuat');
+const loadError = ref(null);
+
+const load = async () => {
+    status.value = 'memuat';
+    loadError.value = null;
+
+    try {
+        const response = await fetch('/api/facilities', { headers: { Accept: 'application/json' } });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        facilities.value = (await response.json()).facilities ?? [];
+        status.value = 'siap';
+    } catch (error) {
+        loadError.value = error.message;
+        status.value = 'gagal';
+    }
+};
+
+load();
 
 const filters = reactive({
     query: '',
@@ -100,6 +120,9 @@ const applyCorrection = (facilityId, field, value) => {
 export function useFacilities() {
     return {
         facilities,
+        status,
+        loadError,
+        reload: load,
         filters,
         results,
         hasFilters,

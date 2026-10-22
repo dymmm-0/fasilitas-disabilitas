@@ -14,8 +14,12 @@ const { facilities } = useFacilities();
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const pending = computed(() => facilities.value.filter((f) => f.verification !== 'terverifikasi').length);
 const average = computed(() =>
-    Math.round(facilities.value.reduce((sum, f) => sum + completeness(f), 0) / facilities.value.length),
+    facilities.value.length
+        ? Math.round(facilities.value.reduce((sum, f) => sum + completeness(f), 0) / facilities.value.length)
+        : 0,
 );
+// Tabel hanya memuat sebagian baris supaya dashboard tetap ringan; daftar penuh ada di peta.
+const tableRows = computed(() => facilities.value.slice(0, 50));
 const stale = computed(() =>
     facilities.value.filter((f) => daysSince(f.lastChecked) > STALE_DAYS),
 );
@@ -72,7 +76,10 @@ const stale = computed(() =>
 
             <div class="panel stack--sm">
                 <h2 class="display-sm">Pengelolaan fasilitas</h2>
-                <FacilityTable :facilities="facilities" />
+                <FacilityTable
+                    :facilities="tableRows"
+                    :caption="`Menampilkan ${tableRows.length} dari ${facilities.length} fasilitas. Kelengkapan data dihitung dari atribut aksesibilitas yang sudah diketahui.`"
+                />
             </div>
 
             <div class="grid grid--2 grid--stack">
@@ -92,10 +99,11 @@ const stale = computed(() =>
             </div>
 
             <div class="notice">
-                <b>Demonstrasi tanpa backend</b>
+                <b>Data fasilitas dari database</b>
                 <span>
-                    Semua angka dihitung dari data dummy di sisi klien ({{ VERIFICATION.menunggu.label }} termasuk
-                    status menunggu). Tidak ada autentikasi atau penyimpanan permanen pada tahap ini.
+                    Angka di atas dihitung dari fasilitas hasil impor dataset OpenStreetMap ({{ VERIFICATION.menunggu.label }}
+                    termasuk status menunggu). Autentikasi, kontribusi masyarakat, dan verifikasi masih berupa demonstrasi di
+                    sisi klien.
                 </span>
             </div>
         </div>

@@ -12,11 +12,11 @@ defineProps({
         <div v-for="attribute in ATTRIBUTES" :key="attribute.id" class="kv__row">
             <span class="kv__label">{{ attribute.label }}</span>
             <StatusPill kind="availability" :value="facility.accessibility[attribute.id]" />
-            <span class="kv__note">
+            <span v-if="facility.accessibility[attribute.id] === 'belum'" class="kv__note">{{ attribute.hint }}</span>
+            <span v-else class="kv__note">
                 {{
-                    facility.accessibility[attribute.id] === 'belum'
-                        ? attribute.hint
-                        : AVAILABILITY[facility.accessibility[attribute.id]].label + ' menurut pemeriksaan terakhir.'
+                    facility.accessibilityDetails?.[attribute.id]
+                        || AVAILABILITY[facility.accessibility[attribute.id]].label + ' menurut data sumber.'
                 }}
             </span>
         </div>
