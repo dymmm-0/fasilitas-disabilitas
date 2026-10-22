@@ -86,7 +86,7 @@ const drawPickMarker = () => {
 };
 
 onMounted(() => {
-    map = L.map(container.value, { scrollWheelZoom: false, zoomControl: true }).setView(props.center, props.zoom);
+    map = L.map(container.value, { scrollWheelZoom: true, zoomControl: true }).setView(props.center, props.zoom);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
