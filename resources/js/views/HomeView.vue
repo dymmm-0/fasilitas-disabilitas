@@ -19,7 +19,7 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
             <p class="label">Platform pemetaan fasilitas publik</p>
             <h1 class="display-xl">Temukan fasilitas yang bisa <em>diakses semua orang.</em></h1>
             <p class="body-copy">
-                AksesKitaaaaaaaaaaa memetakan ramp, toilet aksesibel, lift, dan jalur kursi roda di fasilitas publik — lalu
+                AksesKita memetakan ramp, toilet aksesibel, lift, dan jalur kursi roda di fasilitas publik — lalu
                 memverifikasinya bersama masyarakat agar keputusan berkegiatan tidak lagi menebak-nebak.
             </p>
 
