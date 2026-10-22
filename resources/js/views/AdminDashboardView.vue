@@ -75,7 +75,7 @@ const stale = computed(() =>
                 <FacilityTable :facilities="facilities" />
             </div>
 
-            <div class="grid grid--2">
+            <div class="grid grid--2 grid--stack">
                 <div class="panel stack--sm">
                     <h2 class="display-sm">Kategori</h2>
                     <CategoryManager />
