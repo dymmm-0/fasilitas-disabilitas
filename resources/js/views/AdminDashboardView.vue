@@ -89,10 +89,9 @@ const stale = computed(() =>
                 </div>
 
                 <div class="panel stack--sm">
-                    <h2 class="display-sm">Pengguna dan peran</h2>
+                    <h2 class="display-sm">Akun admin</h2>
                     <p class="help">
-                        Administrator mengelola fasilitas dan kategori; verifikator memutuskan pengajuan; kontributor
-                        mengirim usulan dan koreksi.
+                        Hanya admin yang memiliki akun dan dapat masuk; masyarakat mengirim usulan tanpa mendaftar.
                     </p>
                     <UserRolesPanel />
                 </div>
@@ -102,8 +101,8 @@ const stale = computed(() =>
                 <b>Data fasilitas dari database</b>
                 <span>
                     Angka di atas dihitung dari fasilitas hasil impor dataset OpenStreetMap ({{ VERIFICATION.menunggu.label }}
-                    termasuk status menunggu). Autentikasi, kontribusi masyarakat, dan verifikasi masih berupa demonstrasi di
-                    sisi klien.
+                    termasuk status menunggu). Akun admin sudah asli; kontribusi masyarakat dan verifikasi masih
+                    berupa demonstrasi di sisi klien.
                 </span>
             </div>
         </div>

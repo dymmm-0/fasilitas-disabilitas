@@ -48,12 +48,6 @@ export const SUBMISSION_STATUSES = {
     perbaikan: { label: 'Minta perbaikan', glyph: '△', pill: 'pill--pending' },
 };
 
-export const ROLES = {
-    admin: { label: 'Administrator', desc: 'Kelola fasilitas, kategori, dan pengguna.' },
-    verifikator: { label: 'Verifikator', desc: 'Periksa pengajuan dan laporan koreksi.' },
-    kontributor: { label: 'Kontributor', desc: 'Usulkan fasilitas dan laporkan koreksi.' },
-};
-
 export const categoryLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label ?? id;
 
 export const categoryGlyph = (id) => CATEGORIES.find((c) => c.id === id)?.glyph ?? '—';

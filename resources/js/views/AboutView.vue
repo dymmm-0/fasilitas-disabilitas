@@ -65,15 +65,15 @@
                             <b>Usulkan fasilitas atau laporkan koreksi.</b> Lengkapi nama, alamat, koordinat lewat peta,
                             checklist aksesibilitas, dan foto bila ada.
                         </span>
-                        <span class="step__time">Untuk kontributor</span>
+                        <span class="step__time">Untuk pengunjung</span>
                     </li>
                     <li class="step">
                         <span class="step__num">iv.</span>
                         <span>
-                            <b>Tinjau di dashboard verifikasi.</b> Verifikator menyetujui, menolak, atau meminta
+                            <b>Tinjau di dashboard verifikasi.</b> Admin menyetujui, menolak, atau meminta
                             perbaikan; keputusan tercatat pada riwayat.
                         </span>
-                        <span class="step__time">Untuk verifikator</span>
+                        <span class="step__time">Untuk admin</span>
                     </li>
                 </ol>
             </div>

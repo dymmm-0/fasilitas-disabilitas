@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '../composables/useAuth';
 
 const routes = [
     {
@@ -23,13 +24,19 @@ const routes = [
         path: '/verifikasi',
         name: 'verification',
         component: () => import('../views/VerificationView.vue'),
-        meta: { title: 'Dashboard verifikasi' },
+        meta: { title: 'Dashboard verifikasi', requiresAdmin: true },
     },
     {
         path: '/admin',
         name: 'admin',
         component: () => import('../views/AdminDashboardView.vue'),
-        meta: { title: 'Dashboard administrasi' },
+        meta: { title: 'Dashboard administrasi', requiresAdmin: true },
+    },
+    {
+        path: '/masuk',
+        name: 'login',
+        component: () => import('../views/LoginView.vue'),
+        meta: { title: 'Masuk admin' },
     },
     {
         path: '/tentang',
@@ -51,6 +58,19 @@ const router = createRouter({
     scrollBehavior(to, from, savedPosition) {
         return savedPosition ?? { top: 0 };
     },
+});
+
+// Guard ini hanya UX; penegakan sebenarnya ada di middleware `auth` (routes/web.php).
+router.beforeEach((to) => {
+    const { user } = useAuth();
+
+    if (to.meta.requiresAdmin && !user.value) {
+        return { name: 'login', query: { redirect: to.fullPath } };
+    }
+
+    if (to.name === 'login' && user.value) return { name: 'admin' };
+
+    return true;
 });
 
 router.afterEach((to) => {

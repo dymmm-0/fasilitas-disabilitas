@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * shortcut: hanya admin yang punya akun, jadi "peran admin" cukup berarti "sedang masuk".
+ * Tambah kolom `role` + Gate saat peran staf kedua (verifikator) benar-benar dibutuhkan.
+ */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable

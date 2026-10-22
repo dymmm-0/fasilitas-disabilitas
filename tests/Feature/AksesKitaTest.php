@@ -19,7 +19,7 @@ class AksesKitaTest extends TestCase
     {
         $this->get('/fasilitas/fas-001')->assertOk()->assertSee('id="app"', false);
         $this->get('/kontribusi')->assertOk()->assertSee('id="app"', false);
-        $this->get('/admin')->assertOk()->assertSee('id="app"', false);
+        $this->get('/tentang')->assertOk()->assertSee('id="app"', false);
     }
 
     public function test_health_check_tidak_tertutup_rute_spa(): void

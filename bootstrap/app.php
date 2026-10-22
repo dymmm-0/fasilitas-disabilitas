@@ -13,7 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Guest diarahkan ke halaman masuk, bukan ke route `login` yang tidak ada.
+        // Admin yang sudah masuk dan membuka /masuk langsung dibawa ke dashboard.
+        $middleware->redirectGuestsTo('/masuk');
+        $middleware->redirectUsersTo('/admin');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
