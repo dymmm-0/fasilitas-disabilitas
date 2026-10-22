@@ -125,8 +125,9 @@
                     Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan ke basis data AksesKita —
                     1.117 fasilitas, semuanya masih berstatus menunggu verifikasi. Karena itu status aksesibilitasnya
                     belum diperiksa lapangan: sebagian besar masih "belum diketahui", hanya sedikit yang punya catatan
-                    pendukung. Akun admin sudah asli dan dilindungi login; antrean pengajuan, riwayat verifikasi, dan
-                    pengelolaan kategori masih berupa data demonstrasi di sisi klien.
+                    pendukung. Akun admin sudah asli dan dilindungi login; antrean pengajuan, keputusan verifikasi,
+                    riwayat, dan bukti pendukung tersimpan di basis data AksesKita. Pengelolaan kategori masih
+                    berupa data di sisi klien karena kategori mengikuti kolom fasilitas hasil impor.
                 </span>
             </div>
 

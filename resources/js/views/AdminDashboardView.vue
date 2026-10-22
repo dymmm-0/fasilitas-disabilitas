@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { completeness } from '../data/facilities';
-import { daysSince, STALE_DAYS, VERIFICATION } from '../data/meta';
+import { daysSince, needsVerification, STALE_DAYS, VERIFICATION } from '../data/meta';
 import { useFacilities } from '../composables/useFacilities';
 import StatCard from '../components/dashboard/StatCard.vue';
 import CompletenessChart from '../components/dashboard/CompletenessChart.vue';
@@ -12,7 +12,7 @@ import UserRolesPanel from '../components/dashboard/UserRolesPanel.vue';
 const { facilities, tablePage, loadTablePage } = useFacilities();
 
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
-const pending = computed(() => facilities.value.filter((f) => f.verification !== 'terverifikasi').length);
+const pending = computed(() => facilities.value.filter(needsVerification).length);
 const average = computed(() =>
     facilities.value.length
         ? Math.round(facilities.value.reduce((sum, f) => sum + completeness(f), 0) / facilities.value.length)
@@ -154,8 +154,8 @@ onMounted(() => loadTablePage(1, 10));
                 <b>Data fasilitas dari database</b>
                 <span>
                     Angka di atas dihitung dari fasilitas hasil impor dataset OpenStreetMap ({{ VERIFICATION.menunggu.label }}
-                    termasuk status menunggu). Akun admin sudah asli; kontribusi masyarakat dan verifikasi masih
-                    berupa demonstrasi di sisi klien.
+                    termasuk status menunggu). Akun admin, antrean kontribusi masyarakat, dan keputusan verifikasi
+                    tersimpan di basis data aplikasi.
                 </span>
             </div>
         </div>

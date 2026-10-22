@@ -111,48 +111,6 @@ const resetFilters = () => {
     filters.attributes = [];
 };
 
-/** Dipakai saat pengajuan usulan disetujui pada dashboard verifikasi. */
-const addFacility = (payload) => {
-    const highest = facilities.value.reduce(
-        (max, f) => Math.max(max, Number(String(f.id).replace(/\D/g, '')) || 0),
-        0,
-    );
-    const id = `AKS-${String(highest + 1).padStart(4, '0')}`;
-
-    facilities.value = [
-        {
-            id,
-            name: payload.name,
-            category: payload.category,
-            address: payload.address,
-            city: payload.city,
-            lat: payload.lat,
-            lng: payload.lng,
-            accessibility: { ...payload.accessibility },
-            notes: payload.notes ?? '',
-            proofs: payload.proofs ?? [],
-            verification: 'terverifikasi',
-            lastChecked: new Date().toISOString().slice(0, 10),
-            updatedAt: new Date().toISOString().slice(0, 10),
-            contributor: payload.submittedBy ?? 'Kontributor masyarakat',
-        },
-        ...facilities.value,
-    ];
-
-    return id;
-};
-
-/** Dipakai saat laporan koreksi disetujui. */
-const applyCorrection = (facilityId, field, value) => {
-    const facility = facilities.value.find((f) => f.id === facilityId);
-    if (!facility) return false;
-
-    facility.accessibility[field] = value;
-    facility.updatedAt = new Date().toISOString().slice(0, 10);
-
-    return true;
-};
-
 export function useFacilities() {
     return {
         facilities,
@@ -171,8 +129,6 @@ export function useFacilities() {
         },
         toggleAttribute,
         resetFilters,
-        addFacility,
-        applyCorrection,
         byId: (id) => facilities.value.find((f) => f.id === id) ?? null,
     };
 }

@@ -6,6 +6,11 @@ import { ATTRIBUTES, CATEGORIES } from '../../data/meta';
 
 const emit = defineEmits(['submit']);
 
+const props = defineProps({
+    busy: { type: Boolean, default: false },
+    error: { type: String, default: '' },
+});
+
 const form = reactive({
     name: '',
     category: 'transportasi',
@@ -26,7 +31,7 @@ const errors = reactive({});
 const onPhoto = (event) => {
     const file = event.target.files?.[0] ?? null;
     if (preview.value) URL.revokeObjectURL(preview.value);
-    photo.value = file ? file.name : null;
+    photo.value = file;
     preview.value = file ? URL.createObjectURL(file) : null;
 };
 
@@ -44,7 +49,7 @@ const validate = () => {
 };
 
 const submit = () => {
-    if (!validate()) return;
+    if (props.busy || !validate()) return;
 
     emit('submit', {
         type: 'usulan',
@@ -60,7 +65,7 @@ const submit = () => {
             accessibility: { ...form.accessibility },
             notes: form.notes.trim(),
         },
-        proofs: photo.value ? [{ type: 'foto', caption: photo.value, date: new Date().toISOString().slice(0, 10) }] : [],
+        proof: photo.value,
         contact: form.email.trim(),
     });
 };
@@ -133,8 +138,15 @@ const submit = () => {
             <div class="stack--sm">
                 <div class="field">
                     <label for="usulan-foto">Foto bukti (opsional)</label>
-                    <input id="usulan-foto" class="input" type="file" accept="image/*" @change="onPhoto">
-                    <p class="help">Demonstrasi: berkas tidak diunggah ke server.</p>
+                    <input
+                        id="usulan-foto"
+                        class="input"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        :disabled="busy"
+                        @change="onPhoto"
+                    >
+                    <p class="help">JPG, PNG, atau WebP, maksimal 4 MB. Berkas disimpan di server dan hanya dibuka petugas verifikasi.</p>
                 </div>
 
                 <div
@@ -174,9 +186,13 @@ const submit = () => {
             </div>
         </div>
 
+        <p v-if="error" class="error-text" role="alert">{{ error }}</p>
+
         <div class="inline-actions">
-            <button type="submit" class="btn btn--primary">Kirim usulan</button>
-            <span class="meta">Simulasi: pengajuan masuk antrean verifikasi, tidak tersimpan ke basis data.</span>
+            <button type="submit" class="btn btn--primary" :disabled="busy">
+                {{ busy ? 'Mengirim…' : 'Kirim usulan' }}
+            </button>
+            <span class="meta">Pengajuan tersimpan di basis data dan masuk antrean verifikasi.</span>
         </div>
     </form>
 </template>

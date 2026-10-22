@@ -32,7 +32,7 @@
 
         <div class="container site-footer__legal">
             <span>© AksesKita 2026 · Proyek kompetisi Fundev</span>
-            <span>Fasilitas dari impor dataset OpenStreetMap Kota Medan · antrean kontribusi masih data demonstrasi</span>
+            <span>Fasilitas dari impor dataset OpenStreetMap Kota Medan · pengajuan kontribusi tersimpan di basis data</span>
         </div>
     </footer>
 </template>

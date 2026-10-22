@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\VerificationQueueController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +15,17 @@ Route::prefix('api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
     Route::get('/me', fn (Request $request) => ['user' => $request->user()?->only('id', 'name', 'email')]);
     Route::get('/users', fn () => User::orderBy('name')->get(['id', 'name', 'email']))->middleware('auth');
+
+    // Kontribusi masyarakat: pengunjung tanpa akun boleh mengirim pengajuan.
+    Route::post('/submissions', [SubmissionController::class, 'store'])->middleware('throttle:10,1');
+
+    // Antrean (fasilitas + pengajuan), bukti, dan keputusan hanya untuk petugas yang masuk.
+    Route::middleware('auth')->group(function () {
+        Route::get('/verification-queue', [VerificationQueueController::class, 'index']);
+        Route::post('/submissions/{submission:public_id}/decision', [SubmissionController::class, 'decide']);
+        Route::get('/submissions/{submission:public_id}/proofs/{proof}', [SubmissionController::class, 'proof']);
+        Route::post('/facilities/{facility:external_id}/verification', [FacilityController::class, 'verify']);
+    });
 });
 
 // Hanya dashboard verifikasi dan admin yang butuh akun.

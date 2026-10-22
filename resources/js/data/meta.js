@@ -48,6 +48,37 @@ export const SUBMISSION_STATUSES = {
     perbaikan: { label: 'Minta perbaikan', glyph: '△', pill: 'pill--pending' },
 };
 
+/** Jenis baris di antrean verifikasi (fasilitas basis data atau pengajuan warga). */
+export const QUEUE_TYPES = {
+    fasilitas: { label: 'Fasilitas', glyph: '▣' },
+    usulan: SUBMISSION_TYPES.usulan,
+    koreksi: SUBMISSION_TYPES.koreksi,
+};
+
+/** Penyaring antrean; kuncinya harus sama dengan `VerificationQueueController::BUCKETS`. */
+export const QUEUE_BUCKETS = [
+    { id: 'perlu', label: 'Semua yang membutuhkan verifikasi' },
+    { id: 'dataset', label: 'Fasilitas dari dataset' },
+    { id: 'usulan', label: 'Usulan fasilitas baru' },
+    { id: 'koreksi', label: 'Laporan koreksi' },
+    { id: 'menunggu', label: 'Menunggu verifikasi' },
+    { id: 'perbaikan', label: 'Perlu perbaikan' },
+    { id: 'selesai', label: 'Sudah diputuskan' },
+];
+
+/** Sama dengan `Facility::NEEDS_VERIFICATION`: masih menunggu atau perlu perbaikan. */
+export const NEEDS_VERIFICATION = ['menunggu', 'perlu-perbaikan'];
+
+export const needsVerification = (facility) => NEEDS_VERIFICATION.includes(facility.verification);
+
+/** Label status baris antrean; status fasilitas dan status pengajuan kosakatanya beda. */
+export const statusMeta = (kind, status) =>
+    (kind === 'fasilitas' ? VERIFICATION : SUBMISSION_STATUSES)[status] ?? {
+        label: status,
+        glyph: '—',
+        pill: 'pill--unknown',
+    };
+
 export const categoryLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label ?? id;
 
 export const categoryGlyph = (id) => CATEGORIES.find((c) => c.id === id)?.glyph ?? '—';

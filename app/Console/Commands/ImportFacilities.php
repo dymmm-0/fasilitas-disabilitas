@@ -29,7 +29,7 @@ class ImportFacilities extends Command
 
     private const AVAILABILITY = ['yes', 'no', 'unknown'];
 
-    private const VERIFICATION = ['pending', 'verified', 'rejected'];
+    private const VERIFICATION = ['pending', 'verified', 'needs_repair', 'rejected'];
 
     private const STATUS_COLUMNS = [
         'ramp_status', 'accessible_toilet_status', 'elevator_status',

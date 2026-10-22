@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
     'ramp_status', 'ramp_details', 'toilet_status', 'toilet_details', 'lift_status', 'lift_details',
     'path_status', 'path_details', 'entrance_status', 'entrance_details',
     'entrance_width_cm', 'entrance_width_measured',
-    'verification_status', 'verified_at', 'verification_method', 'evidence_url',
+    'verification_status', 'verified_at', 'verified_by', 'verification_method', 'verification_note', 'evidence_url',
     'source_name', 'source_url', 'source_ref_type', 'source_ref_id', 'collected_at',
     'data_completeness_percent', 'notes',
 ])]
@@ -30,6 +30,21 @@ class Facility extends Model
         'transport_station_terminal' => 'transportasi',
     ];
 
+    /** Kategori yang boleh dipilih pengaju (sama dengan `resources/js/data/meta.js`). */
+    public const CATEGORIES = [
+        'transportasi', 'kesehatan', 'pendidikan', 'pemerintahan', 'perbelanjaan',
+        'penginapan', 'rekreasi', 'ibadah', 'olahraga',
+    ];
+
+    /** Indikator aksesibilitas → kolom status dan kolom keterangan. */
+    public const ATTRIBUTE_COLUMNS = [
+        'ramp' => ['ramp_status', 'ramp_details'],
+        'toilet' => ['toilet_status', 'toilet_details'],
+        'lift' => ['lift_status', 'lift_details'],
+        'path' => ['path_status', 'path_details'],
+        'entrance' => ['entrance_status', 'entrance_details'],
+    ];
+
     /** Status tiga nilai: ketiadaan bukti bukan "tidak tersedia". */
     public const AVAILABILITY_MAP = [
         'yes' => 'tersedia',
@@ -37,11 +52,22 @@ class Facility extends Model
         'unknown' => 'belum',
     ];
 
+    /** Status verifikasi tingkat fasilitas → label klien (`resources/js/data/meta.js`). */
     public const VERIFICATION_MAP = [
         'pending' => 'menunggu',
         'verified' => 'terverifikasi',
+        'needs_repair' => 'perlu-perbaikan',
         'rejected' => 'ditolak',
     ];
+
+    /**
+     * Status yang berarti fasilitas masih membutuhkan pemeriksaan. `rejected` tidak
+     * termasuk: record-nya tetap ada dan hanya ditampilkan sebagai sudah diputuskan.
+     */
+    public const NEEDS_VERIFICATION = ['pending', 'needs_repair'];
+
+    /** Hasil pemeriksaan yang boleh disimpan petugas. */
+    public const VERIFICATION_ACTIONS = ['verified', 'needs_repair', 'rejected'];
 
     protected function casts(): array
     {
@@ -54,6 +80,24 @@ class Facility extends Model
             'collected_at' => 'date',
             'verified_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Id publik berikutnya (`AKS-####`) untuk fasilitas yang lahir dari usulan
+     * masyarakat. Diurut panjang lalu nilai supaya urutannya benar di MySQL maupun
+     * SQLite tanpa fungsi SQL khusus.
+     *
+     * shortcut: dua keputusan yang disetujui bersamaan bisa menghasilkan id yang sama;
+     * tambah retry atau sequence bila pengajuan sudah diproses paralel.
+     */
+    public static function nextExternalId(): string
+    {
+        $last = static::query()
+            ->orderByRaw('LENGTH(external_id) DESC')
+            ->orderByDesc('external_id')
+            ->value('external_id');
+
+        return 'AKS-'.str_pad((string) ((int) substr((string) $last, 4) + 1), 4, '0', STR_PAD_LEFT);
     }
 
     /** Bentuk data yang dibaca frontend (lihat `resources/js/composables/useFacilities.js`). */
@@ -88,6 +132,11 @@ class Facility extends Model
             'notes' => $this->notes ?? '',
             'proofs' => [],
             'verification' => self::VERIFICATION_MAP[$this->verification_status],
+            // Pemeriksaan tingkat fasilitas; indikator aksesibilitas dicatat terpisah.
+            'verifiedAt' => $this->verified_at?->toIso8601String(),
+            'verifiedBy' => $this->verified_by,
+            'verificationMethod' => $this->verification_method,
+            'verificationNote' => $this->verification_note,
             'lastChecked' => $date,
             'updatedAt' => $date,
             'contributor' => $this->source_name ?? 'Tidak diketahui',

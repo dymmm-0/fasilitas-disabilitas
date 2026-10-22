@@ -12,14 +12,31 @@ const { submit } = useSubmissions();
 
 const tab = ref(route.query.mode === 'koreksi' ? 'koreksi' : 'usulan');
 const result = ref(null);
+const busy = ref(false);
+const submitError = ref('');
 
-const onSubmitted = (payload) => {
-    result.value = {
-        id: submit(payload),
-        label: SUBMISSION_TYPES[payload.type].label,
-        name: payload.facilityName,
-        submittedBy: payload.submittedBy,
-    };
+/** Id pengajuan ditentukan server; klien hanya menampilkan hasil penyimpanan. */
+const onSubmitted = async (payload) => {
+    if (busy.value) return;
+
+    busy.value = true;
+    submitError.value = '';
+
+    try {
+        const submission = await submit(payload);
+
+        result.value = {
+            id: submission.id,
+            label: SUBMISSION_TYPES[payload.type].label,
+            name: submission.facilityName,
+            submittedBy: submission.submittedBy,
+        };
+    } catch (error) {
+        // Pesan validasi pertama dari server, misalnya berkas terlalu besar.
+        submitError.value = Object.values(error.errors ?? {})[0]?.[0] ?? error.message;
+    } finally {
+        busy.value = false;
+    }
 };
 </script>
 
@@ -30,9 +47,8 @@ const onSubmitted = (payload) => {
                 <p class="label">Kontribusi masyarakat</p>
                 <h1 class="display-lg">Tambahkan fasilitas, atau <em>perbaiki data yang keliru.</em></h1>
                 <p class="body-copy">
-                    Setiap pengajuan masuk ke antrean verifikasi. Data fasilitas di peta berasal dari basis data,
-                    sedangkan formulir ini masih demonstrasi: isian tidak dikirim ke server dan tidak tersimpan
-                    permanen.
+                    Setiap pengajuan divalidasi dan disimpan server, lalu masuk antrean verifikasi yang dibaca
+                    petugas dari basis data. Nomor pengajuan diberikan server setelah pengajuan tersimpan.
                 </p>
             </div>
 
@@ -47,19 +63,26 @@ const onSubmitted = (payload) => {
                 </div>
 
                 <div class="panel">
-                    <ContributionForm v-if="tab === 'usulan'" @submit="onSubmitted" />
+                    <ContributionForm
+                        v-if="tab === 'usulan'"
+                        :busy="busy"
+                        :error="submitError"
+                        @submit="onSubmitted"
+                    />
                     <CorrectionForm
                         v-else
                         :initial-facility-id="String(route.query.facility ?? '')"
+                        :busy="busy"
+                        :error="submitError"
                         @submit="onSubmitted"
                     />
                 </div>
 
                 <div class="notice">
-                    <b>Status pengajuan adalah simulasi</b>
+                    <b>Pengajuan tersimpan di basis data</b>
                     <span>
-                        Formulir ini berjalan sepenuhnya di sisi klien. Pada implementasi produksi, pengajuan akan
-                        dikirim ke API Laravel dan disimpan di basis data.
+                        Server memeriksa isian sebelum menyimpan. Bukti foto (opsional) disimpan sebagai berkas
+                        privat dan hanya dapat dibuka petugas verifikasi.
                     </span>
                 </div>
             </div>
@@ -72,8 +95,8 @@ const onSubmitted = (payload) => {
                     <span class="meta">{{ result.label }} · {{ result.name }} · {{ result.submittedBy }}</span>
                 </div>
                 <p class="body-copy">
-                    Verifikator akan meninjau bukti foto dan koordinat. Buka dashboard verifikasi untuk melihat antrean
-                    dan mencoba aksi setujui, tolak, atau minta perbaikan.
+                    Pengajuan sudah tercatat dengan status menunggu. Verifikator akan meninjau bukti dan koordinat;
+                    keputusan serta riwayatnya tersimpan di basis data.
                 </p>
                 <div class="inline-actions">
                     <RouterLink class="btn btn--primary" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
