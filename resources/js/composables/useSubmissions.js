@@ -64,9 +64,11 @@ const decide = (id, action, note = '') => {
             });
             submission.facilityId = facilityId;
             toast.push('Pengajuan disetujui', `${submission.facilityName} ditambahkan ke peta sebagai ${facilityId}.`);
-        } else {
-            facilities.applyCorrection(submission.facilityId, submission.payload.field, submission.payload.to);
+        } else if (facilities.applyCorrection(submission.facilityId, submission.payload.field, submission.payload.to)) {
             toast.push('Koreksi disetujui', `Data ${submission.facilityName} diperbarui.`);
+        } else {
+            // Antrean demonstrasi menyimpan id lama (fas-00x) yang tidak ada di data fasilitas.
+            toast.push('Koreksi tidak diterapkan', `Fasilitas ${submission.facilityId} tidak ditemukan pada data fasilitas.`);
         }
     } else if (action === 'ditolak') {
         toast.push('Pengajuan ditolak', `${id} ditandai ditolak dan tidak masuk ke peta.`);

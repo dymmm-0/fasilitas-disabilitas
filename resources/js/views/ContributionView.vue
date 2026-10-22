@@ -30,8 +30,9 @@ const onSubmitted = (payload) => {
                 <p class="label">Kontribusi masyarakat</p>
                 <h1 class="display-lg">Tambahkan fasilitas, atau <em>perbaiki data yang keliru.</em></h1>
                 <p class="body-copy">
-                    Setiap pengajuan masuk ke antrean verifikasi. Data dummy pada demonstrasi ini tidak dikirim ke
-                    server dan tidak tersimpan permanen.
+                    Setiap pengajuan masuk ke antrean verifikasi. Data fasilitas di peta berasal dari basis data,
+                    sedangkan formulir ini masih demonstrasi: isian tidak dikirim ke server dan tidak tersimpan
+                    permanen.
                 </p>
             </div>
 

@@ -81,7 +81,7 @@ const addFacility = (payload) => {
         (max, f) => Math.max(max, Number(String(f.id).replace(/\D/g, '')) || 0),
         0,
     );
-    const id = `fas-${String(highest + 1).padStart(3, '0')}`;
+    const id = `AKS-${String(highest + 1).padStart(4, '0')}`;
 
     facilities.value = [
         {

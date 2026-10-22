@@ -57,7 +57,7 @@ export const attributeLabel = (id) => ATTRIBUTES.find((a) => a.id === id)?.label
 /** Fasilitas dianggap "perlu diperbarui" setelah 180 hari tanpa pemeriksaan. */
 export const STALE_DAYS = 180;
 
-export const daysSince = (iso, today = new Date('2026-10-21')) =>
+export const daysSince = (iso, today = new Date()) =>
     Math.round((today - new Date(iso)) / 86400000);
 
 export const formatDate = (iso) =>

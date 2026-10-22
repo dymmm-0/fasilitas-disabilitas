@@ -9,7 +9,7 @@ import FacilityMap from '../components/map/FacilityMap.vue';
 import StatusPill from '../components/common/StatusPill.vue';
 
 const route = useRoute();
-const { byId } = useFacilities();
+const { byId, status } = useFacilities();
 
 const facility = computed(() => byId(route.params.id));
 </script>
@@ -132,6 +132,13 @@ const facility = computed(() => byId(route.params.id));
                     </div>
                 </aside>
             </div>
+        </div>
+    </section>
+
+    <section v-else-if="status === 'memuat'" class="container section">
+        <div class="empty-state" role="status">
+            <span class="label">Memuat</span>
+            <h1 class="display-md">Mengambil detail fasilitas...</h1>
         </div>
     </section>
 

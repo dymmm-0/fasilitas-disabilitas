@@ -17,7 +17,7 @@ class AksesKitaTest extends TestCase
 
     public function test_rute_spa_mengembalikan_shell_yang_sama(): void
     {
-        $this->get('/fasilitas/fas-001')->assertOk()->assertSee('id="app"', false);
+        $this->get('/fasilitas/AKS-0001')->assertOk()->assertSee('id="app"', false);
         $this->get('/kontribusi')->assertOk()->assertSee('id="app"', false);
         $this->get('/tentang')->assertOk()->assertSee('id="app"', false);
     }

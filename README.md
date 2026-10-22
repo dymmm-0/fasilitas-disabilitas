@@ -12,15 +12,22 @@ aksesibilitasnya sebelum berkunjung — dari ketersediaan ramp hingga lebar akse
 [![Vue](https://img.shields.io/badge/Vue-3-42B883?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
 [![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
-![Status](https://img.shields.io/badge/status-prototipe%20frontend-A8542A)
+[![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+![Dataset](https://img.shields.io/badge/dataset-1.117%20fasilitas%20Medan-A8542A)
 
 </div>
 
-> ⚠️ **Status proyek: prototipe frontend.**
-> Seluruh data — 13 fasilitas dan 11 pengajuan contoh — berada di `resources/js/data/`
-> dan hanya hidup di memori browser. Belum ada backend domain, autentikasi, unggah
-> berkas, atau penyimpanan permanen. Menyetujui pengajuan pada dashboard verifikasi
-> memang menambah fasilitas ke peta, tetapi **hilang saat halaman dimuat ulang**.
+> **Status proyek.**
+> Aplikasi sudah terhubung ke basis data. Tabel `facilities` berisi
+> **1.117 fasilitas asli** Kota Medan hasil impor dataset OpenStreetMap, dan
+> frontend membacanya lewat `GET /api/facilities`. Login admin memakai autentikasi
+> sesi Laravel sungguhan.
+>
+> Yang **belum** selesai: seluruh 1.117 fasilitas masih berstatus *menunggu
+> verifikasi* dan data aksesibilitasnya belum diperiksa lapangan — sebagian besar
+> masih `belum diketahui`. Antrean pengajuan, riwayat verifikasi, dan pengelolaan
+> kategori masih berjalan di sisi klien sebagai demonstrasi dan tidak tersimpan
+> ke basis data.
 
 ## Daftar Isi
 
@@ -32,9 +39,12 @@ aksesibilitasnya sebelum berkunjung — dari ketersediaan ramp hingga lebar akse
 - [Teknologi yang Digunakan](#teknologi-yang-digunakan)
 - [Tampilan Aplikasi](#tampilan-aplikasi)
 - [Struktur Direktori](#struktur-direktori)
+- [Skema Basis Data](#skema-basis-data)
 - [Persyaratan Sistem](#persyaratan-sistem)
 - [Instalasi dan Menjalankan](#instalasi-dan-menjalankan)
+- [Impor dan Sinkronisasi Data Fasilitas](#impor-dan-sinkronisasi-data-fasilitas)
 - [Konfigurasi Environment](#konfigurasi-environment)
+- [Autentikasi dan Peran](#autentikasi-dan-peran)
 - [Pengujian dan Pengembangan](#pengujian-dan-pengembangan)
 - [Roadmap](#roadmap)
 - [Kontribusi](#kontribusi)
@@ -49,13 +59,13 @@ sebelum mengunjungi fasilitas publik bukan "di mana lokasinya", melainkan
 dalam bentuk terstruktur: sebagian tersebar di ulasan, sebagian hanya diketahui
 warga sekitar, dan sebagian lagi tidak pernah dicatat.
 
-AksesKita mencoba merapikan informasi tersebut ke dalam satu peta dan satu format data
-yang konsisten:
+AksesKita merapikan informasi tersebut ke dalam satu peta, satu skema data, dan satu
+basis data:
 
 - **Mencari** fasilitas berdasarkan nama, alamat, kota, kategori, atau status verifikasi.
 - **Menyaring** hanya fasilitas yang benar-benar memiliki atribut tertentu — misalnya
   yang punya ramp *dan* toilet aksesibel sekaligus.
-- **Membaca detail** kondisi aksesibilitas, catatan lapangan, dan bukti pendukung.
+- **Membaca detail** kondisi aksesibilitas, catatan sumber, dan tautan ke data aslinya.
 - **Mengusulkan** fasilitas baru atau melaporkan data yang sudah tidak sesuai.
 - **Memeriksa** pengajuan sebelum informasi dianggap tepercaya (dashboard verifikasi).
 
@@ -67,57 +77,65 @@ mereka tuju dapat diakses semua orang.
 
 | Permasalahan | Pendekatan AksesKita | Status |
 | --- | --- | --- |
-| Informasi aksesibilitas tersebar dan tidak seragam | Satu skema data: 5 indikator aksesibilitas dengan tiga nilai baku (`tersedia`, `tidak`, `belum`) | ✅ Skema dan tampilan sudah ada |
-| Sulit menilai kesiapan fasilitas sebelum berkunjung | Peta, daftar kartu, filter atribut, dan halaman detail per fasilitas | ✅ Berjalan di frontend |
+| Informasi aksesibilitas tersebar dan tidak seragam | Satu skema data: 5 indikator aksesibilitas dengan tiga nilai baku (`tersedia`, `tidak`, `belum`) | ✅ Skema, basis data, dan tampilan sudah ada |
+| Sulit menilai kesiapan fasilitas sebelum berkunjung | Peta, daftar kartu dengan pemuatan bertahap, filter atribut, dan halaman detail per fasilitas | ✅ Berjalan dari data basis data |
+| Data fasilitas belum terkumpul dalam satu tempat | Dataset OpenStreetMap Kota Medan diimpor ke tabel `facilities` lewat satu perintah idempoten | ✅ 1.117 fasilitas tersimpan |
 | Data yang tidak lengkap tampak sama dengan data yang buruk | Indikator `belum diketahui` ditampilkan terpisah dari `tidak tersedia`, plus persentase kelengkapan data | ✅ Berjalan |
-| Informasi dari masyarakat perlu diperiksa | Antrean verifikasi dengan aksi setujui, tolak, dan minta perbaikan | ⚠️ Alur tersimulasi di browser, belum ada backend |
+| Informasi dari masyarakat perlu diperiksa | Antrean verifikasi dengan aksi setujui, tolak, dan minta perbaikan | ⚠️ Hanya akun admin dan pengajuan yang belum tersimpan |
 | Data lama bisa menyesatkan | Penanda "Perlu diperbarui" di tabel fasilitas dashboard admin bila data tidak diperiksa lebih dari 180 hari | ✅ Berjalan (perhitungan di sisi klien) |
-| Kontribusi warga belum terverifikasi | Setiap pengajuan membawa jenis, ringkasan, dan bukti pendukung | ⚠️ Formulir dan validasi ada, berkas tidak diunggah |
+| Kontribusi warga belum terverifikasi | Setiap pengajuan membawa jenis, ringkasan, dan bukti pendukung | ⚠️ Formulir dan validasi ada, berkas tidak diunggah dan tidak tersimpan |
 
-AksesKita **belum** menyelesaikan seluruh persoalan di atas. Yang sudah tersedia adalah
-alur dan antarmuka yang utuh untuk diperagakan; lapisan data dan otorisasi masih harus
-dibangun.
+AksesKita **belum** menyelesaikan seluruh persoalan di atas. Lapisan data fasilitas
+dan autentikasi admin sudah nyata; lapisan pengajuan warga, unggah bukti, dan
+moderasi masih harus dibangun.
 
 ## Fitur Utama
 
 | Fitur | Rute | Keterangan |
 | --- | --- | --- |
-| Peta fasilitas | `/` | Leaflet + OpenStreetMap, penanda kotak berisi kode kategori |
-| Pencarian dan filter | `/` | Kata kunci, kategori, status verifikasi, dan kombinasi atribut |
-| Daftar kartu | `/` | Menampilkan status verifikasi dan kelengkapan data tiap fasilitas |
-| Detail fasilitas | `/fasilitas/:id` | 5 indikator aksesibilitas, catatan, bukti, riwayat pemeriksaan |
-| Kontribusi masyarakat | `/kontribusi` | Usulan fasilitas baru atau koreksi data, lengkap dengan validasi |
-| Dashboard verifikasi | `/verifikasi` | Antrean pengajuan, detail, setujui/tolak/minta perbaikan, riwayat |
-| Dashboard administrasi | `/admin` | Statistik, tabel fasilitas, kelengkapan data, kategori, dan peran pengguna |
+| Peta fasilitas | `/` | Leaflet + OpenStreetMap, penanda kotak berisi kode kategori, diisi 1.117 fasilitas dari API |
+| Pencarian dan filter | `/` | Kata kunci, kategori, status verifikasi, dan kombinasi atribut (client-side, atas data API) |
+| Daftar kartu | `/` | 40 kartu per tahap dengan tombol "Tampilkan lagi"; jalur alternatif keyboard/pembaca layar |
+| Detail fasilitas | `/fasilitas/:id` | 5 indikator, catatan sumber, koordinat, asal data, dan kelengkapan data |
+| Kontribusi masyarakat | `/kontribusi` | Usulan fasilitas baru atau koreksi data, lengkap dengan validasi (belum tersimpan) |
+| Masuk admin | `/masuk` | Login sesi Laravel dengan proteksi CSRF dan pembatasan percobaan |
+| Dashboard verifikasi | `/verifikasi` | Antrean pengajuan, detail, setujui/tolak/minta perbaikan, riwayat (perlu masuk) |
+| Dashboard administrasi | `/admin` | Statistik, tabel fasilitas, kelengkapan data per kategori, jumlah per kategori, daftar akun (perlu masuk) |
 | Tentang dan panduan | `/tentang` | Latar belakang, panduan penggunaan, mekanisme kontribusi dan verifikasi |
 | Halaman 404 | `*` | Rute tidak dikenal tetap memakai shell SPA |
 
-**Sudah berjalan (frontend):**
+**Sudah berjalan:**
 
-- 🗺️ Peta interaktif dengan 13 fasilitas contoh di 8 kategori: transportasi, kesehatan,
-  pendidikan, pemerintahan, perbelanjaan, rekreasi, ibadah, dan olahraga.
+- 🗺️ Peta interaktif dengan 1.117 fasilitas asli dalam 7 kategori: kesehatan,
+  pemerintahan, pendidikan, penginapan, perbelanjaan, rekreasi, dan transportasi.
+- 🔌 `GET /api/facilities` membaca tabel `facilities`; frontend tidak lagi memuat data
+  fasilitas dari berkas JavaScript.
+- 🔐 Login admin berbasis sesi (`POST /api/login`, `POST /api/logout`, `GET /api/me`),
+  dengan `/admin` dan `/verifikasi` diproteksi middleware `auth`.
 - 🔎 Filter bekerja pada peta dan daftar sekaligus; memilih atribut berarti "harus
   memiliki semua atribut ini", bukan "salah satu".
 - 📊 Persentase kelengkapan data per fasilitas, dihitung dari jumlah indikator yang
   bukan `belum`.
-- 📝 Formulir kontribusi dengan validasi wajib isi, pemilihan lokasi lewat peta,
-  pratinjau foto di sisi klien, dan nomor pengajuan otomatis (`SUB-0143`, dst.).
-- ✅ Aksi verifikasi benar-benar mengubah state bersama: pengajuan yang disetujui
-  menambah atau memperbarui fasilitas yang tampil di peta dan daftar.
 - 🧭 Navigasi SPA dengan riwayat browser, judul halaman per rute, dan tautan aktif.
+- ♿ Status selalu ditampilkan sebagai label + glyph, tidak mengandalkan warna saja.
 
 **Belum tersedia:**
 
-- Autentikasi, akun, dan pembatasan akses per peran (`admin`, `verifikator`,
-  `kontributor` baru berupa data contoh di panel admin).
-- Penyimpanan permanen: tidak ada tabel `facilities`, `submissions`, atau `proofs`.
-- API, unggah foto ke server, dan validasi di sisi server.
-- Jejak audit dan moderasi data dunia nyata.
+- Penyimpanan pengajuan warga: tidak ada tabel `submissions`, `proofs`, atau `reviews`.
+  Formulir kontribusi dan antrean verifikasi hanya mengubah state di memori browser dan
+  hilang saat halaman dimuat ulang.
+- Unggah foto ke server.
+- Peran pengguna selain admin: tidak ada kolom `role`, `admin` dan `verifikator` belum
+  dipisahkan.
+- API tulis (POST/PATCH) untuk fasilitas, pengajuan, dan keputusan verifikasi.
+- Jejak audit keputusan verifikasi di basis data.
+- Riwayat perubahan data fasilitas.
+- Tes komponen Vue, tes end-to-end, linter JavaScript, dan CI.
 
 ## Indikator Aksesibilitas
 
 Lima indikator yang dipakai di seluruh aplikasi (didefinisikan di
-`resources/js/data/meta.js`):
+`resources/js/data/meta.js`, dipetakan dari kolom database di `app/Models/Facility.php`):
 
 | ID | Indikator | Yang dicatat |
 | --- | --- | --- |
@@ -152,50 +170,51 @@ fasilitas di dashboard admin (`STALE_DAYS` di `meta.js`).
    adalah jalur alternatif untuk pengguna keyboard dan pembaca layar.
 2. **Cari atau saring** — ketik nama/alamat/kota, pilih kategori, status verifikasi,
    atau atribut yang wajib ada. Jumlah hasil ikut berubah di peta dan daftar.
-3. **Buka detail** (`/fasilitas/fas-001`) — periksa lima indikator, catatan lapangan,
-   bukti pendukung, dan kapan terakhir diperiksa.
+3. **Buka detail** (`/fasilitas/AKS-0001`) — periksa lima indikator, catatan sumber,
+   koordinat, dan tautan ke data OpenStreetMap aslinya.
 4. **Kirim kontribusi** (`/kontribusi`) — pilih "usulan fasilitas baru" atau "koreksi
    data", isi lokasi lewat peta, lalu kirim. Formulir menolak isian yang tidak lengkap.
-5. **Verifikasi** (`/verifikasi`) — buka pengajuan, tinjau ringkasan dan bukti, lalu
-   setujui, tolak, atau minta perbaikan. Persetujuan usulan langsung menambah fasilitas
-   ke peta pada sesi yang sama.
+5. **Masuk sebagai admin** (`/masuk`) — dashboard verifikasi dan administrasi hanya
+   dapat dibuka setelah masuk.
+6. **Verifikasi** (`/verifikasi`) — buka pengajuan, tinjau ringkasan dan bukti, lalu
+   setujui, tolak, atau minta perbaikan.
 
-Langkah 4 dan 5 sudah dapat dicoba, tetapi hasilnya belum tersimpan ke database dan
-belum ada pemeriksaan hak akses.
+Langkah 4 dan 5 sudah dapat dicoba, tetapi pengajuan pada langkah 4 dan 6 belum
+tersimpan ke basis data.
 
 ## Teknologi yang Digunakan
 
 | Teknologi | Versi | Peran dalam proyek |
 | --- | --- | --- |
-| PHP | `^8.3` (diuji pada 8.5.9) | Bahasa server |
-| Laravel | `^13.17` (terpasang 13.38.0) | Kerangka backend, routing, Blade shell, migrasi |
+| PHP | `^8.3` (terpasang 8.5.9) | Bahasa server |
+| Laravel | `^13.17` | Kerangka backend, routing, Blade shell, migrasi, autentikasi sesi |
 | Vue 3 | `3.5.44` | Seluruh antarmuka SPA (`<script setup>`) |
-| Vue Router | `5.4.0` | 6 rute + halaman 404, mode history |
+| Vue Router | `5.4.0` | 8 rute + halaman 404, mode history, penjaga rute admin |
 | Vite | `8.3.4` | Build aset, HMR, unduh font saat build |
-| `laravel-vite-plugin` | `3.1` | Menghubungkan Vite dengan Blade (`@vite`, `Vite::fonts()`) |
+| `laravel-vite-plugin` | `3.2.0` | Menghubungkan Vite dengan Blade (`@vite`, `Vite::fonts()`) |
 | `@vitejs/plugin-vue` | `6.0.10` | Kompilasi komponen `.vue` |
 | Leaflet | `1.9.4` | Peta interaktif, penanda `L.divIcon` tanpa aset gambar |
-| OpenStreetMap | — | Sumber tile peta (butuh koneksi internet) |
+| OpenStreetMap | — | Sumber tile peta dan sumber dataset fasilitas (butuh internet) |
 | Tailwind CSS | `4.x` | Terpasang dan aktif di Vite; antarmuka sendiri memakai token CSS di `resources/css/app.css` |
-| MySQL | 8.x | Database pada `.env.example` (belum menyimpan data fasilitas) |
+| MySQL | 8.x | Basis data: `facilities`, `users`, `sessions`, `cache`, `jobs` |
 | PHPUnit | `12.5` | Tes backend |
 | Laravel Pint | `1.27` | Perapian gaya kode PHP |
-| Composer | 2.x | Manajemen dependensi PHP |
-| npm | 11.x | Manajemen dependensi frontend |
+| Composer / npm | 2.x / 11.x | Manajemen dependensi PHP dan frontend |
 
 Tidak ada library state management, HTTP client, atau komponen UI eksternal. State
-bersama memakai composable singleton (`useFacilities`, `useSubmissions`, `useToast`),
-dan seluruh gaya ditulis sebagai kelas CSS biasa.
+bersama memakai composable singleton (`useFacilities`, `useSubmissions`, `useAuth`,
+`useToast`), dan seluruh gaya ditulis sebagai kelas CSS biasa.
 
 ## Tampilan Aplikasi
 
 | Halaman | Isi utama |
 | --- | --- |
-| Beranda | Hero ringkas, peta fasilitas, panel filter, daftar kartu, legenda peta |
-| Detail fasilitas | Nama, kategori, alamat, lima indikator, catatan, bukti, status verifikasi |
+| Beranda | Hero ringkas, peta fasilitas, panel filter, daftar kartu bertahap, legenda peta |
+| Detail fasilitas | Nama, kategori, alamat, lima indikator, catatan sumber, koordinat, status verifikasi |
 | Kontribusi | Dua jenis formulir, pemilih lokasi di peta, pratinjau foto, daftar kesalahan |
+| Masuk | Formulir surel + kata sandi dengan pesan kesalahan yang terbaca pembaca layar |
 | Verifikasi | Antrean kiri, detail pengajuan, aksi keputusan, riwayat keputusan |
-| Administrasi | Kartu statistik, tabel fasilitas, diagram kelengkapan, kelola kategori, peran pengguna |
+| Administrasi | Kartu statistik, tabel fasilitas, diagram kelengkapan, kelola kategori, daftar akun |
 | Tentang | Latar belakang, panduan langkah demi langkah, mekanisme kontribusi dan verifikasi |
 
 Repositori ini **belum** menyimpan tangkapan layar. Daripada menampilkan gambar yang
@@ -210,52 +229,86 @@ tidak dapat diverifikasi, dokumentasi visual sengaja dikosongkan. Untuk menambah
 
 ```text
 fasilitas-disabilitas/
-├── app/                        # Controller dasar, model User, service provider
-│                               # (belum ada logika domain fasilitas)
-├── bootstrap/                  # Bootstrap aplikasi dan cache
+├── app/
+│   ├── Console/Commands/       # facilities:import (pembaca dataset + laporan)
+│   ├── Http/Controllers/       # AuthController (login/logout), FacilityController (API)
+│   └── Models/                 # Facility (peta status + toPayload), User
+├── bootstrap/app.php           # Registrasi route web/api + redirect guest
 ├── config/                     # Konfigurasi Laravel
 ├── database/
-│   ├── factories/              # UserFactory (bawaan)
-│   ├── migrations/             # users, cache, jobs — belum ada tabel fasilitas
-│   └── seeders/                # DatabaseSeeder (bawaan)
+│   ├── factories/              # UserFactory
+│   ├── migrations/             # users/sessions, cache, jobs, facilities
+│   └── seeders/                # DatabaseSeeder (akun admin)
+├── Dataset/
+│   └── akseskita_facilities_medan.csv   # Sumber 1.117 fasilitas (read-only)
 ├── public/                     # Document root; build aset Vite diabaikan Git
 ├── resources/
 │   ├── css/app.css             # Token desain + seluruh kelas komponen
 │   ├── js/
 │   │   ├── components/         # layout, common, map, facilities, forms,
 │   │   │                       # verification, dashboard
-│   │   ├── composables/        # useFacilities, useSubmissions, useToast
-│   │   ├── data/               # facilities, submissions, users, meta (data contoh)
-│   │   ├── router/index.js     # Rute SPA dan judul halaman
-│   │   ├── views/              # 7 halaman: beranda, detail, kontribusi,
+│   │   ├── composables/        # useFacilities, useSubmissions, useAuth, useToast
+│   │   ├── data/               # meta (label/glyph), submissions (antrean demo),
+│   │   │                       # facilities (helper kelengkapan)
+│   │   ├── router/index.js     # Rute SPA, judul halaman, penjaga rute admin
+│   │   ├── views/              # 8 halaman: beranda, detail, kontribusi, masuk,
 │   │   │                       # verifikasi, admin, tentang, 404
 │   │   ├── App.vue             # Header, footer, host toast
-│   │   └── app.js              # Titik masuk Vue
+│   │   └── app.js              # Titik masuk Vue (memuat sesi lebih dulu)
 │   └── views/
 │       ├── app.blade.php       # Satu-satunya shell aplikasi (#app + @vite)
 │       └── welcome.blade.php   # Halaman bawaan Laravel (tidak dipakai rute)
-├── routes/web.php              # SPA fallback, /up dikecualikan
-├── storage/                    # Log, cache, sesi (isi diabaikan Git)
-├── tests/                      # AksesKitaTest + dua contoh bawaan Laravel
+├── routes/
+│   ├── api.php                 # GET /api/facilities
+│   └── web.php                 # Endpoint sesi /api/*, halaman yang butuh auth, SPA fallback
+├── storage/app/private/import-reports/  # Laporan impor (dibuat otomatis)
+├── tests/                      # AksesKitaTest, AuthTest, FacilityImportTest + fixture CSV
 ├── TemplateDesignWeb/          # Referensi desain asli (read-only, bukan bagian aplikasi)
 ├── vite.config.js              # Plugin Vue, Tailwind, dan unduh font Bunny
 ├── composer.json               # Dependensi dan skrip PHP
 └── package.json                # Dependensi dan skrip frontend
 ```
 
+## Skema Basis Data
+
+Empat tabel dibuat oleh migrasi: `users` (+ `password_reset_tokens` dan `sessions`),
+`cache`, `jobs`, dan `facilities`.
+
+Tabel **`facilities`** (`database/migrations/2026_10_22_000000_create_facilities_table.php`)
+mengikuti skema berkas dataset:
+
+| Kelompok | Kolom |
+| --- | --- |
+| Identitas | `id`, `external_id` (unik, mis. `AKS-0001`), `name`, `category`, `source_category`, `source_category_detail` |
+| Lokasi | `address`, `village`, `subdistrict`, `city`, `province`, `postal_code`, `latitude`, `longitude` |
+| Aksesibilitas | `ramp_status`/`ramp_details`, `toilet_status`/`toilet_details`, `lift_status`/`lift_details`, `path_status`/`path_details`, `entrance_status`, `entrance_details`, `entrance_width_cm`, `entrance_width_measured` |
+| Verifikasi | `verification_status`, `verified_at`, `verification_method`, `evidence_url` |
+| Sumber | `source_name`, `source_url`, `source_ref_type`, `source_ref_id`, `collected_at` |
+| Ringkasan | `data_completeness_percent`, `notes`, `timestamps` |
+
+Catatan penting:
+
+- `external_id` adalah id publik yang dipakai frontend (`/fasilitas/AKS-0001`).
+- Kolom status aksesibilitas memakai `enum('yes','no','unknown')` dengan nilai awal
+  `unknown`, supaya ketiadaan bukti tidak pernah terbaca sebagai "tidak tersedia".
+- Indeks tambahan ada pada `(latitude, longitude)`, `category`, dan `verification_status`.
+- Tabel ini **additif**: migrasinya tidak menyentuh tabel lain dan `down()` hanya
+  menghapus tabel `facilities` bila dijalankan sendiri.
+
 ## Persyaratan Sistem
 
 | Kebutuhan | Versi minimum | Catatan |
 | --- | --- | --- |
-| PHP | 8.3 | Mengikuti `composer.json`; dikembangkan pada PHP 8.5.9 |
-| Composer | 2.x | Diuji pada 2.10.2 |
-| Node.js | 20.19 atau 22.12+ | Batas dari Vite 8; diuji pada Node 24.15 |
-| npm | 10+ | Diuji pada npm 11.12 |
+| PHP | 8.3 | Mengikuti `composer.json` |
+| Composer | 2.x | Manajemen dependensi PHP |
+| Node.js | 20.19 atau 22.12+ | Batas dari Vite 8 |
+| npm | 10+ | Manajemen dependensi frontend |
 | MySQL | 8.x | Alternatif: SQLite untuk pengembangan lokal |
-| Git | 2.x | Diuji pada 2.55 |
+| Git | 2.x | Kontrol versi |
 
-Butuh koneksi internet untuk dua hal: mengunduh font (Syne, Inter, DM Mono) saat
-`npm run build`/`npm run dev`, dan memuat tile OpenStreetMap saat peta dibuka.
+Butuh koneksi internet untuk tiga hal: mengunduh font (Syne, Inter, DM Mono) saat
+`npm run build`/`npm run dev`, memuat tile OpenStreetMap saat peta dibuka, dan
+memuat halaman OpenStreetMap dari tautan sumber data.
 
 ## Instalasi dan Menjalankan
 
@@ -291,23 +344,35 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Jalankan migrasi bawaan:
+Jalankan migrasi dan seeder akun admin:
 
 ```powershell
 php artisan migrate
+php artisan db:seed
 ```
 
-Migrasi hanya membuat tabel `users`, `cache`, dan `jobs`. Aplikasi tetap berjalan
-tanpa data fasilitas di database karena seluruh isinya berasal dari data contoh
-di `resources/js/data/`.
+Migrasi membuat tabel `users`, `sessions`, `cache`, `jobs`, dan `facilities`.
+Seeder membuat satu akun admin (`admin@akseskita.test`) dengan kata sandi dari
+`SEED_PASSWORD` (bawaan `password`). **Ganti kata sandi itu sebelum dipakai di luar
+mesin lokal.**
 
-### 4. Bangun aset frontend
+### 4. Impor dataset fasilitas
+
+```powershell
+php artisan facilities:import
+```
+
+Perintah ini mengisi tabel `facilities` dengan 1.117 fasilitas dari
+`Dataset/akseskita_facilities_medan.csv`. Rinciannya ada di
+[Impor dan Sinkronisasi Data Fasilitas](#impor-dan-sinkronisasi-data-fasilitas).
+
+### 5. Bangun aset frontend
 
 ```powershell
 npm run build
 ```
 
-### 5. Jalankan aplikasi
+### 6. Jalankan aplikasi
 
 **Opsi A — satu perintah (disarankan).** `composer run dev` menjalankan
 `php artisan dev`, yang menyalakan tiga proses sekaligus:
@@ -350,7 +415,44 @@ composer run setup
 
 Perintah ini menjalankan `composer install`, menyalin `.env`, membuat application key,
 `php artisan migrate --force`, `npm install --ignore-scripts`, dan `npm run build`.
-Database harus sudah dibuat sebelum perintah dijalankan.
+Database harus sudah dibuat sebelum perintah dijalankan. Pintasan ini **tidak**
+menjalankan seeder dan **tidak** mengimpor dataset — jalankan `php artisan db:seed`
+dan `php artisan facilities:import` setelahnya.
+
+## Impor dan Sinkronisasi Data Fasilitas
+
+Sumber tunggal data fasilitas adalah `Dataset/akseskita_facilities_medan.csv`
+(1.117 baris data, 36 kolom). Berkas ini **tidak boleh diubah** — perbaikan format
+dilakukan di sisi pembaca.
+
+| Perintah | Kegunaan |
+| --- | --- |
+| `php artisan facilities:import` | Impor dataset bawaan dari `Dataset/` |
+| `php artisan facilities:import "path/file.csv"` | Impor berkas lain dengan skema kolom yang sama |
+| `php artisan facilities:import --dry-run` | Validasi dan ringkasan tanpa menyentuh basis data |
+
+Sifat perintah ini:
+
+- **Idempoten.** Baris dengan `external_id` yang sudah ada tidak dibuat ulang.
+- **Tidak menimpa hasil verifikasi.** Baris yang `verification_status`-nya bukan
+  `pending` dilewati, bukan ditimpa.
+- **Bertransaksi per 200 baris** dan melaporkan ringkasan
+  (dibaca / dibuat / diperbarui / dilewati / gagal).
+- **Tidak pernah menghapus** data. Tidak ada operasi massal yang merusak.
+- Menulis laporan per baris ke `storage/app/private/import-reports/facilities-<tanggal>.csv`,
+  termasuk alasan baris yang gagal.
+- Menolak berkas tanpa kolom wajib, dan menolak baris dengan kategori di luar
+  pemetaan, koordinat tidak numerik, atau nama kosong.
+
+Pemetaan kategori dataset → kategori aplikasi ada di `Facility::CATEGORY_MAP`; kategori
+yang tidak dikenal membuat baris tersebut gagal dan tercatat di laporan, bukan
+ditebak. Dataset yang berisi bacaan lengkap hasil impor terakhir ada di
+[Lampiran: hasil validasi](#lampiran-hasil-validasi-dataset).
+
+### Kalau dataset bertambah
+
+Jalankan `php artisan facilities:import` lagi. Baris baru ditambahkan, baris lama
+dilewati, dan laporan baru dibuat. Tidak perlu menghapus tabel lebih dulu.
 
 ## Konfigurasi Environment
 
@@ -364,8 +466,9 @@ Database harus sudah dibuat sebelum perintah dijalankan.
 | `DB_CONNECTION` | Driver database | `mysql` |
 | `DB_DATABASE` | Nama database | `fasilitas_disabilitas` |
 | `DB_USERNAME` / `DB_PASSWORD` | Kredensial database | Isi sesuai mesin masing-masing |
-| `SESSION_DRIVER` | Penyimpanan sesi | `database` (bawaan) |
+| `SESSION_DRIVER` | Penyimpanan sesi | `database` (bawaan; butuh tabel `sessions`) |
 | `QUEUE_CONNECTION` | Antrean | `database` (bawaan) |
+| `SEED_PASSWORD` | Kata sandi awal akun admin hasil seeder | Ganti dari bawaan `password` |
 | `VITE_APP_NAME` | Nama aplikasi untuk sisi Vite | `${APP_NAME}` |
 
 - File `.env` **tidak** diunggah ke GitHub; `.gitignore` sudah mengecualikannya.
@@ -374,6 +477,27 @@ Database harus sudah dibuat sebelum perintah dijalankan.
   database lokal.
 - Jangan menaruh token, kunci API, atau kata sandi di dalam kode maupun di README.
 
+## Autentikasi dan Peran
+
+Autentikasi memakai sesi Laravel berbasis cookie (bukan token API), sehingga token
+CSRF dikirim lewat cookie `XSRF-TOKEN`.
+
+| Endpoint | Middleware | Kegunaan |
+| --- | --- | --- |
+| `POST /api/login` | `throttle:6,1` | Masuk dengan surel + kata sandi |
+| `POST /api/logout` | `auth` | Mengakhiri sesi |
+| `GET /api/me` | — | Profil pengguna yang sedang masuk, atau `null` untuk pengunjung |
+| `GET /api/users` | `auth` | Daftar akun (hanya untuk admin) |
+| `GET /api/facilities` | — | Seluruh fasilitas untuk peta, daftar, dan dashboard |
+
+Tamu yang membuka `/admin` atau `/verifikasi` diarahkan ke `/masuk`, sedangkan admin
+yang sudah masuk dan membuka `/masuk` diarahkan ke `/admin`. Penjaga rute Vue hanya
+untuk pengalaman pengguna; penegakan sesungguhnya ada di middleware `auth`.
+
+> `shortcut:` saat ini hanya ada satu peran, yaitu admin, jadi "peran admin" berarti
+> "sedang masuk". Tambahkan kolom `role` dan `Gate` saat peran staf kedua
+> (verifikator) benar-benar dibutuhkan. Lihat komentar di `app/Models/User.php`.
+
 ## Pengujian dan Pengembangan
 
 ```powershell
@@ -381,7 +505,7 @@ Database harus sudah dibuat sebelum perintah dijalankan.
 php artisan test
 
 # Satu berkas tes
-php artisan test tests/Feature/AksesKitaTest.php
+php artisan test tests/Feature/FacilityImportTest.php
 
 # Periksa format PHP tanpa mengubah berkas
 vendor/bin/pint --test
@@ -393,35 +517,40 @@ vendor/bin/pint
 npm run build
 ```
 
-Saat README ini ditulis, `php artisan test` menjalankan 5 tes dengan 12 asersi dan
-lulus: tiga tes fitur AksesKita (shell Vue pada beranda, SPA fallback untuk
-`/fasilitas/:id`, `/kontribusi`, `/admin`, serta `/up` yang tidak tertutup rute SPA)
-dan dua tes contoh bawaan Laravel. Perintah `vendor/bin/pint --test` juga lulus.
+Saat README ini ditulis, `php artisan test` menjalankan **16 tes dengan 77 asersi dan
+lulus**: tiga tes shell/rute SPA (`AksesKitaTest`), empat tes impor dan bentuk payload
+API (`FacilityImportTest`), tujuh tes autentikasi (`AuthTest`), dan dua tes contoh
+bawaan Laravel. Perintah `vendor/bin/pint --test` dan `npm run build` juga lulus.
 
 Yang belum ada: tes untuk komponen Vue, tes end-to-end, linter JavaScript, dan CI.
 Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 
 ## Roadmap
 
-**Sudah selesai (prototipe frontend)**
+**Sudah selesai**
 
+- [x] Impor dataset 1.117 fasilitas ke tabel `facilities` dengan perintah idempoten
+- [x] API `GET /api/facilities` + integrasi peta, daftar, dan dashboard ke basis data
+- [x] Pemuatan bertahap pada daftar kartu dan pembatasan baris tabel dashboard
+- [x] Autentikasi sesi untuk admin dan proteksi `/admin` serta `/verifikasi`
 - [x] Peta Leaflet + OpenStreetMap dengan penanda berkode kategori
 - [x] Pencarian, filter kategori, status verifikasi, dan kombinasi atribut
-- [x] Halaman detail dengan lima indikator, bukti, dan status verifikasi
-- [x] Formulir usulan fasilitas dan koreksi data dengan validasi
-- [x] Dashboard verifikasi: setujui, tolak, minta perbaikan, riwayat
-- [x] Dashboard administrasi: statistik, tabel fasilitas, kelengkapan data, kategori, peran
+- [x] Halaman detail dengan lima indikator, catatan sumber, dan status verifikasi
+- [x] Formulir usulan fasilitas dan koreksi data dengan validasi (sisi klien)
+- [x] Dashboard verifikasi dan administrasi (verifikasi masih simulasi klien)
 - [x] Tata letak responsif dan status yang selalu disertai teks + glyph
 - [x] Shell SPA Laravel dengan rute history dan halaman 404
 
 **Berikutnya**
 
-- [ ] Skema database: `facilities`, `facility_attributes`, `submissions`, `proofs`, `reviews`
-- [ ] API Laravel + validasi di sisi server untuk usulan dan koreksi
-- [ ] Autentikasi dan otorisasi berbasis peran (admin, verifikator, kontributor)
+- [ ] Tabel `submissions`, `submissions_proofs`, dan `reviews` + API tulis
+- [ ] Memindahkan antrean verifikasi dan keputusan dari state klien ke basis data
+- [ ] Peran `admin` dan `verifikator` dengan kolom `role` dan `Gate`
 - [ ] Unggah foto ke storage dan penyajian bukti pendukung
-- [ ] Riwayat perubahan dan jejak audit keputusan verifikasi
-- [ ] Data fasilitas nyata dengan alur moderasi
+- [ ] Riwayat perubahan data fasilitas dan jejak audit keputusan
+- [ ] Pemeriksaan lapangan atas 1.117 fasilitas sehingga indikator `belum diketahui`
+      berubah menjadi `tersedia` atau `tidak`
+- [ ] Paginasi `GET /api/facilities` bila jumlah fasilitas tumbuh jauh lebih besar
 - [ ] Tes komponen Vue, tes end-to-end, dan CI
 - [ ] Audit aksesibilitas WCAG 2.2 AA dan perbaikan temuan
 - [ ] Tangkapan layar di `docs/screenshots/`
@@ -429,8 +558,9 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 ## Kontribusi
 
 1. Fork repositori ini.
-2. Buat branch baru dari `master`:
+2. Tarik perubahan terbaru, lalu buat branch baru dari `master`:
    ```powershell
+   git pull --rebase
    git checkout -b feat/nama-perubahan
    ```
 3. Lakukan perubahan, lalu jalankan `php artisan test`, `vendor/bin/pint --test`,
@@ -438,9 +568,41 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 4. Commit dengan pesan yang jelas, misalnya `feat: tambah filter jarak terdekat`.
 5. Push branch dan ajukan pull request ke `master`.
 
-Karena kode aplikasi masih berupa prototipe, jelaskan di pull request apakah perubahan
-menyentuh data contoh, komponen bersama di `composables/`, atau hanya tampilan.
-Jangan menyertakan `.env`, kredensial, atau berkas hasil build.
+Jangan hapus atau ubah `Dataset/akseskita_facilities_medan.csv` dan jangan commit
+ulang data hasil impor. Perubahan skema memerlukan migrasi baru, bukan perubahan
+pada migrasi yang sudah dijalankan. Jangan menyertakan `.env`, kredensial, atau
+berkas hasil build.
+
+## Lampiran: Hasil Validasi Dataset
+
+Angka berikut berasal dari dataset dan basis data pengembangan pada saat README ini
+ditulis. Semuanya dapat diperiksa ulang dengan `php artisan facilities:import --dry-run`.
+
+| Pemeriksaan | Hasil |
+| --- | --- |
+| Berkas sumber | `Dataset/akseskita_facilities_medan.csv`, 1 header + 1.117 baris data, 36 kolom |
+| Baris lolos validasi | 1.117 (0 gagal) |
+| `external_id` unik | 1.117 dari 1.117 (`AKS-0001`–`AKS-1117`, tanpa lubang) |
+| Baris dibuat saat impor pertama | 1.117 |
+| Baris dibuat saat impor ulang | 0 (1.117 dilewati — impor idempoten) |
+| Koordinat tidak valid / tertukar | 0 (lat 3,48–3,79; lng 98,60–98,74) |
+| Nama atau kategori kosong | 0 |
+| Alamat jalan kosong di sumber | 926 dari 1.117 |
+| Kode pos kosong di sumber | 1.024 dari 1.117 |
+| Cakupan wilayah | Kota Medan, Sumatera Utara — 21 kecamatan, 138 kelurahan |
+| Nama + kelurahan kembar | 5 pasang (node dan way untuk tempat sama) — diimpor apa adanya, tidak dihapus |
+| Kategori terpakai | kesehatan, pemerintahan, pendidikan, penginapan, perbelanjaan, rekreasi, transportasi |
+| Sumber | OpenStreetMap (`way`/`node`/`relation`), dikumpulkan 21 Oktober 2026 |
+| Status verifikasi | 100% `pending` (0 terverifikasi) |
+| Kelengkapan data | 1.105 fasilitas 0%; 12 fasilitas 40% (punya catatan minimal satu indikator) |
+| Jalur kursi roda | 8 `yes`, 4 `no`, 1.105 `unknown` |
+| Akses masuk | 8 `yes`, 4 `no`, 1.105 `unknown` |
+| Ramp, toilet aksesibel, lift | 1.117 `unknown` — belum ada bukti sama sekali |
+| Lebar pintu terukur | 0 baris (sumber belum mengisi) |
+
+> **Jangan membaca tabel ini sebagai klaim kualitas aksesibilitas.** 1.117 adalah
+> jumlah fasilitas yang datanya tersedia di sumber, bukan jumlah fasilitas yang sudah
+> diperiksa. Baru 8 fasilitas yang punya catatan jalur kursi roda dan akses masuk.
 
 ## Tujuan Pembangunan Berkelanjutan
 
@@ -452,8 +614,8 @@ AksesKita berkaitan langsung dengan dua tujuan pembangunan berkelanjutan:
 - **SDG 11 — Kota dan permukiman yang inklusif.** Data kondisi fasilitas publik dapat
   menjadi masukan bagi pengelola dan pemerintah daerah untuk memperbaiki akses.
 
-Keterkaitan ini bersifat konseptual dan baru pada tahap prototipe. Belum ada
-pengukuran dampak sosial, jumlah pengguna, atau data lapangan yang dapat diklaim.
+Keterkaitan ini bersifat konseptual. Belum ada pengukuran dampak sosial, jumlah
+pengguna, atau verifikasi lapangan yang dapat diklaim.
 
 ## Lisensi dan Kontak
 

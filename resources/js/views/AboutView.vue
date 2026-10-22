@@ -122,9 +122,11 @@
             <div class="notice">
                 <b>Catatan sumber data</b>
                 <span>
-                    Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan ke basis data AksesKita.
-                    Status aksesibilitasnya belum diverifikasi lapangan: sebagian besar masih "belum diketahui".
-                    Pengguna, pengajuan, dan verifikasi masih berupa data dummy demonstrasi tanpa autentikasi.
+                    Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan ke basis data AksesKita —
+                    1.117 fasilitas, semuanya masih berstatus menunggu verifikasi. Karena itu status aksesibilitasnya
+                    belum diperiksa lapangan: sebagian besar masih "belum diketahui", hanya sedikit yang punya catatan
+                    pendukung. Akun admin sudah asli dan dilindungi login; antrean pengajuan, riwayat verifikasi, dan
+                    pengelolaan kategori masih berupa data demonstrasi di sisi klien.
                 </span>
             </div>
 

@@ -31,8 +31,8 @@
         </div>
 
         <div class="container site-footer__legal">
-            <span>© AksesKita 2026 · Prototipe kompetisi Fundev</span>
-            <span>Fasilitas dari impor dataset OpenStreetMap · sisanya data demonstrasi</span>
+            <span>© AksesKita 2026 · Proyek kompetisi Fundev</span>
+            <span>Fasilitas dari impor dataset OpenStreetMap Kota Medan · antrean kontribusi masih data demonstrasi</span>
         </div>
     </footer>
 </template>

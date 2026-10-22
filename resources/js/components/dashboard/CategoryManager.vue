@@ -1,13 +1,21 @@
 <script setup>
-import { ref } from 'vue';
-import { CATEGORY_SETTINGS } from '../../data/users';
+import { computed, ref } from 'vue';
 import { CATEGORIES } from '../../data/meta';
+import { useFacilities } from '../../composables/useFacilities';
 
-const categories = ref(CATEGORY_SETTINGS.map((category) => ({ ...category })));
+const { facilities } = useFacilities();
+
+// Jumlah fasilitas dihitung dari data yang sedang tampil, bukan angka tetap.
+const counts = computed(() => {
+    const map = new Map();
+
+    facilities.value.forEach((facility) => map.set(facility.category, (map.get(facility.category) ?? 0) + 1));
+
+    return map;
+});
+
+const categories = ref(CATEGORIES.map((category) => ({ ...category, active: true })));
 const newName = ref('');
-
-const label = (id) => CATEGORIES.find((c) => c.id === id)?.label ?? id;
-const glyph = (id) => CATEGORIES.find((c) => c.id === id)?.glyph ?? '—';
 
 const addCategory = () => {
     const name = newName.value.trim();
@@ -16,7 +24,7 @@ const addCategory = () => {
     const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     if (categories.value.some((category) => category.id === id)) return;
 
-    categories.value = [...categories.value, { id, facilities: 0, active: true }];
+    categories.value = [...categories.value, { id, label: name, glyph: '—', active: true }];
     newName.value = '';
 };
 </script>
@@ -26,7 +34,8 @@ const addCategory = () => {
         <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel kategori fasilitas">
             <table class="table">
                 <caption class="help" style="text-align: left; padding-bottom: 12px">
-                    Menonaktifkan kategori menyembunyikannya dari filter peta pada implementasi nyata.
+                    Jumlah fasilitas dihitung dari data yang sedang tampil. Menonaktifkan kategori menyembunyikannya
+                    dari filter peta pada implementasi nyata.
                 </caption>
                 <thead>
                     <tr>
@@ -38,9 +47,9 @@ const addCategory = () => {
                 </thead>
                 <tbody>
                     <tr v-for="category in categories" :key="category.id">
-                        <td class="mono">{{ glyph(category.id) }}</td>
-                        <td><b>{{ label(category.id) }}</b></td>
-                        <td>{{ category.facilities }}</td>
+                        <td class="mono">{{ category.glyph }}</td>
+                        <td><b>{{ category.label }}</b></td>
+                        <td>{{ counts.get(category.id) ?? 0 }}</td>
                         <td>
                             <label class="toggle">
                                 <input v-model="category.active" type="checkbox">

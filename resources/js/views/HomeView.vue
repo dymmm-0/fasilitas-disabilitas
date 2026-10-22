@@ -31,7 +31,7 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                         v-model="filters.query"
                         class="input"
                         type="search"
-                        placeholder="Contoh: stasiun, rumah sakit, Yogyakarta"
+                        placeholder="Contoh: rumah sakit, puskesmas, Medan"
                         autocomplete="off"
                     >
                 </div>

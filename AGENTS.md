@@ -1,6 +1,6 @@
 # AGENTS.md
 
-AksesKita — Laravel 13 + Vue 3 SPA for mapping/verifying disability-friendly public facilities. Frontend is dummy data only: no backend features, DB schema, or real auth yet.
+AksesKita — Laravel 13 + Vue 3 SPA for mapping/verifying disability-friendly public facilities. Facilities are real: 1.117 rows imported from the Medan OSM dataset into the `facilities` table and served by `GET /api/facilities`. Submissions, verification queue, and category management are still client-side demo data; admin login is real (session auth).
 
 ## Commands
 
@@ -14,7 +14,7 @@ AksesKita — Laravel 13 + Vue 3 SPA for mapping/verifying disability-friendly p
 
 - Vue 3 + `<script setup>` SPA mounted on `resources/views/app.blade.php` (`#app`). Pages in `resources/js/views/`, routes in `resources/js/router/index.js` (history mode), reusable UI in `resources/js/components/{layout,common,map,facilities,forms,verification,dashboard}/`.
 - Cross-page state lives in `resources/js/composables/` and is module-level (singleton) on purpose — `useFacilities` feeds the map, card list, and admin dashboard from one array; `useSubmissions` mutates it when a submission is approved.
-- Dummy data is in `resources/js/data/` (`facilities.js`, `submissions.js`, `users.js`, `meta.js`). `meta.js` is the single source for status labels/glyphs — add statuses there, not inline in components.
+- Data files live in `resources/js/data/`: `meta.js` (status labels/glyphs — the single source, add statuses there, not inline in components), `submissions.js` (demo verification queue), and `facilities.js` (completeness helpers only). Facility data itself comes from `/api/facilities`, never from a client-side array.
 - Status must always render label **and** glyph (`StatusPill`), never colour alone. `--rust` is the only accent colour; keep it off small text on `--ink` backgrounds (contrast).
 - Leaflet markers are `L.divIcon` squares (no marker image assets). OSM tiles need internet access. The card list is the keyboard/screen-reader path for the map.
 - Design tokens and component classes live in `resources/css/app.css` (translated from `TemplateDesignWeb/design_handoff_atelier_tide/`). Tailwind 4 is still wired up, but the UI is class-based CSS — there is no `tailwind.config.js`.
