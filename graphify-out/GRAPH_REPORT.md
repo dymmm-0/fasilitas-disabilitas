@@ -1,175 +1,188 @@
-# Graph Report - D:\Laragon\www\fasilitas-disabilitas  (2026-10-21)
+# Graph Report - .  (2026-10-22)
 
 ## Corpus Check
-- 85 files · ~162,332 words
-- Verdict: corpus is large enough that graph structure adds value.
+- Corpus is ~32,821 words - fits in a single context window. You may not need a graph.
 
 ## Summary
-- 411 nodes · 540 edges · 47 communities (40 shown, 7 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 28 edges (avg confidence: 0.74)
-- Token cost: 21,000 input · 7,200 output
+- 556 nodes · 894 edges · 51 communities (45 shown, 6 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 28 edges (avg confidence: 0.69)
+- Token cost: 5,800 input · 3,450 output
 
 ## Community Hubs (Navigation)
-- Facility Catalog & Filters
-- Composer Manifest
-- Verification Review UI
-- NPM Manifest
-- Submission Queue & Toasts
+- Submission Decisions & Facility Creation
+- Admin Category Management
+- App Shell & Navigation
+- HTTP Controllers & Auth
+- Composer Autoload Manifest
+- NPM Dependencies
+- Models, Users & Seeders
 - Composer Scripts
-- Auth Scaffold (User Model)
 - Architecture Rules (AGENTS.md)
-- Map & Facility List
+- Facility Card List
+- Status & Accessibility Display
+- Admin Facility Table
 - Contribution Form
-- Design System Rules
-- Admin Panels (Categories & Users)
+- Verification Queue Tests
+- Completeness Meters
+- Facility CSV Importer
+- Verification Queue View
 - Correction Form
-- Laravel Feature Tests
-- App Shell & Router
-- Atelier Tide Prototype Sections
-- Commands & Quality Gates
-- Template Hero Anatomy
-- Tide Hall Imagery
-- Laravel Service Provider
-- PHPUnit Unit Test
-- Misc 24
-- Misc 26
-- Misc 27
-- Misc 44
-- Misc 45
+- Filters & Facility Review
+- Queue List & Status Meta
+- Toast Notifications
+- Service Provider Bootstrap
+- Review Action Buttons
+- Verification Decision Rules
+- Example Unit Test
+- Accessibility Checklist Form
+- CLAUDE.md Pointer
+- robots.txt Default
 
 ## God Nodes (most connected - your core abstractions)
-1. `useFacilities()` - 12 edges
-2. `scripts` - 9 edges
-3. `ATTRIBUTES` - 9 edges
-4. `categoryLabel()` - 9 edges
-5. `Atelier Tide Design Tokens (paper / ink / rust)` - 9 edges
-6. `require-dev` - 8 edges
-7. `setup` - 7 edges
-8. `VERIFICATION` - 7 edges
-9. `Atelier Tide Hero Thumbnail (architecture studio landing page screenshot)` - 7 edges
-10. `User` - 6 edges
+1. `Facility` - 31 edges
+2. `Submission` - 28 edges
+3. `SubmissionTest` - 19 edges
+4. `VerificationQueueTest` - 18 edges
+5. `useFacilities()` - 14 edges
+6. `TestCase` - 14 edges
+7. `User` - 13 edges
+8. `request()` - 12 edges
+9. `AksesKita` - 12 edges
+10. `ImportFacilities` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Single Accent Hue Rule` --semantically_similar_to--> `Rust as Sole Accent, Kept Off Small Text on Ink`  [INFERRED] [semantically similar]
-  TemplateDesignWeb/design_handoff_atelier_tide/README.md → AGENTS.md
-- `robots.txt Allow-All (Laravel default)` --conceptually_related_to--> `AksesKita — Disability-Friendly Facility Mapping SPA`  [INFERRED]
-  public/robots.txt → AGENTS.md
-- `CLAUDE.md as Pointer to AGENTS.md` --references--> `AksesKita — Disability-Friendly Facility Mapping SPA`  [EXTRACTED]
-  CLAUDE.md → AGENTS.md
-- `Laravel Framework (default scaffold README)` --conceptually_related_to--> `AksesKita — Disability-Friendly Facility Mapping SPA`  [INFERRED]
+- `pending Means Never Checked` --semantically_similar_to--> `belum Is Not tidak (unknown != no)`  [INFERRED] [semantically similar]
+  AGENTS.md → README.md
+- `AksesKita` --conceptually_related_to--> `SPA Fallback Route with /up Excluded`  [AMBIGUOUS]
   README.md → AGENTS.md
-- `Design Tokens and Component Classes in resources/css/app.css` --implements--> `High-Fidelity Handoff: Recreate, Do Not Copy`  [INFERRED]
-  AGENTS.md → TemplateDesignWeb/design_handoff_atelier_tide/README.md
+- `Only Verification Checks: PHPUnit, Pint, Vite Build` --semantically_similar_to--> `PHPUnit Test Suite (39 tests, 317 assertions)`  [INFERRED] [semantically similar]
+  AGENTS.md → README.md
+- `VerificationQueueTest` --references--> `User`  [EXTRACTED]
+  tests/Feature/VerificationQueueTest.php → app/Models/User.php
+- `Server-side Merged Verification Queue` --conceptually_related_to--> `VerificationQueueController`  [INFERRED]
+  AGENTS.md → README.md
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
-- **Atelier Tide One-Page Composition** — templatedesignweb_design_handoff_atelier_tide_readme_top_bar, templatedesignweb_design_handoff_atelier_tide_readme_hero, templatedesignweb_design_handoff_atelier_tide_readme_filmstrip, templatedesignweb_design_handoff_atelier_tide_readme_philosophy, templatedesignweb_design_handoff_atelier_tide_readme_timeline_rail, templatedesignweb_design_handoff_atelier_tide_readme_contact_cta, templatedesignweb_design_handoff_atelier_tide_readme_site_footer [EXTRACTED 1.00]
-- **Design Restraint System (one accent, zero radius, one shadow)** — templatedesignweb_design_handoff_atelier_tide_readme_design_tokens, templatedesignweb_design_handoff_atelier_tide_readme_one_accent_rule, templatedesignweb_design_handoff_atelier_tide_readme_zero_radii_rule, templatedesignweb_design_handoff_atelier_tide_readme_offset_shadow, agents_app_css_design_tokens [EXTRACTED 1.00]
-- **Accessibility-First Rendering Requirements** — agents_status_pill_label_glyph, agents_card_list_keyboard_path, agents_rust_accent_contrast_rule, templatedesignweb_design_handoff_atelier_tide_readme_known_gaps [INFERRED 0.85]
+- **Merged Verification Queue and Decision Flow** — agents_verification_queue_merge, agents_facility_decision_scope, readme_verification_queue_controller, readme_facility_controller_verify, readme_submission_controller, readme_verification_events [INFERRED 0.85]
+- **'Absence of Evidence Is Not Evidence of Absence' Principle** — agents_pending_means_never_checked, readme_belum_vs_tidak, readme_accessibility_indicators, readme_data_completeness [INFERRED 0.85]
+- **Frontend Shared-State, Data Contract and Status Presentation** — agents_singleton_composables, agents_meta_js_sync_contract, agents_status_label_and_glyph_rule, readme_use_verification [INFERRED 0.75]
 
-## Communities (47 total, 7 thin omitted)
+## Communities (51 total, 6 thin omitted)
 
-### Community 0 - "Facility Catalog & Filters"
+### Community 0 - "Submission Decisions & Facility Creation"
+Cohesion: 0.08
+Nodes (10): SubmissionController, Facility, Submission, Illuminate\Foundation\Testing\RefreshDatabase, Illuminate\Foundation\Testing\TestCase, AksesKitaTest, ExampleTest, FacilityImportTest (+2 more)
+
+### Community 1 - "Admin Category Management"
+Cohesion: 0.06
+Nodes (40): el, shown, categories, counts, { facilities }, newName, facilities, filters (+32 more)
+
+### Community 2 - "App Shell & Navigation"
 Cohesion: 0.07
-Nodes (35): el, shown, props, rows, stale(), known, low, percent (+27 more)
+Nodes (33): error, users, LINKS, onLogout(), open, route, router, { user, logout } (+25 more)
 
-### Community 1 - "Composer Manifest"
+### Community 3 - "HTTP Controllers & Auth"
+Cohesion: 0.09
+Nodes (12): AuthController, Controller, FacilityController, VerificationQueueController, SubmissionProof, VerificationEvent, Illuminate\Database\Eloquent\Model, Illuminate\Database\Eloquent\Relations\BelongsTo (+4 more)
+
+### Community 4 - "Composer Autoload Manifest"
 Cohesion: 0.05
 Nodes (40): pestphp/pest-plugin, php-http/discovery, autoload, autoload-dev, psr-4, psr-4, config, allow-plugins (+32 more)
 
-### Community 2 - "Verification Review UI"
-Cohesion: 0.09
-Nodes (28): meta, props, SOURCES, emit, props, setValue(), decide(), decided (+20 more)
-
-### Community 3 - "NPM Manifest"
+### Community 5 - "NPM Dependencies"
 Cohesion: 0.07
 Nodes (29): concurrently, @laravel/multiplex, laravel-vite-plugin, leaflet, dependencies, leaflet, vue, vue-router (+21 more)
 
-### Community 4 - "Submission Queue & Toasts"
+### Community 6 - "Models, Users & Seeders"
 Cohesion: 0.11
-Nodes (22): { messages, dismiss }, counts, decide(), history, now(), queue, queueFilters, submissions (+14 more)
+Nodes (11): User, UserFactory, DatabaseSeeder, Illuminate\Database\Console\Seeds\WithoutModelEvents, Illuminate\Database\Eloquent\Factories\Factory, Illuminate\Database\Eloquent\Factories\HasFactory, Illuminate\Database\Seeder, Illuminate\Foundation\Auth\User (+3 more)
 
-### Community 5 - "Composer Scripts"
+### Community 7 - "Composer Scripts"
 Cohesion: 0.08
 Nodes (26): scripts, dev, post-autoload-dump, post-create-project-cmd, post-root-package-install, post-update-cmd, pre-package-uninstall, setup (+18 more)
 
-### Community 6 - "Auth Scaffold (User Model)"
+### Community 8 - "Architecture Rules (AGENTS.md)"
+Cohesion: 0.09
+Nodes (23): Leaflet divIcon Category Squares, meta.js / Backend Constant Sync Contract, pending Means Never Checked, Module-level Singleton Composables, SPA Fallback Route with /up Excluded, Status Renders Label and Glyph, Never Colour Alone, Only Verification Checks: PHPUnit, Pint, Vite Build, Server-side Merged Verification Queue (+15 more)
+
+### Community 9 - "Facility Card List"
+Cohesion: 0.15
+Nodes (16): emit, props, verified, emit, props, shown, visible, container (+8 more)
+
+### Community 10 - "Status & Accessibility Display"
+Cohesion: 0.14
+Nodes (14): meta, props, SOURCES, accessibility, actions, doneLabel, emit, isUsulan (+6 more)
+
+### Community 11 - "Admin Facility Table"
 Cohesion: 0.16
-Nodes (10): User, UserFactory, DatabaseSeeder, Illuminate\Database\Console\Seeds\WithoutModelEvents, Illuminate\Database\Eloquent\Factories\Factory, Illuminate\Database\Eloquent\Factories\HasFactory, Illuminate\Database\Seeder, Illuminate\Foundation\Auth\User (+2 more)
+Nodes (13): stale(), daysSince(), STALE_DAYS, average, currentPage, { facilities, tablePage, loadTablePage }, lastPage, pageNumbers (+5 more)
 
-### Community 7 - "Architecture Rules (AGENTS.md)"
-Cohesion: 0.12
-Nodes (17): AksesKita — Disability-Friendly Facility Mapping SPA, Card List as the Keyboard/Screen-Reader Path to the Map, Dummy-Data-Only Frontend Phase, Leaflet L.divIcon Square Markers (no image assets), meta.js as Single Source for Status Labels and Glyphs, Module-Level Singleton Composables, SPA Fallback {any} with /up Excluded, StatusPill: Label + Glyph, Never Colour Alone (+9 more)
+### Community 12 - "Contribution Form"
+Cohesion: 0.16
+Nodes (12): emit, errors, form, photo, preview, props, submit(), validate() (+4 more)
 
-### Community 8 - "Map & Facility List"
-Cohesion: 0.18
-Nodes (13): emit, props, verified, emit, container, drawPickMarker(), emit, label() (+5 more)
-
-### Community 9 - "Contribution Form"
-Cohesion: 0.18
-Nodes (11): emit, errors, form, photo, preview, submit(), validate(), center (+3 more)
-
-### Community 10 - "Design System Rules"
+### Community 14 - "Completeness Meters"
 Cohesion: 0.21
-Nodes (13): Design Tokens and Component Classes in resources/css/app.css, bunny() Font Download at Build Time, Rust as Sole Accent, Kept Off Small Text on Ink, TemplateDesignWeb as Read-Only Design Reference, Atelier Tide Single-File HTML Prototype, Atelier Tide (fictional architecture studio), Atelier Tide Design Tokens (paper / ink / rust), Syne / Inter / DM Mono Type Triad (+5 more)
+Nodes (10): props, rows, known, low, percent, props, completeness(), knownAttributeCount() (+2 more)
 
-### Community 11 - "Admin Panels (Categories & Users)"
-Cohesion: 0.20
-Nodes (6): categories, newName, users, ROLES, CATEGORY_SETTINGS, USERS
+### Community 16 - "Verification Queue View"
+Cohesion: 0.17
+Nodes (10): QUEUE_BUCKETS, busy, currentPage, decideError, FACILITY_ACTIONS, { items, stats, history, filters, meta, status, loadError, selected, load, decide, verify, select }, lastPage, pageNumbers (+2 more)
 
-### Community 12 - "Correction Form"
+### Community 17 - "Correction Form"
 Cohesion: 0.20
 Nodes (10): currentValue, emit, errors, { facilities }, form, photo, props, selected (+2 more)
 
-### Community 13 - "Laravel Feature Tests"
-Cohesion: 0.22
-Nodes (4): Illuminate\Foundation\Testing\TestCase, AksesKitaTest, ExampleTest, TestCase
-
-### Community 14 - "App Shell & Router"
+### Community 18 - "Filters & Facility Review"
 Cohesion: 0.20
-Nodes (5): LINKS, open, route, router, routes
+Nodes (8): { filters, attributes, results, hasFilters, toggleAttribute, resetFilters }, actions, doneLabel, emit, facility, props, verificationNote, VERIFICATION
 
-### Community 15 - "Atelier Tide Prototype Sections"
-Cohesion: 0.24
-Nodes (10): IntersectionObserver Reveal Script, Strip Prev/Next scrollBy(±500) Handlers, Filmstrip / ProjectStrip (horizontal scroll-snap gallery), Hero (display headline + offset-shadow portrait), Build Checklist / Known Gaps, Philosophy Split (image + numbered principles), Single 880px Breakpoint, Scroll Reveal (.reveal + one-shot IntersectionObserver) (+2 more)
+### Community 19 - "Queue List & Status Meta"
+Cohesion: 0.39
+Nodes (6): emit, formatDate(), NEEDS_VERIFICATION, needsVerification(), QUEUE_TYPES, statusMeta()
 
-### Community 16 - "Commands & Quality Gates"
-Cohesion: 0.25
-Nodes (8): php artisan test (PHPUnit 12), composer run dev (serve + queue:listen + Vite), composer run setup (one-time install with migrate --force), MySQL in .env vs SQLite :memory: in phpunit.xml, npm run build, .npmrc ignore-scripts=true, vendor/bin/pint (PHP formatting), Only Three Quality Gates (no CI, no static analysis)
-
-### Community 17 - "Template Hero Anatomy"
-Cohesion: 0.43
-Nodes (8): Atelier Tide Hero Thumbnail (architecture studio landing page screenshot), Brutalist Concrete Colonnade Photo with Dust and Side Light, Editorial Split Hero Layout (oversized headline left, full-bleed photo right), Italic Display Accent Type in Rust ("sideways."), Minimal Uppercase Top Navigation with Language Switcher (EN / IT / ES), Rust Accent on Warm Off-White Palette (ink black type, #A85A32-ish accent), "SCROLL RIGHT" Boxed Directional CTA, "14 PROJECTS / SINCE 2014" Dark Stat Overlay Card
-
-### Community 18 - "Tide Hall Imagery"
+### Community 20 - "Toast Notifications"
 Cohesion: 0.48
-Nodes (7): Abstract Bronze Maquette on Plinth, Tide Hall Photo (brutalist concrete interior), Repeating Concrete Column Grid and Coffered Ceiling, Glass-Balustrade Mezzanine Walkway, Warm Sun Patches and Atmospheric Haze, One-Point Perspective Toward Hazed Vanishing Point, Lone Walking Figure as Scale Reference
+Nodes (5): { messages, dismiss }, dismiss(), messages, push(), useToast()
+
+### Community 22 - "Review Action Buttons"
+Cohesion: 0.40
+Nodes (5): decide(), disabled, emit, note, props
+
+### Community 23 - "Verification Decision Rules"
+Cohesion: 0.40
+Nodes (5): Facility Decision Writes Verification Columns Only, Private Storage for Submission Proofs, FacilityController::verify, SubmissionController, verification_events Audit Trail
+
+### Community 25 - "Accessibility Checklist Form"
+Cohesion: 0.67
+Nodes (3): emit, props, setValue()
 
 ## Ambiguous Edges - Review These
-- `Warm Sun Patches and Atmospheric Haze` → `Glass-Balustrade Mezzanine Walkway`  [AMBIGUOUS]
-  TemplateDesignWeb/assets/img/15-tide-hall.jpg · relation: semantically_similar_to
+- `SPA Fallback Route with /up Excluded` → `AksesKita`  [AMBIGUOUS]
+  README.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **157 isolated node(s):** `Controller`, `$schema`, `name`, `type`, `description` (+152 more)
+- **191 isolated node(s):** `$schema`, `name`, `type`, `description`, `laravel` (+186 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **What is the exact relationship between `Warm Sun Patches and Atmospheric Haze` and `Glass-Balustrade Mezzanine Walkway`?**
-  _Edge tagged AMBIGUOUS (relation: semantically_similar_to) - confidence is low._
-- **Why does `scripts` connect `Composer Scripts` to `Composer Manifest`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
-- **Why does `useFacilities()` connect `Facility Catalog & Filters` to `Verification Review UI`, `Correction Form`, `Submission Queue & Toasts`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Are the 4 inferred relationships involving `useFacilities()` (e.g. with `addFacility()` and `applyCorrection()`) actually correct?**
+- **What is the exact relationship between `SPA Fallback Route with /up Excluded` and `AksesKita`?**
+  _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
+- **Why does `Facility` connect `Submission Decisions & Facility Creation` to `HTTP Controllers & Auth`, `Verification Queue Tests`, `Models, Users & Seeders`, `Facility CSV Importer`?**
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
+- **Why does `Submission` connect `Submission Decisions & Facility Creation` to `HTTP Controllers & Auth`, `Verification Queue Tests`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Why does `TestCase` connect `Submission Decisions & Facility Creation` to `Verification Queue Tests`, `Models, Users & Seeders`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
+- **Are the 6 inferred relationships involving `Facility` (e.g. with `.store()` and `.index()`) actually correct?**
+  _`Facility` has 6 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 4 inferred relationships involving `useFacilities()` (e.g. with `load()` and `loadTablePage()`) actually correct?**
   _`useFacilities()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Controller`, `$schema`, `name` to the rest of the system?**
-  _157 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Facility Catalog & Filters` be split into smaller, more focused modules?**
-  _Cohesion score 0.06767676767676768 - nodes in this community are weakly interconnected._
-- **Should `Composer Manifest` be split into smaller, more focused modules?**
-  _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
+- **What connects `$schema`, `name`, `type` to the rest of the system?**
+  _191 weakly-connected nodes found - possible documentation gaps or missing edges._
