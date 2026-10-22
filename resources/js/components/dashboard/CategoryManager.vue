@@ -23,7 +23,7 @@ const addCategory = () => {
 
 <template>
     <div class="stack--sm">
-        <div class="table-wrap">
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel kategori fasilitas">
             <table class="table">
                 <caption class="help" style="text-align: left; padding-bottom: 12px">
                     Menonaktifkan kategori menyembunyikannya dari filter peta pada implementasi nyata.

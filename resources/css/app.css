@@ -29,6 +29,10 @@
     --ink-a20: rgba(31, 28, 23, 0.2);
     --paper-a92: rgba(245, 241, 234, 0.92);
 
+    /* Varian rust khusus di atas --ink: rust murni hanya 3.4:1, terlalu rendah
+       untuk teks kecil. Tetap keluarga aksen yang sama. */
+    --rust-on-ink: #c97a4a;
+
     --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -203,7 +207,8 @@ em {
 }
 
 .grid--4 {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    /* 150px: empat kartu statistik pas 4 kolom di tablet dan 2x2 di ponsel. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
 }
 
 .grid--sidebar {
@@ -230,6 +235,14 @@ em {
     background: var(--ink);
     color: var(--paper);
     border-color: var(--ink);
+}
+
+.panel--dark .label {
+    color: var(--rust-on-ink);
+}
+
+.panel--dark .label::before {
+    background: var(--rust-on-ink);
 }
 
 .hero-shadow {
@@ -475,7 +488,8 @@ em {
     transition: background 0.25s, color 0.25s;
 }
 
-.tab[aria-selected='true'] {
+.tab[aria-selected='true'],
+.tab[aria-pressed='true'] {
     background: var(--ink);
     color: var(--paper);
     border-color: var(--ink);
@@ -558,8 +572,26 @@ em {
 }
 
 .card--compact .card__media {
-    aspect-ratio: 1 / 1;
+    /* aspect-ratio + height:100% memaksa lebar ikut tinggi baris sehingga
+       media (122px) menimpa kolom body yang hanya 96px. */
+    aspect-ratio: auto;
     height: 100%;
+}
+
+/* Label kategori pada kartu ringkas harus muat di dalam kolom 96px. */
+.card--compact .card__badge {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    padding: 4px 6px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+}
+
+/* Pill status di kartu ringkas: white-space nowrap-nya memaksa min-content
+   kartu ~327px, lebih lebar dari layar 360px. Biarkan membungkus di situ. */
+.card--compact .pill {
+    white-space: normal;
 }
 
 .card__media::after {
@@ -1021,7 +1053,7 @@ fieldset {
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--rust);
+    color: var(--rust-on-ink);
 }
 
 /* ---- Header / footer ---------------------------------------------------- */
@@ -1161,7 +1193,15 @@ fieldset {
 
     .grid--sidebar,
     .grid--map {
-        grid-template-columns: 1fr;
+        /* minmax(0) supaya kolom boleh menyusut di bawah min-content-nya
+           (kartu/pill panjang) alih-alih melebarkan seluruh halaman. */
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Kata terpanjang ("aksesibilitasnya.", 321px pada 32px) melebihi lebar
+       konten di bawah ~380px. Di atas itu clamp menghasilkan nilai yang sama. */
+    .display-lg {
+        font-size: clamp(26px, 8vw, 32px);
     }
 
     .map {
@@ -1169,7 +1209,9 @@ fieldset {
     }
 
     .site-footer .grid {
-        grid-template-columns: 1fr 1fr;
+        /* auto-fit: 2 kolom di tablet, 1 kolom di ponsel. Kolom `1fr` tetap
+           mengambil lebar minimum konten (surel + wordmark) dan meluber di 360px. */
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
     }
 
     .step {
@@ -1472,6 +1514,13 @@ fieldset {
 
     .hero__frame {
         aspect-ratio: 4 / 5;
+    }
+
+    /* Gutter seluler hanya 18px; stamp keluar 20px dari tepi frame. */
+    .stamp {
+        top: -14px;
+        right: -14px;
+        padding: 10px 14px;
     }
 
     .searchbar {

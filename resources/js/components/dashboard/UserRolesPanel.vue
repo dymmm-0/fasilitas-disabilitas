@@ -8,7 +8,7 @@ const users = ref(USERS.map((user) => ({ ...user })));
 </script>
 
 <template>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel pengguna dan peran">
         <table class="table">
             <caption class="help" style="text-align: left; padding-bottom: 12px">
                 Peran diubah langsung pada tabel untuk kebutuhan demonstrasi; tidak ada penyimpanan permanen.

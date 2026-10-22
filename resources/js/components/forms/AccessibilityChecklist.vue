@@ -17,7 +17,7 @@ const setValue = (id, value) => {
         <fieldset v-for="attribute in ATTRIBUTES" :key="attribute.id">
             <legend class="fieldset__legend">{{ attribute.label }}</legend>
             <p class="help">{{ attribute.hint }}</p>
-            <div class="cluster">
+            <div class="choice-grid">
                 <label v-for="(meta, key) in AVAILABILITY" :key="key" class="choice">
                     <input
                         type="radio"

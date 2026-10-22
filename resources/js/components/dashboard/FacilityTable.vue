@@ -12,7 +12,7 @@ const stale = (facility) => daysSince(facility.lastChecked) > STALE_DAYS;
 </script>
 
 <template>
-    <div class="table-wrap">
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel fasilitas">
         <table class="table">
             <caption class="help" style="text-align: left; padding-bottom: 12px">{{ caption }}</caption>
             <thead>

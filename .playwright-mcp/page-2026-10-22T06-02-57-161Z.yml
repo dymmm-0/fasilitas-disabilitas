@@ -1,0 +1,390 @@
+- generic [ref=f1e2]:
+  - link "Lewati ke konten utama" [ref=f1e3] [cursor=pointer]:
+    - /url: "#konten"
+  - banner [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "AksesKita, ke beranda" [ref=f1e6] [cursor=pointer]:
+        - /url: /
+        - text: Akses
+        - emphasis [ref=f1e7]: Kita
+      - navigation "Navigasi utama" [ref=f1e8]:
+        - link "Peta" [ref=f1e9] [cursor=pointer]:
+          - /url: /
+        - link "Kontribusi" [ref=f1e10] [cursor=pointer]:
+          - /url: /kontribusi
+        - link "Verifikasi" [ref=f1e11] [cursor=pointer]:
+          - /url: /verifikasi
+        - link "Admin" [ref=f1e12] [cursor=pointer]:
+          - /url: /admin
+        - link "Tentang" [ref=f1e13] [cursor=pointer]:
+          - /url: /tentang
+      - link "Usulkan fasilitas" [ref=f1e15] [cursor=pointer]:
+        - /url: /kontribusi
+  - main [ref=f1e16]:
+    - generic [ref=f1e17]:
+      - generic [ref=f1e18]:
+        - paragraph [ref=f1e19]: Platform pemetaan fasilitas publik
+        - heading [level=1] [ref=f1e20]:
+          - text: Temukan fasilitas yang bisa
+          - emphasis [ref=f1e21]: diakses semua orang.
+        - paragraph [ref=f1e22]: AksesKita memetakan ramp, toilet aksesibel, lift, dan jalur kursi roda di fasilitas publik — lalu memverifikasinya bersama masyarakat agar keputusan berkegiatan tidak lagi menebak-nebak.
+        - search [ref=f1e23]:
+          - generic [ref=f1e24]:
+            - generic [ref=f1e25]: Cari fasilitas atau kota
+            - searchbox "Cari fasilitas atau kota" [ref=f1e26]
+          - link "Lihat peta" [ref=f1e27] [cursor=pointer]:
+            - /url: "#peta"
+            - text: Lihat peta
+            - generic [aria-hidden] [ref=f1e28]: ↓
+        - status [ref=f1e29]: 13 fasilitas sesuai pencarian · 9 terverifikasi · 5 kota
+      - paragraph [ref=f1e32]:
+        - text: 13 fasilitas
+        - generic [ref=f1e33]: dipetakan warga
+    - generic [ref=f1e35]:
+      - generic [ref=f1e36]:
+        - paragraph [ref=f1e37]: Peta dan daftar
+        - heading [level=2] [ref=f1e38]:
+          - text: Cari, saring, lalu buka
+          - emphasis [ref=f1e39]: detail aksesibilitasnya.
+        - paragraph [ref=f1e40]: Pilih kategori atau atribut aksesibilitas yang Anda butuhkan. Klik penanda di peta atau kartu di samping — keduanya menampilkan fasilitas yang sama.
+      - search [ref=f1e41]:
+        - generic [ref=f1e42]:
+          - generic [ref=f1e43]:
+            - generic [ref=f1e44]: Cari fasilitas
+            - searchbox "Cari fasilitas" [ref=f1e45]
+          - generic [ref=f1e46]:
+            - generic [ref=f1e47]: Kategori
+            - combobox "Kategori" [ref=f1e48]:
+              - option "Semua kategori" [selected]
+              - option "Transportasi"
+              - option "Kesehatan"
+              - option "Pendidikan"
+              - option "Pemerintahan"
+              - option "Perbelanjaan"
+              - option "Rekreasi"
+              - option "Ibadah"
+              - option "Olahraga"
+          - generic [ref=f1e49]:
+            - generic [ref=f1e50]: Status verifikasi
+            - combobox "Status verifikasi" [ref=f1e51]:
+              - option "Semua status" [selected]
+              - option "Terverifikasi"
+              - option "Menunggu verifikasi"
+              - option "Perlu perbaikan data"
+              - option "Ditolak"
+        - group "Atribut aksesibilitas yang harus tersedia" [ref=f1e52]:
+          - generic [ref=f1e54]:
+            - button "Ramp / jalur landai" [ref=f1e55] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f1e56]: +
+              - text: Ramp / jalur landai
+            - button "Toilet aksesibel" [ref=f1e57] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f1e58]: +
+              - text: Toilet aksesibel
+            - button "Lift" [ref=f1e59] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f1e60]: +
+              - text: Lift
+            - button "Jalur kursi roda" [ref=f1e61] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f1e62]: +
+              - text: Jalur kursi roda
+            - button "Akses masuk" [ref=f1e63] [cursor=pointer]:
+              - generic [aria-hidden] [ref=f1e64]: +
+              - text: Akses masuk
+        - status [ref=f1e66]: 13 fasilitas ditampilkan
+      - generic [ref=f1e67]:
+        - generic [ref=f1e68]:
+          - 'application "e=>`${e.name}. Kategori ${c(e.category)}. Status ${l[e.verification].label}.`" [ref=f1e69]':
+            - generic:
+              - generic:
+                - button "Stasiun MRT Bundaran HI. Kategori Transportasi. Status Terverifikasi." [ref=f1e70] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e71]: TR
+                - button "Terminal Leuwipanjang. Kategori Transportasi. Status Terverifikasi." [ref=f1e72] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e73]: TR
+                - button "RSUP Dr. Hasan Sadikin. Kategori Kesehatan. Status Terverifikasi." [ref=f1e74] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e75]: KS
+                - button "RSUD Dr. Soetomo. Kategori Kesehatan. Status Perlu perbaikan data." [ref=f1e76] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e77]: KS
+                - button "Taman Menteng. Kategori Rekreasi. Status Terverifikasi." [ref=f1e78] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e79]: RK
+                - button "Perpustakaan Kota Yogyakarta. Kategori Pendidikan. Status Terverifikasi." [ref=f1e80] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e81]: PD
+                - button "Gerbang Utama UGM. Kategori Pendidikan. Status Menunggu verifikasi." [ref=f1e82] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e83]: PD
+                - button "Kantor Kecamatan Denpasar Selatan. Kategori Pemerintahan. Status Terverifikasi." [ref=f1e84] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e85]: PK
+                - button "Grand Indonesia. Kategori Perbelanjaan. Status Terverifikasi." [ref=f1e86] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e87]: PB
+                - button "Masjid Istiqlal. Kategori Ibadah. Status Perlu perbaikan data." [ref=f1e88] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e89]: IB
+                - button "Stadion Gelora Bung Karno. Kategori Olahraga. Status Terverifikasi." [ref=f1e90] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e91]: OL
+                - button "Bandara I Gusti Ngurah Rai. Kategori Transportasi. Status Terverifikasi." [ref=f1e92] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e93]: TR
+                - button "Pasar Beringharjo. Kategori Perbelanjaan. Status Menunggu verifikasi." [ref=f1e94] [cursor=pointer]:
+                  - generic [aria-hidden] [ref=f1e95]: PB
+            - generic:
+              - generic [ref=f1e96]:
+                - button "Zoom in" [ref=f1e97] [cursor=pointer]: +
+                - button "Zoom out" [ref=f1e98] [cursor=pointer]: −
+              - generic [ref=f1e99]:
+                - link "Leaflet" [ref=f1e100] [cursor=pointer]:
+                  - /url: https://leafletjs.com
+                - text: "| ©"
+                - link "OpenStreetMap" [ref=f1e105] [cursor=pointer]:
+                  - /url: https://www.openstreetmap.org/copyright
+                - text: contributors
+          - generic [ref=f1e106]:
+            - generic [ref=f1e107]:
+              - generic [aria-hidden] [ref=f1e108]: ✓
+              - text: Terverifikasi
+            - generic [ref=f1e109]:
+              - generic [aria-hidden] [ref=f1e110]: ◐
+              - text: Menunggu / perlu perbaikan
+            - generic [ref=f1e111]: "Kode penanda: TR Transportasi · KS Kesehatan · PD Pendidikan · PK Pemerintahan · PB Perbelanjaan · RK Rekreasi · IB Ibadah · OL Olahraga"
+          - paragraph [ref=f1e112]: Peta bersifat visual. Informasi yang sama tersedia sebagai daftar kartu di samping, dan setiap penanda dapat difokuskan dengan tombol Tab.
+        - generic [ref=f1e113]:
+          - generic [ref=f1e114]:
+            - heading "13 fasilitas" [level=3] [ref=f1e115]
+            - link "Usulkan fasilitas baru" [ref=f1e116] [cursor=pointer]:
+              - /url: /kontribusi
+          - list [ref=f1e117]:
+            - listitem [ref=f1e118]:
+              - link "TR Jakarta Transportasi fas-001 Stasiun MRT Bundaran HI Terverifikasi Diperbarui 16 Agustus 2026" [ref=f1e119] [cursor=pointer]:
+                - /url: /fasilitas/fas-001
+                - generic [ref=f1e120]: TR Jakarta
+                - generic [ref=f1e122]:
+                  - generic [ref=f1e123]:
+                    - generic [ref=f1e124]: Transportasi
+                    - generic [ref=f1e125]: fas-001
+                  - heading "Stasiun MRT Bundaran HI" [level=3] [ref=f1e126]
+                  - generic [ref=f1e127]:
+                    - generic [ref=f1e128]:
+                      - generic [aria-hidden] [ref=f1e129]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e130]: Diperbarui 16 Agustus 2026
+            - listitem [ref=f1e131]:
+              - link "TR Bandung Transportasi fas-002 Terminal Leuwipanjang Terverifikasi Diperbarui 5 Juli 2026" [ref=f1e132] [cursor=pointer]:
+                - /url: /fasilitas/fas-002
+                - generic [ref=f1e133]: TR Bandung
+                - generic [ref=f1e135]:
+                  - generic [ref=f1e136]:
+                    - generic [ref=f1e137]: Transportasi
+                    - generic [ref=f1e138]: fas-002
+                  - heading "Terminal Leuwipanjang" [level=3] [ref=f1e139]
+                  - generic [ref=f1e140]:
+                    - generic [ref=f1e141]:
+                      - generic [aria-hidden] [ref=f1e142]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e143]: Diperbarui 5 Juli 2026
+            - listitem [ref=f1e144]:
+              - link "KS Bandung Kesehatan fas-003 RSUP Dr. Hasan Sadikin Terverifikasi Diperbarui 3 September 2026" [ref=f1e145] [cursor=pointer]:
+                - /url: /fasilitas/fas-003
+                - generic [ref=f1e146]: KS Bandung
+                - generic [ref=f1e148]:
+                  - generic [ref=f1e149]:
+                    - generic [ref=f1e150]: Kesehatan
+                    - generic [ref=f1e151]: fas-003
+                  - heading "RSUP Dr. Hasan Sadikin" [level=3] [ref=f1e152]
+                  - generic [ref=f1e153]:
+                    - generic [ref=f1e154]:
+                      - generic [aria-hidden] [ref=f1e155]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e156]: Diperbarui 3 September 2026
+            - listitem [ref=f1e157]:
+              - link "KS Surabaya Kesehatan fas-004 RSUD Dr. Soetomo Perlu perbaikan data Diperbarui 20 Juni 2026" [ref=f1e158] [cursor=pointer]:
+                - /url: /fasilitas/fas-004
+                - generic [ref=f1e159]: KS Surabaya
+                - generic [ref=f1e161]:
+                  - generic [ref=f1e162]:
+                    - generic [ref=f1e163]: Kesehatan
+                    - generic [ref=f1e164]: fas-004
+                  - heading "RSUD Dr. Soetomo" [level=3] [ref=f1e165]
+                  - generic [ref=f1e166]:
+                    - generic [ref=f1e167]:
+                      - generic [aria-hidden] [ref=f1e168]: △
+                      - text: Perlu perbaikan data
+                    - generic [ref=f1e169]: Diperbarui 20 Juni 2026
+            - listitem [ref=f1e170]:
+              - link "RK Jakarta Rekreasi fas-005 Taman Menteng Terverifikasi Diperbarui 1 Juni 2026" [ref=f1e171] [cursor=pointer]:
+                - /url: /fasilitas/fas-005
+                - generic [ref=f1e172]: RK Jakarta
+                - generic [ref=f1e174]:
+                  - generic [ref=f1e175]:
+                    - generic [ref=f1e176]: Rekreasi
+                    - generic [ref=f1e177]: fas-005
+                  - heading "Taman Menteng" [level=3] [ref=f1e178]
+                  - generic [ref=f1e179]:
+                    - generic [ref=f1e180]:
+                      - generic [aria-hidden] [ref=f1e181]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e182]: Diperbarui 1 Juni 2026
+            - listitem [ref=f1e183]:
+              - link "PD Yogyakarta Pendidikan fas-006 Perpustakaan Kota Yogyakarta Terverifikasi Diperbarui 14 April 2026" [ref=f1e184] [cursor=pointer]:
+                - /url: /fasilitas/fas-006
+                - generic [ref=f1e185]: PD Yogyakarta
+                - generic [ref=f1e187]:
+                  - generic [ref=f1e188]:
+                    - generic [ref=f1e189]: Pendidikan
+                    - generic [ref=f1e190]: fas-006
+                  - heading "Perpustakaan Kota Yogyakarta" [level=3] [ref=f1e191]
+                  - generic [ref=f1e192]:
+                    - generic [ref=f1e193]:
+                      - generic [aria-hidden] [ref=f1e194]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e195]: Diperbarui 14 April 2026
+            - listitem [ref=f1e196]:
+              - link "PD Yogyakarta Pendidikan fas-007 Gerbang Utama UGM Menunggu verifikasi Diperbarui 21 September 2026" [ref=f1e197] [cursor=pointer]:
+                - /url: /fasilitas/fas-007
+                - generic [ref=f1e198]: PD Yogyakarta
+                - generic [ref=f1e200]:
+                  - generic [ref=f1e201]:
+                    - generic [ref=f1e202]: Pendidikan
+                    - generic [ref=f1e203]: fas-007
+                  - heading "Gerbang Utama UGM" [level=3] [ref=f1e204]
+                  - generic [ref=f1e205]:
+                    - generic [ref=f1e206]:
+                      - generic [aria-hidden] [ref=f1e207]: ◐
+                      - text: Menunggu verifikasi
+                    - generic [ref=f1e208]: Diperbarui 21 September 2026
+            - listitem [ref=f1e209]:
+              - link "PK Denpasar Pemerintahan fas-008 Kantor Kecamatan Denpasar Selatan Terverifikasi Diperbarui 7 Agustus 2026" [ref=f1e210] [cursor=pointer]:
+                - /url: /fasilitas/fas-008
+                - generic [ref=f1e211]: PK Denpasar
+                - generic [ref=f1e213]:
+                  - generic [ref=f1e214]:
+                    - generic [ref=f1e215]: Pemerintahan
+                    - generic [ref=f1e216]: fas-008
+                  - heading "Kantor Kecamatan Denpasar Selatan" [level=3] [ref=f1e217]
+                  - generic [ref=f1e218]:
+                    - generic [ref=f1e219]:
+                      - generic [aria-hidden] [ref=f1e220]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e221]: Diperbarui 7 Agustus 2026
+            - listitem [ref=f1e222]:
+              - link "PB Jakarta Perbelanjaan fas-009 Grand Indonesia Terverifikasi Diperbarui 14 September 2026" [ref=f1e223] [cursor=pointer]:
+                - /url: /fasilitas/fas-009
+                - generic [ref=f1e224]: PB Jakarta
+                - generic [ref=f1e226]:
+                  - generic [ref=f1e227]:
+                    - generic [ref=f1e228]: Perbelanjaan
+                    - generic [ref=f1e229]: fas-009
+                  - heading "Grand Indonesia" [level=3] [ref=f1e230]
+                  - generic [ref=f1e231]:
+                    - generic [ref=f1e232]:
+                      - generic [aria-hidden] [ref=f1e233]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e234]: Diperbarui 14 September 2026
+            - listitem [ref=f1e235]:
+              - link "IB Jakarta Ibadah fas-010 Masjid Istiqlal Perlu perbaikan data Diperbarui 25 Maret 2026" [ref=f1e236] [cursor=pointer]:
+                - /url: /fasilitas/fas-010
+                - generic [ref=f1e237]: IB Jakarta
+                - generic [ref=f1e239]:
+                  - generic [ref=f1e240]:
+                    - generic [ref=f1e241]: Ibadah
+                    - generic [ref=f1e242]: fas-010
+                  - heading "Masjid Istiqlal" [level=3] [ref=f1e243]
+                  - generic [ref=f1e244]:
+                    - generic [ref=f1e245]:
+                      - generic [aria-hidden] [ref=f1e246]: △
+                      - text: Perlu perbaikan data
+                    - generic [ref=f1e247]: Diperbarui 25 Maret 2026
+            - listitem [ref=f1e248]:
+              - link "OL Jakarta Olahraga fas-011 Stadion Gelora Bung Karno Terverifikasi Diperbarui 11 Februari 2026" [ref=f1e249] [cursor=pointer]:
+                - /url: /fasilitas/fas-011
+                - generic [ref=f1e250]: OL Jakarta
+                - generic [ref=f1e252]:
+                  - generic [ref=f1e253]:
+                    - generic [ref=f1e254]: Olahraga
+                    - generic [ref=f1e255]: fas-011
+                  - heading "Stadion Gelora Bung Karno" [level=3] [ref=f1e256]
+                  - generic [ref=f1e257]:
+                    - generic [ref=f1e258]:
+                      - generic [aria-hidden] [ref=f1e259]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e260]: Diperbarui 11 Februari 2026
+            - listitem [ref=f1e261]:
+              - link "TR Denpasar Transportasi fas-012 Bandara I Gusti Ngurah Rai Terverifikasi Diperbarui 30 Januari 2026" [ref=f1e262] [cursor=pointer]:
+                - /url: /fasilitas/fas-012
+                - generic [ref=f1e263]: TR Denpasar
+                - generic [ref=f1e265]:
+                  - generic [ref=f1e266]:
+                    - generic [ref=f1e267]: Transportasi
+                    - generic [ref=f1e268]: fas-012
+                  - heading "Bandara I Gusti Ngurah Rai" [level=3] [ref=f1e269]
+                  - generic [ref=f1e270]:
+                    - generic [ref=f1e271]:
+                      - generic [aria-hidden] [ref=f1e272]: ✓
+                      - text: Terverifikasi
+                    - generic [ref=f1e273]: Diperbarui 30 Januari 2026
+            - listitem [ref=f1e274]:
+              - link "PB Yogyakarta Perbelanjaan fas-013 Pasar Beringharjo Menunggu verifikasi Diperbarui 20 November 2025" [ref=f1e275] [cursor=pointer]:
+                - /url: /fasilitas/fas-013
+                - generic [ref=f1e276]: PB Yogyakarta
+                - generic [ref=f1e278]:
+                  - generic [ref=f1e279]:
+                    - generic [ref=f1e280]: Perbelanjaan
+                    - generic [ref=f1e281]: fas-013
+                  - heading "Pasar Beringharjo" [level=3] [ref=f1e282]
+                  - generic [ref=f1e283]:
+                    - generic [ref=f1e284]:
+                      - generic [aria-hidden] [ref=f1e285]: ◐
+                      - text: Menunggu verifikasi
+                    - generic [ref=f1e286]: Diperbarui 20 November 2025
+    - generic [ref=f1e288]:
+      - generic [ref=f1e289]:
+        - paragraph [ref=f1e290]: Cara kerja
+        - heading [level=2] [ref=f1e291]:
+          - text: Dari temuan warga sampai
+          - emphasis [ref=f1e292]: data terverifikasi.
+      - list [ref=f1e293]:
+        - listitem [ref=f1e294]:
+          - generic [ref=f1e295]: i.
+          - generic [ref=f1e296]: Warga mengusulkan. Nama, alamat, koordinat, foto, dan checklist aksesibilitas dikirim lewat formulir kontribusi.
+          - generic [ref=f1e297]: Tahap 1
+        - listitem [ref=f1e298]:
+          - generic [ref=f1e299]: ii.
+          - generic [ref=f1e300]: Verifikator memeriksa. Bukti foto dan koordinat ditinjau; pengajuan dapat disetujui, ditolak, atau diminta diperbaiki.
+          - generic [ref=f1e301]: Tahap 2
+        - listitem [ref=f1e302]:
+          - generic [ref=f1e303]: iii.
+          - generic [ref=f1e304]: Data tampil di peta. Status kelengkapan dan tanggal pemeriksaan terakhir selalu ikut ditampilkan agar pengguna tahu seberapa baru datanya.
+          - generic [ref=f1e305]: Tahap 3
+      - generic [ref=f1e306]:
+        - link "Mulai berkontribusi" [ref=f1e307] [cursor=pointer]:
+          - /url: /kontribusi
+        - link "Baca panduan lengkap" [ref=f1e308] [cursor=pointer]:
+          - /url: /tentang
+  - contentinfo [ref=f1e309]:
+    - generic [ref=f1e310]:
+      - generic [ref=f1e311]:
+        - generic [ref=f1e312]:
+          - text: Akses
+          - emphasis [ref=f1e313]: Kita
+        - paragraph [ref=f1e314]: Platform pemetaan dan verifikasi fasilitas publik ramah disabilitas, dikelola bersama masyarakat.
+      - generic [ref=f1e315]:
+        - heading "Jelajahi" [level=2] [ref=f1e316]
+        - link "Peta fasilitas" [ref=f1e317] [cursor=pointer]:
+          - /url: /
+        - link "Usulkan fasilitas" [ref=f1e318] [cursor=pointer]:
+          - /url: /kontribusi
+        - link "Laporkan koreksi" [ref=f1e319] [cursor=pointer]:
+          - /url: /kontribusi?mode=koreksi
+      - generic [ref=f1e320]:
+        - heading "Pemetaan" [level=2] [ref=f1e321]
+        - link "Dashboard verifikasi" [ref=f1e322] [cursor=pointer]:
+          - /url: /verifikasi
+        - link "Dashboard administrasi" [ref=f1e323] [cursor=pointer]:
+          - /url: /admin
+        - link "Panduan penggunaan" [ref=f1e324] [cursor=pointer]:
+          - /url: /tentang
+      - generic [ref=f1e325]:
+        - heading "Kontak" [level=2] [ref=f1e326]
+        - link "halo@akeskita.example" [ref=f1e327] [cursor=pointer]:
+          - /url: mailto:halo@akeskita.example
+        - link "Komunitas relawan AksesKita" [ref=f1e328] [cursor=pointer]:
+          - /url: "#"
+        - link "OpenStreetMap" [ref=f1e329] [cursor=pointer]:
+          - /url: "#"
+    - generic [ref=f1e330]:
+      - generic [ref=f1e331]: © AksesKita 2026 · Prototipe kompetisi Fundev
+      - generic [ref=f1e332]: Data dummy untuk demonstrasi · belum tersambung basis data
+  - status
