@@ -33,7 +33,7 @@ const submit = async () => {
 <template>
     <section class="container section">
         <div class="panel stack" style="max-width: 420px; margin: 0 auto">
-            <p class="label">Akun admin</p>
+            <p class="label">Akun admin - Robert</p>
             <h1 class="display-md">Masuk untuk <em>mengelola data.</em></h1>
             <p class="body-copy">
                 Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar — cukup isi nama pada formulir
