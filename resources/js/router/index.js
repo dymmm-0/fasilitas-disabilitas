@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
 const routes = [
+    // Area pengunjung: layout publik (default) untuk semua route di bawah ini.
     {
         path: '/',
         name: 'home',
@@ -20,17 +21,19 @@ const routes = [
         component: () => import('../views/ContributionView.vue'),
         meta: { title: 'Kontribusi masyarakat' },
     },
+    // Area admin. `layout: 'admin'` memilih AdminLayout di App.vue; penegakan
+    // aksesnya tetap di middleware `auth` routes/web.php (guard ini hanya UX).
     {
         path: '/verifikasi',
         name: 'verification',
         component: () => import('../views/VerificationView.vue'),
-        meta: { title: 'Dashboard verifikasi', requiresAdmin: true },
+        meta: { title: 'Dashboard verifikasi', requiresAdmin: true, layout: 'admin' },
     },
     {
         path: '/admin',
         name: 'admin',
         component: () => import('../views/AdminDashboardView.vue'),
-        meta: { title: 'Dashboard administrasi', requiresAdmin: true },
+        meta: { title: 'Dashboard administrasi', requiresAdmin: true, layout: 'admin' },
     },
     {
         path: '/masuk',
@@ -56,6 +59,9 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
     scrollBehavior(to, from, savedPosition) {
+        // `top` memberi offset untuk header yang menempel (sticky).
+        if (to.hash) return { el: to.hash, top: 84 };
+
         return savedPosition ?? { top: 0 };
     },
 });

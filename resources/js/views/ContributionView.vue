@@ -5,10 +5,13 @@ import ContributionForm from '../components/forms/ContributionForm.vue';
 import CorrectionForm from '../components/forms/CorrectionForm.vue';
 import StatusPill from '../components/common/StatusPill.vue';
 import { useSubmissions } from '../composables/useSubmissions';
+import { useAuth } from '../composables/useAuth';
 import { SUBMISSION_TYPES } from '../data/meta';
 
 const route = useRoute();
 const { submit } = useSubmissions();
+// Tautan ke antrean verifikasi hanya relevan (dan hanya tampil) untuk petugas.
+const { user } = useAuth();
 
 const tab = ref(route.query.mode === 'koreksi' ? 'koreksi' : 'usulan');
 const result = ref(null);
@@ -99,7 +102,7 @@ const onSubmitted = async (payload) => {
                     keputusan serta riwayatnya tersimpan di basis data.
                 </p>
                 <div class="inline-actions">
-                    <RouterLink class="btn btn--primary" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
+                    <RouterLink v-if="user" class="btn btn--primary" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
                     <button type="button" class="btn" @click="result = null">Kirim pengajuan lain</button>
                 </div>
             </div>

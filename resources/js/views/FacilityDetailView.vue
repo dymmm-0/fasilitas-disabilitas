@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useFacilities } from '../composables/useFacilities';
+import { useAuth } from '../composables/useAuth';
 import { categoryLabel, formatDate } from '../data/meta';
 import AccessibilityPanel from '../components/facilities/AccessibilityPanel.vue';
 import CompletenessMeter from '../components/facilities/CompletenessMeter.vue';
@@ -10,6 +11,8 @@ import StatusPill from '../components/common/StatusPill.vue';
 
 const route = useRoute();
 const { byId, status } = useFacilities();
+// Antrean verifikasi adalah halaman internal: tautannya hanya untuk petugas.
+const { user } = useAuth();
 
 const facility = computed(() => byId(route.params.id));
 </script>
@@ -128,7 +131,7 @@ const facility = computed(() => byId(route.params.id));
                         >
                             Laporkan koreksi
                         </RouterLink>
-                        <RouterLink class="btn" to="/verifikasi">Lihat antrean verifikasi</RouterLink>
+                        <RouterLink v-if="user" class="btn" to="/verifikasi">Lihat antrean verifikasi</RouterLink>
                     </div>
                 </aside>
             </div>

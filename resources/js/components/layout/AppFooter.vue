@@ -1,3 +1,11 @@
+<script setup>
+import { useAuth } from '../../composables/useAuth';
+
+// Tautan dashboard hanya untuk petugas yang sudah masuk; pengunjung biasa tidak
+// diberi menu internal.
+const { user } = useAuth();
+</script>
+
 <template>
     <footer class="site-footer">
         <div class="container grid">
@@ -15,11 +23,17 @@
                 <RouterLink to="/kontribusi?mode=koreksi">Laporkan koreksi</RouterLink>
             </div>
 
-            <div>
+            <div v-if="user">
                 <h2>Pemetaan</h2>
                 <RouterLink to="/verifikasi">Dashboard verifikasi</RouterLink>
                 <RouterLink to="/admin">Dashboard administrasi</RouterLink>
                 <RouterLink to="/tentang">Panduan penggunaan</RouterLink>
+            </div>
+
+            <div v-else>
+                <h2>Panduan</h2>
+                <RouterLink to="/tentang">Tentang AksesKita</RouterLink>
+                <RouterLink to="/masuk">Masuk petugas</RouterLink>
             </div>
 
             <div>

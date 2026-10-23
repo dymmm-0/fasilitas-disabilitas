@@ -1,25 +1,19 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../../composables/useAuth';
 
+// Navigasi pengunjung. Menu internal (pengelolaan fasilitas, verifikasi, kategori)
+// hanya ada di AdminHeader; tautan Dashboard muncul setelah petugas masuk.
 const LINKS = [
-    { to: '/', label: 'Peta', hideForAdmin: true },
+    { to: '/', label: 'Beranda' },
     { to: '/kontribusi', label: 'Kontribusi' },
-    { to: '/verifikasi', label: 'Verifikasi', admin: true },
-    { to: '/admin', label: 'Admin', admin: true },
-    { to: '/tentang', label: 'Tentang', hideForAdmin: true },
+    { to: '/tentang', label: 'Tentang' },
 ];
 
 const { user, logout } = useAuth();
 const router = useRouter();
 const route = useRoute();
-
-// Link admin hanya tampil setelah masuk; Peta & Tentang disembunyikan saat admin
-// bekerja di dashboard. Kedua halaman itu tetap bisa dibuka lewat wordmark.
-const links = computed(() =>
-    LINKS.filter((link) => (!link.admin || user.value) && !(link.hideForAdmin && user.value)),
-);
 
 const open = ref(false);
 
@@ -44,11 +38,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
             <RouterLink class="wordmark" to="/" aria-label="AksesKita, ke beranda">Akses<em>Kita</em></RouterLink>
 
             <nav class="site-nav" aria-label="Navigasi utama">
-                <RouterLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</RouterLink>
+                <RouterLink v-for="link in LINKS" :key="link.to" :to="link.to">{{ link.label }}</RouterLink>
             </nav>
 
             <div class="cluster" style="gap: 8px">
                 <span v-if="user" class="meta desktop-only">{{ user.name }}</span>
+                <RouterLink v-if="user" class="btn btn--sm desktop-only" to="/admin">Dashboard</RouterLink>
                 <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">Keluar</button>
                 <RouterLink v-else class="btn btn--primary btn--sm desktop-only" to="/masuk">Masuk</RouterLink>
 
@@ -67,9 +62,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 
         <div v-if="open" id="navigasi-seluler" class="container mobile-only">
             <nav class="mobile-nav" aria-label="Navigasi seluler">
-                <RouterLink v-for="link in links" :key="link.to" :to="link.to">{{ link.label }}</RouterLink>
-                <RouterLink v-if="!user" to="/masuk">Masuk</RouterLink>
-                <button v-else type="button" class="btn btn--sm" @click="onLogout">Keluar ({{ user.name }})</button>
+                <RouterLink v-for="link in LINKS" :key="link.to" :to="link.to">{{ link.label }}</RouterLink>
+                <RouterLink v-if="user" to="/admin">Dashboard</RouterLink>
+                <RouterLink v-else to="/masuk">Masuk</RouterLink>
+                <button v-if="user" type="button" class="btn btn--sm" @click="onLogout">Keluar ({{ user.name }})</button>
             </nav>
         </div>
     </header>

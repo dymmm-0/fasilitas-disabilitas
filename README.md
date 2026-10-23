@@ -298,14 +298,14 @@ fasilitas-disabilitas/
 ├── resources/
 │   ├── css/app.css             # Token desain + seluruh kelas komponen
 │   ├── js/
-│   │   ├── components/         # layout, common, map, facilities, forms,
-│   │   │                       # verification, dashboard
+│   │   ├── components/         # layout (PublicLayout/AdminLayout + header publik/admin),
+│   │   │                       # common, map, facilities, forms, verification, dashboard
 │   │   ├── composables/        # useFacilities, useVerification, useSubmissions, useAuth, useToast
 │   │   ├── data/               # meta (label/glyph), facilities (helper kelengkapan)
 │   │   ├── router/index.js     # Rute SPA, judul halaman, penjaga rute admin
 │   │   ├── views/              # 8 halaman: beranda, detail, kontribusi, masuk,
 │   │   │                       # verifikasi, admin, tentang, 404
-│   │   ├── App.vue             # Header, footer, host toast
+│   │   ├── App.vue             # Pemilih layout (meta.layout admin/publik) + host toast
 │   │   └── app.js              # Titik masuk Vue (memuat sesi lebih dulu)
 │   └── views/
 │       ├── app.blade.php       # Satu-satunya shell aplikasi (#app + @vite)

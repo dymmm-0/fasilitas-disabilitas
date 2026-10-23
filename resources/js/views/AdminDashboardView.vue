@@ -95,7 +95,7 @@ onMounted(() => loadTablePage(1, 10));
                 </div>
             </div>
 
-            <div class="panel stack--sm">
+            <div id="pengelolaan-fasilitas" class="panel stack--sm">
                 <h2 class="display-sm">Pengelolaan fasilitas</h2>
 
                 <div class="cluster cluster--between">
@@ -136,7 +136,7 @@ onMounted(() => loadTablePage(1, 10));
             </div>
 
             <div class="grid grid--2 grid--stack">
-                <div class="panel stack--sm">
+                <div id="kategori" class="panel stack--sm">
                     <h2 class="display-sm">Kategori</h2>
                     <CategoryManager />
                 </div>
