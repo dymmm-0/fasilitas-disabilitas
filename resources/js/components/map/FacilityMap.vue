@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { categoryGlyph, categoryLabel, VERIFICATION } from '../../data/meta';
@@ -21,6 +21,23 @@ let map = null;
 let layer = null;
 let pickMarker = null;
 let accuracyCircle = null;
+let resizeObserver = null;
+let resizeFrame = null;
+
+const refreshMapSize = () => {
+    if (!map || !container.value || container.value.clientWidth === 0 || container.value.clientHeight === 0) return;
+
+    map.invalidateSize({ pan: false });
+};
+
+const scheduleMapRefresh = () => {
+    if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+
+    resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = null;
+        refreshMapSize();
+    });
+};
 
 const pinIcon = (facility, selected) => {
     const classes = ['map-pin'];
@@ -130,6 +147,9 @@ onMounted(() => {
     }
 
     render();
+    resizeObserver = new ResizeObserver(scheduleMapRefresh);
+    resizeObserver.observe(container.value);
+    nextTick(scheduleMapRefresh);
 });
 
 watch(() => props.facilities, () => render(true), { deep: true });
@@ -151,6 +171,10 @@ watch(
 );
 
 onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
+    resizeObserver = null;
+    if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+    resizeFrame = null;
     accuracyCircle?.remove();
     accuracyCircle = null;
     map?.remove();

@@ -5,6 +5,11 @@
 
     RewriteEngine On
 
+    # Canonical local origin: keep other local hosts (e.g. artisan serve) on HTTP.
+    RewriteCond %{HTTP_HOST} ^fasilitas-disabilitas\.test(?::80)?$ [NC]
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://fasilitas-disabilitas.test%{REQUEST_URI} [R=301,L,NE]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

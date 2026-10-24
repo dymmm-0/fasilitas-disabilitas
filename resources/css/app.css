@@ -216,6 +216,10 @@ em {
     align-items: start;
 }
 
+.grid--sidebar > * {
+    min-width: 0;
+}
+
 .grid--map {
     grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
     align-items: start;
@@ -932,8 +936,11 @@ fieldset {
 .map {
     height: 100%;
     min-height: 440px;
+    min-width: 0;
     border: 1px solid var(--ink);
     background: var(--ink-a06);
+    isolation: isolate;
+    overflow: hidden;
 }
 
 .map--picker {
@@ -1410,10 +1417,16 @@ fieldset {
     grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1.6fr);
 }
 
-.accessibility-row .pill {
+.accessibility-row .pill,
+.verification-row .pill {
     justify-self: start;
     width: 150px;
+    max-width: 100%;
     justify-content: center;
+}
+
+.verification-row .pill {
+    white-space: normal;
 }
 
 .verification-row > :nth-child(2) {

@@ -485,6 +485,8 @@ composer run dev
 - queue listener
 - Vite (HMR untuk `resources/js` dan `resources/css`)
 
+Opsi A memakai HTTP pada server artisan. Untuk URL aplikasi kanonik lokal, gunakan Opsi C.
+
 **Opsi B — terpisah di dua terminal.**
 
 ```powershell
@@ -493,7 +495,7 @@ npm run dev
 ```
 
 **Opsi C — virtual host Laragon.** Arahkan document root ke folder `public/`
-(misalnya `http://fasilitas-disabilitas.test`), tambahkan host di `hosts`, lalu
+(misalnya `https://fasilitas-disabilitas.test`), tambahkan host di `hosts`, lalu
 restart Apache. Dengan opsi ini `npm run dev` tidak wajib selama aset sudah
 dibangun dengan `npm run build`.
 
@@ -561,12 +563,13 @@ dilewati, dan laporan baru dibuat. Tidak perlu menghapus tabel lebih dulu.
 | `APP_NAME` | Nama aplikasi | `AksesKita` |
 | `APP_ENV` | Lingkungan | `local` |
 | `APP_KEY` | Kunci enkripsi Laravel | Dibuat oleh `php artisan key:generate` |
-| `APP_URL` | URL dasar aplikasi | `http://localhost:8000` |
+| `APP_URL` | URL dasar aplikasi | `https://fasilitas-disabilitas.test` (Laragon) atau `http://localhost:8000` (artisan serve) |
 | `APP_DEBUG` | Detail error | `true` hanya di lokal |
 | `DB_CONNECTION` | Driver database | `mysql` |
 | `DB_DATABASE` | Nama database | `fasilitas_disabilitas` |
 | `DB_USERNAME` / `DB_PASSWORD` | Kredensial database | Isi sesuai mesin masing-masing |
 | `SESSION_DRIVER` | Penyimpanan sesi | `database` (bawaan; butuh tabel `sessions`) |
+| `SESSION_SECURE_COOKIE` | Cookie hanya lewat HTTPS | `true` pada URL HTTPS; `false` atau kosong saat memakai artisan serve HTTP |
 | `QUEUE_CONNECTION` | Antrean | `database` (bawaan) |
 | `SEED_PASSWORD` | Kata sandi awal akun admin hasil seeder | Ganti dari bawaan `password` |
 | `VITE_APP_NAME` | Nama aplikasi untuk sisi Vite | `${APP_NAME}` |
