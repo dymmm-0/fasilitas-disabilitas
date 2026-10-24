@@ -1405,6 +1405,34 @@ fieldset {
     font-size: 14px;
 }
 
+.accessibility-row,
+.verification-row {
+    grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1.6fr);
+}
+
+.accessibility-row .pill {
+    justify-self: start;
+    width: 150px;
+    justify-content: center;
+}
+
+.verification-row > :nth-child(2) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.verification-row > :nth-child(3) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.verification-row a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+}
+
 .kv__row:last-child {
     border-bottom: 0;
 }
@@ -1427,10 +1455,25 @@ fieldset {
    teksnya menimpa pill. Pakai susunan dua baris seperti di ponsel. */
 @container kv (max-width: 430px) {
     .kv__row {
-        grid-template-columns: minmax(min-content, auto) minmax(min-content, 1fr);
+        grid-template-columns: minmax(min-content, auto) minmax(0, 1fr);
+    }
+
+    .accessibility-row,
+    .verification-row {
+        grid-template-columns: minmax(0, 1fr) 150px;
     }
 
     .kv__row .kv__note {
+        grid-column: 1 / -1;
+    }
+
+    .accessibility-row .pill {
+        width: 150px;
+        max-width: 100%;
+    }
+
+    .accessibility-row .kv__note,
+    .verification-row .kv__note {
         grid-column: 1 / -1;
     }
 }

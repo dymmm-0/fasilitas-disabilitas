@@ -92,22 +92,22 @@ const facility = computed(() => byId(route.params.id));
                     <div class="panel stack--sm">
                         <h2 class="meta">Informasi verifikasi</h2>
                         <div class="kv">
-                            <div class="kv__row">
+                            <div class="kv__row verification-row">
                                 <span class="kv__label">Status</span>
                                 <StatusPill kind="verification" :value="facility.verification" />
                                 <span class="kv__note">{{ facility.id }}</span>
                             </div>
-                            <div class="kv__row">
+                            <div class="kv__row verification-row">
                                 <span class="kv__label">Data dikumpulkan</span>
                                 <span>{{ formatDate(facility.lastChecked) }}</span>
                                 <span class="kv__note">{{ facility.id }}</span>
                             </div>
-                            <div class="kv__row">
+                            <div class="kv__row verification-row">
                                 <span class="kv__label">Koordinat</span>
                                 <span>{{ facility.lat }}, {{ facility.lng }}</span>
                                 <span class="kv__note">{{ facility.city }}</span>
                             </div>
-                            <div class="kv__row">
+                            <div class="kv__row verification-row">
                                 <span class="kv__label">Sumber data</span>
                                 <span>{{ facility.contributor }}</span>
                                 <a

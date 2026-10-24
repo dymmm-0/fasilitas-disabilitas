@@ -9,7 +9,7 @@ defineProps({
 
 <template>
     <div class="kv">
-        <div v-for="attribute in ATTRIBUTES" :key="attribute.id" class="kv__row">
+        <div v-for="attribute in ATTRIBUTES" :key="attribute.id" class="kv__row accessibility-row">
             <span class="kv__label">{{ attribute.label }}</span>
             <StatusPill kind="availability" :value="facility.accessibility[attribute.id]" />
             <span v-if="facility.accessibility[attribute.id] === 'belum'" class="kv__note">{{ attribute.hint }}</span>
