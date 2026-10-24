@@ -21,6 +21,7 @@ const { user } = useAuth();
                 <RouterLink to="/">Peta fasilitas</RouterLink>
                 <RouterLink to="/kontribusi">Usulkan fasilitas</RouterLink>
                 <RouterLink to="/kontribusi?mode=koreksi">Laporkan koreksi</RouterLink>
+                <RouterLink to="/status">Cek status pengajuan</RouterLink>
             </div>
 
             <div v-if="user">

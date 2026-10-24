@@ -42,6 +42,7 @@ export const SUBMISSION_TYPES = {
 };
 
 export const SUBMISSION_STATUSES = {
+    queued: { label: 'Dalam antrean', glyph: '◷', pill: 'pill--pending' },
     menunggu: { label: 'Menunggu', glyph: '◐', pill: 'pill--pending' },
     disetujui: { label: 'Disetujui', glyph: '✓', pill: 'pill--ok' },
     ditolak: { label: 'Ditolak', glyph: '✕', pill: 'pill--no' },

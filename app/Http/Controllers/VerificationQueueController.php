@@ -118,7 +118,9 @@ class VerificationQueueController extends Controller
     {
         $builder = DB::table('submissions')
             ->select('public_id as ref', 'facility_name as name', 'status', 'created_at')
-            ->selectRaw('type as kind');
+            ->selectRaw('type as kind')
+            // `queued` belum masuk antrean: pengajuan tampil setelah jeda antreannya lewat.
+            ->where('status', '!=', 'queued');
 
         if ($bucket === 'dataset') {
             $builder->whereRaw('1 = 0');
@@ -210,7 +212,9 @@ class VerificationQueueController extends Controller
             ->where('source_ref_type', 'submission')
             ->count();
 
-        $submissionsOpen = Submission::whereNotIn('status', Submission::FINAL_STATUSES)->count();
+        $submissionsOpen = Submission::whereNotIn('status', Submission::FINAL_STATUSES)
+            ->where('status', '!=', 'queued')
+            ->count();
 
         return [
             'facilitiesTotal' => Facility::count(),
@@ -221,6 +225,7 @@ class VerificationQueueController extends Controller
             'datasetPending' => $datasetPending,
             'communityPending' => $communityPending,
             'submissionsOpen' => $submissionsOpen,
+            'submissionsQueued' => Submission::where('status', 'queued')->count(),
             'submissionsDecided' => Submission::whereIn('status', Submission::FINAL_STATUSES)->count(),
             'queueTotal' => $pending + $needsRepair + $submissionsOpen,
         ];

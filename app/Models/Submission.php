@@ -16,10 +16,13 @@ class Submission extends Model
 {
     public const TYPES = ['usulan', 'koreksi'];
 
-    public const STATUSES = ['menunggu', 'disetujui', 'perbaikan', 'ditolak'];
+    public const STATUSES = ['queued', 'menunggu', 'disetujui', 'perbaikan', 'ditolak'];
 
     /** Status akhir: keputusan tidak boleh diubah lagi. */
     public const FINAL_STATUSES = ['disetujui', 'ditolak'];
+
+    /** Status yang boleh diputuskan petugas: `queued` belum masuk meja verifikasi. */
+    public const DECIDABLE_STATUSES = ['menunggu', 'perbaikan'];
 
     /** Lima indikator aksesibilitas yang boleh diklaim pengaju atau dikoreksi. */
     public const ATTRIBUTES = ['ramp', 'toilet', 'lift', 'path', 'entrance'];
@@ -67,7 +70,7 @@ class Submission extends Model
 
     public function isDecidable(): bool
     {
-        return ! in_array($this->status, self::FINAL_STATUSES, true);
+        return in_array($this->status, self::DECIDABLE_STATUSES, true);
     }
 
     /** Bentuk data yang dibaca antrean verifikasi (`resources/js/composables/useVerification.js`). */

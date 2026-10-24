@@ -21,6 +21,12 @@ const routes = [
         component: () => import('../views/ContributionView.vue'),
         meta: { title: 'Kontribusi masyarakat' },
     },
+    {
+        path: '/status',
+        name: 'status',
+        component: () => import('../views/StatusView.vue'),
+        meta: { title: 'Status pengajuan' },
+    },
     // Area admin. `layout: 'admin'` memilih AdminLayout di App.vue; penegakan
     // aksesnya tetap di middleware `auth` routes/web.php (guard ini hanya UX).
     {

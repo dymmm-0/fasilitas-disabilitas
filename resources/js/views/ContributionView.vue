@@ -33,6 +33,8 @@ const onSubmitted = async (payload) => {
             label: SUBMISSION_TYPES[payload.type].label,
             name: submission.facilityName,
             submittedBy: submission.submittedBy,
+            status: submission.status,
+            email: payload.contact,
         };
     } catch (error) {
         // Pesan validasi pertama dari server, misalnya berkas terlalu besar.
@@ -94,15 +96,21 @@ const onSubmitted = async (payload) => {
                 <p class="label">Pengajuan terkirim</p>
                 <h2 class="display-md">{{ result.id }} masuk antrean verifikasi.</h2>
                 <div class="inline-actions">
-                    <StatusPill kind="submission" value="menunggu" />
+                    <StatusPill kind="submission" :value="result.status" />
                     <span class="meta">{{ result.label }} · {{ result.name }} · {{ result.submittedBy }}</span>
                 </div>
                 <p class="body-copy">
-                    Pengajuan sudah tercatat dengan status menunggu. Verifikator akan meninjau bukti dan koordinat;
-                    keputusan serta riwayatnya tersimpan di basis data.
+                    Pengajuan tersimpan di basis data dan masuk jeda antrean. Setelah diproses otomatis, statusnya
+                    berubah menjadi menunggu verifikasi dan muncul di meja petugas.
                 </p>
                 <div class="inline-actions">
-                    <RouterLink v-if="user" class="btn btn--primary" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
+                    <RouterLink
+                        class="btn btn--primary"
+                        :to="{ path: '/status', query: { email: result.email } }"
+                    >
+                        Cek status pengajuan
+                    </RouterLink>
+                    <RouterLink v-if="user" class="btn" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
                     <button type="button" class="btn" @click="result = null">Kirim pengajuan lain</button>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\QueueSubmission;
 use App\Models\Facility;
 use App\Models\Submission;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,12 @@ class SubmissionController extends Controller
 
     /** Batas ukuran bukti pendukung (KB). */
     private const MAX_PROOF_KB = 4096;
+
+    /** Jeda antrean: pengajuan baru masuk meja verifikasi setelah sekian detik. */
+    private const QUEUE_DELAY_SECONDS = 60;
+
+    /** Batas jumlah pengajuan yang ditampilkan halaman status guest. */
+    private const STATUS_LIMIT = 50;
 
     /** Pengajuan dari masyarakat. Terbuka untuk pengunjung tanpa akun. */
     public function store(Request $request): JsonResponse
@@ -58,6 +65,10 @@ class SubmissionController extends Controller
         }
 
         $data = $request->validate($rules);
+
+        // Surel adalah kunci identitas pengaju (guest tidak punya akun), jadi
+        // disimpan terormalisasi supaya pencarian status konsisten di MySQL dan SQLite.
+        $data['contact'] = mb_strtolower(trim($data['contact']));
 
         $facility = null;
         $payload = [
@@ -110,7 +121,7 @@ class SubmissionController extends Controller
                     'contact' => $data['contact'],
                     'summary' => $data['summary'] ?? null,
                     'payload' => $payload,
-                    'status' => 'menunggu',
+                    'status' => 'queued',
                 ]);
 
                 // Identifier publik dari primary key: tidak ada nilai yang bisa bentrok.
@@ -141,9 +152,61 @@ class SubmissionController extends Controller
             throw $error;
         }
 
+        // Dispatch setelah transaksi selesai: job tidak boleh berjalan sebelum
+        // barisnya benar-benar ada di basis data.
+        $readyAt = $submission->created_at->copy()->addSeconds(self::QUEUE_DELAY_SECONDS);
+        QueueSubmission::dispatch($submission)->delay($readyAt);
+
         return response()->json([
             'submission' => $submission->load(['facility', 'createdFacility', 'proofs'])->toPayload(),
+            'queue' => ['readyAt' => $readyAt->toIso8601String()],
         ], 201);
+    }
+
+    /**
+     * Status pengajuan untuk guest tanpa akun: dicari lewat surel pengaju, karena
+     * nama boleh sama antara dua orang. Hanya field non-sensitif yang dikembalikan —
+     * surel, isian mentah, ringkasan, bukti, dan identitas petugas tidak pernah ikut.
+     *
+     * shortcut: pencarian per surel, maksimal 50 pengajuan terbaru; tambah pagination
+     * bila volume pengajuan bertambah.
+     */
+    public function status(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'email' => ['required', 'email', 'max:190'],
+            'name' => ['nullable', 'string', 'max:120'],
+        ]);
+
+        $submissions = Submission::query()
+            ->with(['facility:id,external_id', 'createdFacility:id,external_id'])
+            ->whereRaw('LOWER(TRIM(contact)) = ?', [mb_strtolower(trim($data['email']))])
+            ->when(
+                filled($data['name'] ?? null),
+                fn ($builder) => $builder->whereRaw('LOWER(TRIM(submitted_by)) = ?', [mb_strtolower(trim($data['name']))]),
+            )
+            ->latest('id')
+            ->limit(self::STATUS_LIMIT)
+            ->get();
+
+        return response()->json([
+            'total' => $submissions->count(),
+            'submissions' => $submissions->map(fn (Submission $submission) => [
+                'id' => $submission->public_id,
+                'type' => $submission->type,
+                'facilityName' => $submission->facility_name,
+                'category' => $submission->category,
+                'city' => $submission->city,
+                'status' => $submission->status,
+                'submittedAt' => $submission->created_at?->toDateString(),
+                'decidedAt' => $submission->decided_at?->toIso8601String(),
+                'readyAt' => $submission->status === 'queued'
+                    ? $submission->created_at?->copy()->addSeconds(self::QUEUE_DELAY_SECONDS)->toIso8601String()
+                    : null,
+                'facilityId' => $submission->facility?->external_id,
+                'createdFacilityId' => $submission->createdFacility?->external_id,
+            ])->all(),
+        ]);
     }
 
     /** Keputusan verifikasi: setujui, minta perbaikan, atau tolak. */

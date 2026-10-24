@@ -104,6 +104,7 @@ petugas.
 | Daftar kartu | `/` | 40 kartu per tahap dengan tombol "Tampilkan lagi"; jalur alternatif keyboard/pembaca layar |
 | Detail fasilitas | `/fasilitas/:id` | 5 indikator, catatan sumber, koordinat, asal data, dan kelengkapan data |
 | Kontribusi masyarakat | `/kontribusi` | Usulan fasilitas baru atau koreksi data, divalidasi server dan disimpan ke tabel `submissions` |
+| Status pengajuan | `/status` | Guest memeriksa status usulan atau koreksi lewat surel pengaju, tanpa akun; field sensitif tidak ditampilkan |
 | Masuk admin | `/masuk` | Login sesi Laravel dengan proteksi CSRF dan pembatasan percobaan |
 | Dashboard verifikasi | `/verifikasi` | Antrean gabungan (fasilitas yang belum diperiksa + pengajuan warga) berhalaman dengan penyaring, detail + bukti, keputusan verifikasi, riwayat keputusan (perlu masuk) |
 | Dashboard administrasi | `/admin` | Statistik, tabel fasilitas berhalaman (5 atau 10 baris per halaman), kelengkapan data per kategori, jumlah per kategori, daftar akun (perlu masuk) |
@@ -121,6 +122,12 @@ petugas.
 - 📥 Kontribusi warga tersimpan di basis data: `POST /api/submissions` memvalidasi isian,
   memberi nomor `SUB-####`, dan menyimpannya ke tabel `submissions`. Bukti foto opsional
   diunggah ke storage privat (`submission_proofs`) dan hanya dapat dibuka petugas.
+- ⏳ Jeda antrean pengajuan: pengajuan baru disimpan berstatus `queued`, lalu job
+  `QueueSubmission` memindahkannya ke `menunggu` setelah jeda 60 detik. Selama `queued`,
+  pengajuan tidak muncul di meja verifikasi dan belum dapat diputuskan.
+- 🔎 Status pengajuan guest: `GET /api/submissions/status` mencari pengajuan lewat surel
+  pengaju (nama boleh sama antara dua orang), menampilkan status, waktu kirim, dan tautan
+  fasilitas yang terkait. Surel, isian mentah, ringkasan, dan bukti tidak pernah dikirim.
 - 🧾 Keputusan verifikasi nyata: `POST /api/submissions/{id}/decision` menyimpan status,
   catatan, identitas petugas, dan waktu; `POST /api/facilities/{id}/verification` menyimpan
   hasil pemeriksaan fasilitas. Keduanya mencatat riwayat di `verification_events`.
@@ -143,6 +150,8 @@ petugas.
   dipisahkan.
 - Pengajuan ulang yang terhubung ke pengajuan lama: pengaju tidak punya akun, jadi
   "minta perbaikan" tidak mengirim pemberitahuan dan pengajuan baru dibuat dari formulir.
+  Pengaju bisa memeriksa keputusan itu sendiri lewat `/status` (dicari dengan surel), tetapi
+  tidak ada notifikasi dan tidak ada keterkaitan ke pengajuan lama.
 - Pemeriksaan lapangan: menyetujui pengajuan tidak mengubah `verification_status`
   fasilitas menjadi `verified`. Fasilitas baru hasil usulan tetap `pending` sampai ada
   pemeriksaan, dan indikator yang tidak punya bukti tetap `unknown`.
@@ -182,7 +191,7 @@ berbahasa Indonesia**, padanan `yes`/`no`/`unknown` hanya untuk memudahkan pemba
 
 Status verifikasi tingkat fasilitas: `terverifikasi`, `menunggu`, `perlu-perbaikan`,
 dan `ditolak` (kolom `facilities.verification_status`; nilai database `pending`,
-`verified`, `needs_repair`, `rejected`). Status pengajuan: `menunggu`, `disetujui`,
+`verified`, `needs_repair`, `rejected`). Status pengajuan: `queued`, `menunggu`, `disetujui`,
 `ditolak`, `perbaikan`.
 Data yang tidak diperiksa lebih dari **180 hari** ditandai **Perlu diperbarui** pada tabel
 fasilitas di dashboard admin (`STALE_DAYS` di `meta.js`).
@@ -198,6 +207,7 @@ dan `NEEDS_VERIFICATION` di `meta.js`):
 | Belum diverifikasi / menunggu | `verification_status = pending` | `stats.facilitiesPending` |
 | Perlu perbaikan | `verification_status = needs_repair` | `stats.facilitiesNeedsRepair` |
 | Pengajuan belum diputuskan | `submissions.status` = `menunggu` atau `perbaikan` | `stats.submissionsOpen` |
+| Pengajuan dalam jeda antrean | `submissions.status = queued` — **tidak** tampil di antrean sampai job antrean memindahkannya | `stats.submissionsQueued` |
 | Terverifikasi | `verification_status = verified` — **tidak** dihitung sebagai antrean | `stats.facilitiesVerified` |
 | Ditolak | `verification_status = rejected` — baris fasilitas tetap tersimpan, hanya tampil pada penyaring "sudah diputuskan" | `stats.facilitiesRejected` |
 
@@ -283,9 +293,11 @@ fasilitas-disabilitas/
 ├── app/
 │   ├── Console/Commands/       # facilities:import (pembaca dataset + laporan)
 │   ├── Http/Controllers/       # AuthController (login/logout), FacilityController (API),
-│   │                           # SubmissionController (antrean + keputusan verifikasi)
+│   │                           # SubmissionController (antrean + keputusan verifikasi),
+│   │                           # VerificationQueueController (antrean gabungan)
+│   ├── Jobs/                   # QueueSubmission (jeda antrean pengajuan)
 │   └── Models/                 # Facility (peta status + toPayload), Submission,
-│                               # SubmissionProof, SubmissionEvent, User
+│                               # SubmissionProof, VerificationEvent, User
 ├── bootstrap/app.php           # Registrasi route web/api + redirect guest
 ├── config/                     # Konfigurasi Laravel
 ├── database/
@@ -303,7 +315,7 @@ fasilitas-disabilitas/
 │   │   ├── composables/        # useFacilities, useVerification, useSubmissions, useAuth, useToast
 │   │   ├── data/               # meta (label/glyph), facilities (helper kelengkapan)
 │   │   ├── router/index.js     # Rute SPA, judul halaman, penjaga rute admin
-│   │   ├── views/              # 8 halaman: beranda, detail, kontribusi, masuk,
+│   │   ├── views/              # 9 halaman: beranda, detail, kontribusi, status, masuk,
 │   │   │                       # verifikasi, admin, tentang, 404
 │   │   ├── App.vue             # Pemilih layout (meta.layout admin/publik) + host toast
 │   │   └── app.js              # Titik masuk Vue (memuat sesi lebih dulu)
@@ -360,7 +372,7 @@ lama yang diubah, hanya penambahan kolom dan penggantian nama tabel riwayat.
 
 | Tabel | Isi | Kolom penting |
 | --- | --- | --- |
-| `submissions` | Satu baris per pengajuan warga | `public_id` (`SUB-0001`, unik), `type` (`usulan`/`koreksi`), `facility_id` (untuk koreksi), `facility_name`, `category`, `city`, `submitted_by`, `contact`, `summary`, `payload` (JSON isian mentah), `status` (`menunggu`/`disetujui`/`perbaikan`/`ditolak`), `decided_by`, `decided_at`, `created_facility_id` |
+| `submissions` | Satu baris per pengajuan warga | `public_id` (`SUB-0001`, unik), `type` (`usulan`/`koreksi`), `facility_id` (untuk koreksi), `facility_name`, `category`, `city`, `submitted_by`, `contact`, `summary`, `payload` (JSON isian mentah), `status` (`queued`/`menunggu`/`disetujui`/`perbaikan`/`ditolak`), `decided_by`, `decided_at`, `created_facility_id` |
 | `submission_proofs` | Bukti foto pendukung, satu baris per berkas | `disk`, `path`, `original_name`, `mime`, `size` |
 | `verification_events` | Riwayat keputusan (jejak audit) untuk **pengajuan maupun fasilitas** | `submission_id` (nullable), `facility_id` (nullable), `status_from`, `status_to`, `note`, `actor` |
 
@@ -579,6 +591,7 @@ CSRF dikirim lewat cookie `XSRF-TOKEN`.
 | `GET /api/facilities` | — | Seluruh fasilitas (1.117 baris) untuk peta dan agregat dashboard |
 | `GET /api/facilities?page=1&per_page=10` | — | Satu halaman untuk tabel Pengelolaan fasilitas di `/admin` (maks. 100 baris per permintaan) |
 | `POST /api/submissions` | `throttle:10,1` | Pengajuan warga (usulan atau koreksi) beserta bukti foto opsional; terbuka untuk pengunjung tanpa akun |
+| `GET /api/submissions/status` | `throttle:10,1` | Status pengajuan warga dicari lewat surel pengaju (`?email=`, `?name=` opsional); terbuka tanpa akun, maks. 50 pengajuan terbaru |
 | `GET /api/verification-queue` | `auth` | Antrean verifikasi gabungan: `?bucket=perlu\|dataset\|usulan\|koreksi\|menunggu\|perbaikan\|selesai`, `?q=`, `?page=`, `?per_page=` (maks. 50). Mengembalikan `items`, `meta`, `stats`, dan `history` |
 | `POST /api/submissions/{id}/decision` | `auth` | Keputusan atas pengajuan (`disetujui`, `perbaikan`, `ditolak`); catatan wajib untuk minta perbaikan dan tolak |
 | `POST /api/facilities/{id}/verification` | `auth` | Keputusan atas fasilitas (`verified`, `needs_repair`, `rejected`); catatan wajib untuk minta perbaikan dan tolak |
@@ -587,6 +600,8 @@ CSRF dikirim lewat cookie `XSRF-TOKEN`.
 Aturan keputusan yang dijalankan server (bukan hanya tampilan):
 
 - Pengajuan yang sudah `disetujui` atau `ditolak` tidak dapat diputuskan lagi.
+- Pengajuan yang masih `queued` belum masuk antrean verifikasi dan tidak dapat diputuskan;
+  setelah jeda antrean lewat, statusnya `menunggu` dan baru muncul di meja petugas.
 - Fasilitas yang sudah `verified` tidak dapat ditandai terverifikasi dua kali (422).
 - Keputusan atas fasilitas menulis `verification_status`, `verified_at`, `verified_by`,
   `verification_method`, dan `verification_note`; kolom indikator aksesibilitas tidak
@@ -629,11 +644,13 @@ vendor/bin/pint
 npm run build
 ```
 
-Saat README ini ditulis, `php artisan test` menjalankan **39 tes dengan 317 asersi dan
+Saat README ini ditulis, `php artisan test` menjalankan **53 tes dengan 359 asersi dan
 lulus**: tiga tes shell/rute SPA (`AksesKitaTest`), lima tes impor dan bentuk payload
 API (`FacilityImportTest`), tujuh tes autentikasi (`AuthTest`), dua belas tes kontribusi
 dan keputusan pengajuan (`SubmissionTest`), sepuluh tes antrean verifikasi gabungan dan
-keputusan fasilitas (`VerificationQueueTest`), dan dua tes contoh bawaan Laravel.
+keputusan fasilitas (`VerificationQueueTest`), lima tes jeda antrean pengajuan
+(`QueueSubmissionTest`), sembilan tes status pengajuan guest (`SubmissionStatusTest`),
+dan dua tes contoh bawaan Laravel.
 Perintah `vendor/bin/pint --test` dan `npm run build` juga lulus.
 
 Yang belum ada: tes untuk komponen Vue, tes end-to-end, linter JavaScript, dan CI.
@@ -657,6 +674,8 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 - [x] Antrean verifikasi gabungan berhalaman: fasilitas dataset yang belum diperiksa + pengajuan warga, dengan penyaring, pencarian, dan statistik server
 - [x] Keputusan verifikasi tingkat fasilitas (`pending`/`verified`/`needs_repair`/`rejected`) tanpa mengubah indikator aksesibilitas
 - [x] Dashboard verifikasi dan administrasi yang membaca antrean, statistik, dan riwayat dari basis data
+- [x] Halaman status pengajuan guest (`/status`) dengan kunci surel pengaju, tanpa akun
+- [x] Jeda antrean pengajuan lewat job `QueueSubmission` (status `queued` → `menunggu`)
 - [x] Tata letak responsif dan status yang selalu disertai teks + glyph
 - [x] Shell SPA Laravel dengan rute history dan halaman 404
 

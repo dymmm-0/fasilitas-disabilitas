@@ -8,6 +8,7 @@ import { useAuth } from '../../composables/useAuth';
 const LINKS = [
     { to: '/', label: 'Beranda' },
     { to: '/kontribusi', label: 'Kontribusi' },
+    { to: '/status', label: 'Status' },
     { to: '/tentang', label: 'Tentang' },
 ];
 

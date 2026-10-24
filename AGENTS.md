@@ -23,6 +23,7 @@ AksesKita — Laravel 13 + Vue 3 SPA for mapping/verifying disability-friendly p
 - Design tokens and component classes live in `resources/css/app.css` (translated from `TemplateDesignWeb/design_handoff_atelier_tide/`). Tailwind 4 is still wired up, but the UI is class-based CSS — there is no `tailwind.config.js`.
 - Fonts (Syne, Inter, DM Mono) are downloaded at build time by `bunny()` in `vite.config.js` and injected through `{{ Vite::fonts() }}` in the Blade shell — a build without network fails.
 - `TemplateDesignWeb/` is the original design reference. Do not delete or edit it; adapt from it.
+- Guest submission status lives at `/status` (`StatusView.vue`). The public `GET /api/submissions/status` looks up by email (`submissions.contact`, stored lowercased) because names may repeat; keep its response whitelist free of `contact`, `payload`, `summary`, and proofs.
 
 ## Gotchas
 
@@ -32,4 +33,5 @@ AksesKita — Laravel 13 + Vue 3 SPA for mapping/verifying disability-friendly p
 - Submissions: `POST /api/submissions` is public (`throttle:10,1`) and lives in `routes/web.php` so guest browsers still get the session + CSRF cookie; the queue, the decision endpoints, and the proof route are behind `auth`. Proof files sit on the private `local` disk (`storage/app/private/submission-proofs`), never under `public/`.
 - Facility verification: the audit on 2026-10-22 found all 1.117 rows `pending` with `verified_at`/`verification_method`/`evidence_url` empty, so `pending` genuinely means "never checked". Do not add a migration that mass-updates those statuses, and do not treat name/category/address completeness as evidence of verification.
 - `verification_events` holds one row per decision for either subject (`submission_id` or `facility_id`, both nullable); the old table name was `submission_events`.
+- New submissions are saved as `queued` and leave the queue only when the `QueueSubmission` job runs (`SubmissionController::QUEUE_DELAY_SECONDS`, 60s). `queued` must stay excluded from `VerificationQueueController` and from `Submission::DECIDABLE_STATUSES`. Without a running worker (`queue:listen`, included in `composer run dev`) nothing leaves `queued`; the job's `failed()` releases the row to `menunggu` instead.
 - No CI, static analysis, or JS test runner. `php artisan test`, `vendor/bin/pint --test`, and a successful `npm run build` are the only checks.

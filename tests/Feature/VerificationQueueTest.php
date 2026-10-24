@@ -53,6 +53,17 @@ class VerificationQueueTest extends TestCase
         ]);
     }
 
+    /**
+     * Menjalankan job jeda antrean yang sudah jatuh tempo, supaya pengajuan berstatus
+     * `menunggu` dan terlihat di antrean verifikasi seperti perilaku sebelum antrean.
+     */
+    private function drainQueue(): void
+    {
+        $this->travel(61)->seconds();
+        $this->artisan('queue:work', ['--once' => true]);
+        $this->travelBack();
+    }
+
     private function koreksi(Facility $facility, string $field, string $to, string $by = 'Budi'): void
     {
         $this->postJson('/api/submissions', [
@@ -66,6 +77,8 @@ class VerificationQueueTest extends TestCase
             'submitted_by' => $by,
             'contact' => 'budi@contoh.test',
         ])->assertCreated();
+
+        $this->drainQueue();
     }
 
     /** @return array<int, array<string, mixed>> */
@@ -140,6 +153,8 @@ class VerificationQueueTest extends TestCase
                 'ramp' => 'tersedia', 'toilet' => 'belum', 'lift' => 'belum', 'path' => 'tidak', 'entrance' => 'tersedia',
             ],
         ])->assertCreated();
+
+        $this->drainQueue();
 
         $dataset = $this->queue(['bucket' => 'dataset']);
         $this->assertSame(['fasilitas'], array_column($dataset['items'], 'kind'));

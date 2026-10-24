@@ -49,6 +49,17 @@ class SubmissionTest extends TestCase
         ]);
     }
 
+    /**
+     * Menjalankan job jeda antrean yang sudah jatuh tempo, supaya pengajuan berstatus
+     * `menunggu` dan bisa diuji seperti perilaku sebelum antrean ada.
+     */
+    private function drainQueue(): void
+    {
+        $this->travel(61)->seconds();
+        $this->artisan('queue:work', ['--once' => true]);
+        $this->travelBack();
+    }
+
     private function usulan(array $overrides = []): array
     {
         return $overrides + [
@@ -79,9 +90,11 @@ class SubmissionTest extends TestCase
 
         $response->assertCreated()
             ->assertJsonPath('submission.id', 'SUB-0001')
-            ->assertJsonPath('submission.status', 'menunggu')
+            ->assertJsonPath('submission.status', 'queued')
             ->assertJsonPath('submission.payload.accessibility.toilet', 'belum')
             ->assertJsonPath('submission.createdFacilityId', null);
+
+        $this->drainQueue();
 
         $this->assertDatabaseCount('submissions', 1);
         $this->assertDatabaseCount('verification_events', 0);
@@ -146,6 +159,8 @@ class SubmissionTest extends TestCase
         $this->facility();
         $this->postJson('/api/submissions', $this->usulan())->assertCreated();
 
+        $this->drainQueue();
+
         $this->getJson('/api/verification-queue')->assertUnauthorized();
         $this->postJson('/api/submissions/SUB-0001/decision', ['action' => 'disetujui'])->assertUnauthorized();
 
@@ -156,6 +171,8 @@ class SubmissionTest extends TestCase
     {
         $this->facility();
         $this->postJson('/api/submissions', $this->usulan())->assertCreated();
+
+        $this->drainQueue();
 
         $admin = $this->admin();
 
@@ -211,6 +228,8 @@ class SubmissionTest extends TestCase
         $this->facility();
         $this->postJson('/api/submissions', $this->usulan())->assertCreated();
 
+        $this->drainQueue();
+
         $admin = $this->admin();
 
         $this->actingAs($admin)
@@ -239,6 +258,8 @@ class SubmissionTest extends TestCase
     {
         $this->facility();
         $this->postJson('/api/submissions', $this->usulan())->assertCreated();
+
+        $this->drainQueue();
 
         $this->actingAs($this->admin())
             ->postJson('/api/submissions/SUB-0001/decision', [
@@ -269,6 +290,8 @@ class SubmissionTest extends TestCase
             'summary' => 'Toilet aksesibel sudah dipasang.',
         ])->assertCreated()->assertJsonPath('submission.payload.from', 'belum');
 
+        $this->drainQueue();
+
         $this->actingAs($this->admin())
             ->postJson('/api/submissions/SUB-0001/decision', ['action' => 'disetujui'])
             ->assertOk();
@@ -294,6 +317,8 @@ class SubmissionTest extends TestCase
             'contact' => 'budi@contoh.test',
         ])->assertCreated();
 
+        $this->drainQueue();
+
         $this->actingAs($this->admin())
             ->postJson('/api/submissions/SUB-0001/decision', ['action' => 'ditolak', 'note' => 'Bukti tidak jelas.'])
             ->assertOk();
@@ -306,6 +331,8 @@ class SubmissionTest extends TestCase
     {
         $this->facility();
         $this->postJson('/api/submissions', $this->usulan())->assertCreated();
+
+        $this->drainQueue();
 
         $admin = $this->admin();
 
