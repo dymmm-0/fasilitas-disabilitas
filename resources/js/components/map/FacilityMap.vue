@@ -10,6 +10,7 @@ const props = defineProps({
     mode: { type: String, default: 'view' },
     center: { type: Array, default: () => [-6.2, 106.82] },
     zoom: { type: Number, default: 11 },
+    accuracy: { type: Number, default: null },
     label: { type: String, default: 'Peta fasilitas publik ramah disabilitas' },
 });
 
@@ -19,6 +20,7 @@ const container = ref(null);
 let map = null;
 let layer = null;
 let pickMarker = null;
+let accuracyCircle = null;
 
 const pinIcon = (facility, selected) => {
     const classes = ['map-pin'];
@@ -33,8 +35,8 @@ const pinIcon = (facility, selected) => {
     });
 };
 
-const label = (facility) =>
-    `${facility.name}. Kategori ${categoryLabel(facility.category)}. Status ${VERIFICATION[facility.verification].label}.`;
+const facilityLabel = (facility) =>
+    `${facility.name}. Kategori ${categoryLabel(facility.category)}. Status ${VERIFICATION[facility.verification].label}`;
 
 const render = (fit = true) => {
     if (!map) return;
@@ -45,7 +47,7 @@ const render = (fit = true) => {
         const marker = L.marker([facility.lat, facility.lng], {
             icon: pinIcon(facility, facility.id === props.selectedId),
             title: facility.name,
-            alt: label(facility),
+            alt: facilityLabel(facility),
         });
 
         marker.bindTooltip(facility.name, { direction: 'top', offset: [0, -14] });
@@ -56,7 +58,7 @@ const render = (fit = true) => {
 
             element.setAttribute('tabindex', '0');
             element.setAttribute('role', 'button');
-            element.setAttribute('aria-label', label(facility));
+            element.setAttribute('aria-label', facilityLabel(facility));
             element.addEventListener('focus', () => emit('select', facility.id));
             element.addEventListener('click', () => emit('select', facility.id));
             element.addEventListener('keydown', (event) => {
@@ -83,6 +85,33 @@ const drawPickMarker = () => {
     pickMarker = L.marker(props.center, {
         icon: pinIcon({ category: 'transportasi', verification: 'menunggu' }, true),
     }).addTo(map);
+
+    accuracyCircle?.remove();
+    accuracyCircle = Number.isFinite(props.accuracy) && props.accuracy > 0
+        ? L.circle(props.center, {
+            radius: props.accuracy,
+            color: '#a8542a',
+            fillColor: '#a8542a',
+            fillOpacity: 0.12,
+            weight: 1,
+        }).addTo(map)
+        : null;
+};
+
+const fitPickerView = () => {
+    if (!map) return;
+
+    if (accuracyCircle) {
+        map.fitBounds(accuracyCircle.getBounds(), { padding: [40, 40], maxZoom: 17 });
+        return;
+    }
+
+    map.setView(props.center, 16);
+};
+
+const drawPickerLocation = () => {
+    drawPickMarker();
+    fitPickerView();
 };
 
 onMounted(() => {
@@ -112,17 +141,18 @@ watch(
 
 // Marker sementara pada mode pemilihan koordinat.
 watch(
-    () => props.center,
-    ([lat, lng]) => {
+    [() => props.center, () => props.accuracy],
+    () => {
         if (props.mode !== 'pick' || !map) return;
 
-        drawPickMarker();
-        map.setView([lat, lng]);
+        drawPickerLocation();
     },
     { deep: true },
 );
 
 onBeforeUnmount(() => {
+    accuracyCircle?.remove();
+    accuracyCircle = null;
     map?.remove();
     map = null;
 });

@@ -1,20 +1,109 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import FacilityMap from './FacilityMap.vue';
+
+const ACCURACY_WARNING_METERS = 100;
+const DEFAULT_CENTER = [-6.1944, 106.8229];
 
 const props = defineProps({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true },
+    coordinateError: { type: String, default: '' },
 });
 
 const emit = defineEmits(['update:lat', 'update:lng']);
 
-const center = computed(() => [props.lat, props.lng]);
+const locating = ref(false);
+const locationError = ref('');
+const locationStatus = ref('');
+const accuracy = ref(null);
+let mounted = true;
 
-const pick = ({ lat, lng }) => {
+const center = computed(() => [
+    Number.isFinite(props.lat) ? props.lat : DEFAULT_CENTER[0],
+    Number.isFinite(props.lng) ? props.lng : DEFAULT_CENTER[1],
+]);
+
+const pick = ({ lat, lng }, keepAccuracy = false) => {
+    if (!keepAccuracy) accuracy.value = null;
     emit('update:lat', Number(lat.toFixed(5)));
     emit('update:lng', Number(lng.toFixed(5)));
 };
+
+const updateManualCoordinate = (key, value) => {
+    accuracy.value = null;
+    emit(`update:${key}`, value.trim() === '' ? NaN : Number(value));
+};
+
+const locationErrorMessage = (error) => {
+    if (error.code === 1) {
+        return 'Izin lokasi ditolak. Aktifkan izin lokasi untuk situs ini melalui pengaturan browser jika ingin mencoba lagi.';
+    }
+
+    if (error.code === 2) {
+        return 'Lokasi tidak dapat ditemukan. Periksa GPS, sinyal, atau izin lokasi perangkat.';
+    }
+
+    if (error.code === 3) {
+        return 'Waktu pencarian lokasi habis. Coba lagi atau pilih titik secara manual di peta.';
+    }
+
+    return 'Lokasi tidak dapat diambil. Pilih titik secara manual di peta atau coba lagi.';
+};
+
+const useMyLocation = () => {
+    locationError.value = '';
+    locationStatus.value = '';
+
+    if (!window.isSecureContext) {
+        locationError.value = 'Pengambilan lokasi membutuhkan koneksi aman (HTTPS atau localhost). Pilih titik secara manual di peta.';
+        return;
+    }
+
+    if (!('geolocation' in navigator)) {
+        locationError.value = 'Browser ini tidak mendukung pengambilan lokasi. Pilih titik secara manual di peta.';
+        return;
+    }
+
+    locating.value = true;
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            if (!mounted) return;
+
+            const { latitude, longitude, accuracy: accuracyMeters } = position.coords;
+            if (
+                !Number.isFinite(latitude)
+                || !Number.isFinite(longitude)
+                || latitude < -90
+                || latitude > 90
+                || longitude < -180
+                || longitude > 180
+            ) {
+                locating.value = false;
+                locationError.value = 'Koordinat lokasi tidak valid. Pilih titik secara manual di peta.';
+                return;
+            }
+
+            accuracy.value = Number.isFinite(accuracyMeters) && accuracyMeters > 0 ? accuracyMeters : null;
+            pick({ lat: latitude, lng: longitude }, true);
+            locating.value = false;
+            locationStatus.value = Number.isFinite(accuracyMeters) && accuracyMeters > ACCURACY_WARNING_METERS
+                ? `Lokasi ditemukan. Akurasi sekitar ${Math.round(accuracyMeters)} meter; pastikan titik fasilitas sudah benar.`
+                : 'Lokasi ditemukan. Pastikan titik ini benar-benar lokasi fasilitas yang dilaporkan.';
+        },
+        (error) => {
+            if (!mounted) return;
+
+            locating.value = false;
+            locationError.value = locationErrorMessage(error);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
+};
+
+onBeforeUnmount(() => {
+    mounted = false;
+});
 </script>
 
 <template>
@@ -24,6 +113,7 @@ const pick = ({ lat, lng }) => {
             :facilities="[]"
             :center="center"
             :zoom="14"
+            :accuracy="accuracy"
             label="Peta pemilihan koordinat. Klik untuk menandai lokasi fasilitas."
             @pick="pick"
         />
@@ -35,9 +125,13 @@ const pick = ({ lat, lng }) => {
                     id="koordinat-lat"
                     class="input"
                     type="number"
+                    min="-90"
+                    max="90"
                     step="0.00001"
-                    :value="lat"
-                    @input="emit('update:lat', Number($event.target.value))"
+                    :aria-invalid="Boolean(coordinateError)"
+                    :aria-describedby="coordinateError ? 'koordinat-error' : 'koordinat-help'"
+                    :value="Number.isFinite(lat) ? lat : ''"
+                    @input="updateManualCoordinate('lat', $event.target.value)"
                 >
             </div>
             <div class="field">
@@ -46,12 +140,31 @@ const pick = ({ lat, lng }) => {
                     id="koordinat-lng"
                     class="input"
                     type="number"
+                    min="-180"
+                    max="180"
                     step="0.00001"
-                    :value="lng"
-                    @input="emit('update:lng', Number($event.target.value))"
+                    :aria-invalid="Boolean(coordinateError)"
+                    :aria-describedby="coordinateError ? 'koordinat-error' : 'koordinat-help'"
+                    :value="Number.isFinite(lng) ? lng : ''"
+                    @input="updateManualCoordinate('lng', $event.target.value)"
                 >
             </div>
         </div>
-        <p class="help">Klik pada peta atau isi koordinat secara manual.</p>
+
+        <div class="inline-actions">
+            <button
+                type="button"
+                class="btn"
+                :disabled="locating"
+                :aria-busy="locating"
+                @click="useMyLocation"
+            >
+                {{ locating ? 'Mencari lokasi…' : 'Gunakan Lokasi Saya' }}
+            </button>
+            <span class="help">Lokasi hanya diambil setelah tombol ditekan dan dikirim saat formulir dikirim.</span>
+        </div>
+        <p v-if="locationStatus" class="help" role="status" aria-live="polite">{{ locationStatus }}</p>
+        <p v-if="locationError" class="error-text" role="alert">{{ locationError }}</p>
+        <p id="koordinat-help" class="help">Klik pada peta atau isi koordinat secara manual. Koordinat dikirim hanya sebagai lokasi fasilitas saat formulir dikirim.</p>
     </div>
 </template>

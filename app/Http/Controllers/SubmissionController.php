@@ -328,8 +328,15 @@ class SubmissionController extends Controller
                 && isset(Submission::AVAILABILITY_TO_DB[$submission->payload['to'] ?? null]);
         }
 
-        return is_numeric($submission->payload['lat'] ?? null)
-            && is_numeric($submission->payload['lng'] ?? null);
+        $latitude = $submission->payload['lat'] ?? null;
+        $longitude = $submission->payload['lng'] ?? null;
+
+        return is_numeric($latitude)
+            && is_numeric($longitude)
+            && (float) $latitude >= -90
+            && (float) $latitude <= 90
+            && (float) $longitude >= -180
+            && (float) $longitude <= 180;
     }
 
     /** Kiriman identik berulang (klik ganda atau percobaan ulang) ditolak. */

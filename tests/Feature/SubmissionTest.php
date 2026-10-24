@@ -390,4 +390,25 @@ class SubmissionTest extends TestCase
 
         $this->assertDatabaseCount('submissions', 0);
     }
+
+    public function test_koordinat_usulan_harus_berada_dalam_rentang_geografis(): void
+    {
+        $this->postJson('/api/submissions', $this->usulan([
+            'submitted_by' => 'Latitude Salah',
+            'contact' => 'latitude@contoh.test',
+            'latitude' => 90.00001,
+        ]))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('latitude');
+
+        $this->postJson('/api/submissions', $this->usulan([
+            'submitted_by' => 'Longitude Salah',
+            'contact' => 'longitude@contoh.test',
+            'longitude' => -180.00001,
+        ]))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('longitude');
+
+        $this->assertDatabaseCount('submissions', 0);
+    }
 }

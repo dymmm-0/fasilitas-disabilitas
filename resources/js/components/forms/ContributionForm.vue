@@ -16,8 +16,8 @@ const form = reactive({
     category: 'transportasi',
     address: '',
     city: '',
-    lat: -6.1944,
-    lng: 106.8229,
+    lat: 3.595,
+    lng: 98.672,
     notes: '',
     accessibility: Object.fromEntries(ATTRIBUTES.map((a) => [a.id, 'belum'])),
     submitter: '',
@@ -43,7 +43,16 @@ const validate = () => {
     if (!form.city.trim()) errors.city = 'Kota wajib diisi.';
     if (!form.submitter.trim()) errors.submitter = 'Nama pengusul wajib diisi.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Alamat surel tidak valid.';
-    if (!Number.isFinite(form.lat) || !Number.isFinite(form.lng)) errors.lat = 'Koordinat wajib diisi.';
+    if (
+        !Number.isFinite(form.lat)
+        || !Number.isFinite(form.lng)
+        || form.lat < -90
+        || form.lat > 90
+        || form.lng < -180
+        || form.lng > 180
+    ) {
+        errors.lat = 'Latitude harus -90 sampai 90 dan longitude -180 sampai 180.';
+    }
 
     return Object.keys(errors).length === 0;
 };
@@ -120,8 +129,12 @@ const submit = () => {
 
         <fieldset>
             <legend class="fieldset__legend">Koordinat lokasi</legend>
-            <LocationPicker v-model:lat="form.lat" v-model:lng="form.lng" />
-            <p v-if="errors.lat" class="error-text" role="alert">{{ errors.lat }}</p>
+            <LocationPicker
+                v-model:lat="form.lat"
+                v-model:lng="form.lng"
+                :coordinate-error="errors.lat"
+            />
+            <p v-if="errors.lat" id="koordinat-error" class="error-text" role="alert">{{ errors.lat }}</p>
         </fieldset>
 
         <fieldset>
