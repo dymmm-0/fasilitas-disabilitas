@@ -1,11 +1,30 @@
 <script setup>
-import { reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
 const { login } = useAuth();
 const router = useRouter();
 const route = useRoute();
+
+const section = ref(null);
+let footer = null;
+
+onMounted(() => {
+    footer = document.querySelector('.site-footer');
+
+    if (footer) footer.style.display = 'none';
+
+    const header = document.querySelector('.site-header');
+
+    if (header && section.value) {
+        section.value.style.minHeight = `calc(100svh - ${header.offsetHeight}px)`;
+    }
+});
+
+onBeforeUnmount(() => {
+    if (footer) footer.style.display = '';
+});
 
 const form = reactive({ email: '', password: '' });
 const error = ref('');
@@ -31,13 +50,12 @@ const submit = async () => {
 </script>
 
 <template>
-    <section class="container section">
+    <section ref="section" class="container section">
         <div class="panel stack" style="max-width: 420px; margin: 0 auto">
             <p class="label">Akun admin - Robert</p>
             <h1 class="display-md">Masuk untuk <em>mengelola data.</em></h1>
             <p class="body-copy">
-                Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar — cukup isi nama pada formulir
-                kontribusi.
+                Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar 
             </p>
 
             <form class="stack" novalidate @submit.prevent="submit">
@@ -81,3 +99,25 @@ const submit = async () => {
         </div>
     </section>
 </template>
+
+<style scoped>
+/* Halaman masuk dipadatkan agar muat dalam satu layar tanpa gulir. */
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: none;
+    padding-block: clamp(20px, 4vh, 48px);
+    min-height: calc(100vh - 58px);
+    min-height: calc(100svh - 58px);
+}
+
+.panel {
+    width: 100%;
+    padding: clamp(20px, 3vh, 28px);
+}
+
+.stack {
+    gap: clamp(14px, 1.8vh, 22px);
+}
+</style>
