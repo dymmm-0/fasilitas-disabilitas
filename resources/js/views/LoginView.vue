@@ -9,21 +9,21 @@ const route = useRoute();
 
 const section = ref(null);
 let footer = null;
+let header = null;
 
 onMounted(() => {
     footer = document.querySelector('.site-footer');
+    header = document.querySelector('.site-header');
 
     if (footer) footer.style.display = 'none';
+    if (header) header.style.display = 'none';
 
-    const header = document.querySelector('.site-header');
-
-    if (header && section.value) {
-        section.value.style.minHeight = `calc(100svh - ${header.offsetHeight}px)`;
-    }
+    if (section.value) section.value.style.minHeight = '100svh';
 });
 
 onBeforeUnmount(() => {
     if (footer) footer.style.display = '';
+    if (header) header.style.display = '';
 });
 
 const form = reactive({ email: '', password: '' });
@@ -52,38 +52,24 @@ const submit = async () => {
 <template>
     <section ref="section" class="container section">
         <div class="panel stack" style="max-width: 420px; margin: 0 auto">
-            <p class="label">Akun admin - Robert</p>
+            <p class="label">Akun admin</p>
             <h1 class="display-md">Masuk untuk <em>mengelola data.</em></h1>
             <p class="body-copy">
-                Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar 
+                Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar
             </p>
 
             <form class="stack" novalidate @submit.prevent="submit">
                 <div class="field">
                     <label for="masuk-surel">Surel</label>
-                    <input
-                        id="masuk-surel"
-                        v-model="form.email"
-                        class="input"
-                        type="email"
-                        autocomplete="username"
-                        required
-                        :aria-invalid="Boolean(error)"
-                    >
+                    <input id="masuk-surel" v-model="form.email" class="input" type="email" autocomplete="username"
+                        required :aria-invalid="Boolean(error)">
                 </div>
 
                 <div class="field">
                     <label for="masuk-sandi">Kata sandi</label>
-                    <input
-                        id="masuk-sandi"
-                        v-model="form.password"
-                        class="input"
-                        type="password"
-                        autocomplete="current-password"
-                        required
-                        :aria-invalid="Boolean(error)"
-                        :aria-describedby="error ? 'masuk-error' : undefined"
-                    >
+                    <input id="masuk-sandi" v-model="form.password" class="input" type="password"
+                        autocomplete="current-password" required :aria-invalid="Boolean(error)"
+                        :aria-describedby="error ? 'masuk-error' : undefined">
                 </div>
 
                 <p v-if="error" id="masuk-error" class="error-text" role="alert">{{ error }}</p>
@@ -108,8 +94,8 @@ const submit = async () => {
     justify-content: center;
     border-top: none;
     padding-block: clamp(20px, 4vh, 48px);
-    min-height: calc(100vh - 58px);
-    min-height: calc(100svh - 58px);
+    min-height: 100vh;
+    min-height: 100svh;
 }
 
 .panel {
