@@ -110,20 +110,20 @@ class FacilityImportTest extends TestCase
         $this->assertSame('Hasil survei lapangan.', $verified->notes);
     }
 
-    public function test_dataset_berkas_penuh_melaporkan_kategori_belum_dipetakan(): void
+    public function test_dataset_berkas_penuh_memakai_kategori_baru_tanpa_baris_gagal(): void
     {
-        // Tempat ibadah sudah punya kategori aplikasi; bank dan jasa kurir belum.
         $this->artisan('facilities:import', ['file' => 'Dataset/akseskita_facilities_medan.csv'])
-            ->expectsOutputToContain('kategori belum ada di aplikasi: other_public_facility/bank')
-            ->assertExitCode(1);
+            ->assertExitCode(0);
 
-        $this->assertSame(1098, Facility::count());
+        $this->assertSame(1104, Facility::count());
         $this->assertSame(2, Facility::where('category', 'ibadah')->count());
         $this->assertSame(10, Facility::where('category', 'olahraga')->count());
+        $this->assertSame(1, Facility::where('category', 'perbankan')->count());
+        $this->assertSame(11, Facility::where('category', 'pengiriman')->count());
         $this->assertSame(0, Facility::where('verification_status', '!=', 'pending')->count());
         $this->assertSame(8, Facility::where('path_status', 'yes')->count());
         $this->assertSame(4, Facility::where('path_status', 'no')->count());
-        $this->assertDatabaseMissing('facilities', ['external_id' => 'AKS-1097']);
+        $this->assertSame('perbankan', Facility::firstWhere('external_id', 'AKS-1097')->category);
     }
 
     public function test_sinkronisasi_mempertahankan_source_id_dan_mengabaikan_id_csv(): void
@@ -152,7 +152,7 @@ class FacilityImportTest extends TestCase
     {
         $this->artisan('facilities:import', ['file' => self::FIXTURE]);
 
-        // Bank belum punya kategori aplikasi; hotel di baris lain tetap harus tersinkron.
+        // Detail tanpa kategori aplikasi; hotel di baris lain tetap harus tersinkron.
         $csv = str_replace(
             ['health_hospital', 'hotel_accommodation'],
             ['other_public_facility', 'other_public_facility'],
@@ -162,7 +162,7 @@ class FacilityImportTest extends TestCase
         $this->assertSame(6, $replacements);
         $csv = str_replace(
             ['other_public_facility,hospital', 'other_public_facility,tourism_hotel'],
-            ['other_public_facility,bank', 'other_public_facility,place_of_worship'],
+            ['other_public_facility,community_centre', 'other_public_facility,place_of_worship'],
             $csv,
         );
 
@@ -172,7 +172,7 @@ class FacilityImportTest extends TestCase
 
         try {
             $this->artisan('facilities:import', ['file' => $path, '--sync' => true])
-                ->expectsOutputToContain('other_public_facility/bank')
+                ->expectsOutputToContain('other_public_facility/community_centre')
                 ->assertExitCode(0);
         } finally {
             unlink($path);

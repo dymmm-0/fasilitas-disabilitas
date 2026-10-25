@@ -35,8 +35,18 @@ class Facility extends Model
      * Detail di luar daftar ini belum punya kategori aplikasi yang benar — jangan dipaksa.
      */
     public const CATEGORY_DETAIL_MAP = [
-        'other_public_facility' => ['place_of_worship' => 'ibadah'],
-        'park_tourism_public_space' => ['sports_centre' => 'olahraga', 'stadium' => 'olahraga'],
+        'other_public_facility' => [
+            'place_of_worship' => 'ibadah',
+            'bank' => 'perbankan',
+            'courier_service' => 'pengiriman',
+        ],
+        'park_tourism_public_space' => [
+            'sports_centre' => 'olahraga',
+            'stadium' => 'olahraga',
+            // OSM pernah menandai bank sebagai ruang publik; bank bukan rekreasi.
+            'bank' => 'perbankan',
+        ],
+        'government_public_service' => ['post_office' => 'pengiriman'],
     ];
 
     /** Kategori aplikasi untuk satu baris dataset; detail menang atas kategori kasar. */
@@ -50,7 +60,7 @@ class Facility extends Model
     /** Kategori yang boleh dipilih pengaju (sama dengan `resources/js/data/meta.js`). */
     public const CATEGORIES = [
         'transportasi', 'kesehatan', 'pendidikan', 'pemerintahan', 'perbelanjaan',
-        'penginapan', 'rekreasi', 'ibadah', 'olahraga',
+        'penginapan', 'rekreasi', 'ibadah', 'olahraga', 'perbankan', 'pengiriman',
     ];
 
     /** Indikator aksesibilitas → kolom status dan kolom keterangan. */

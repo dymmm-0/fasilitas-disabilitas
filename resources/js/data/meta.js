@@ -13,6 +13,8 @@ export const CATEGORIES = [
     { id: 'rekreasi', label: 'Rekreasi', glyph: 'RK' },
     { id: 'ibadah', label: 'Ibadah', glyph: 'IB' },
     { id: 'olahraga', label: 'Olahraga', glyph: 'OL' },
+    { id: 'perbankan', label: 'Perbankan & Keuangan', glyph: 'BK' },
+    { id: 'pengiriman', label: 'Jasa Pengiriman', glyph: 'JP' },
 ];
 
 export const ATTRIBUTES = [
