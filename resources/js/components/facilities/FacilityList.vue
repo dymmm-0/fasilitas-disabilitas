@@ -23,7 +23,7 @@ watch(() => props.facilities, () => {
 </script>
 
 <template>
-    <ul v-if="shown.length" class="list-scroll" style="list-style: none">
+    <ul v-if="shown.length" class="list-scroll list-scroll--facilities" style="list-style: none">
         <li v-for="facility in shown" :key="facility.id">
             <FacilityCard
                 :facility="facility"

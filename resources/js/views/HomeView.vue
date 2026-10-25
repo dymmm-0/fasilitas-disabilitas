@@ -1,14 +1,18 @@
 <script setup>
 import { computed } from 'vue';
+import { categoryLabel, formatDate } from '../data/meta';
 import { useFacilities } from '../composables/useFacilities';
+import AccessibilityPanel from '../components/facilities/AccessibilityPanel.vue';
 import FacilityFilters from '../components/facilities/FacilityFilters.vue';
 import FacilityList from '../components/facilities/FacilityList.vue';
 import FacilityMap from '../components/map/FacilityMap.vue';
 import MapLegend from '../components/map/MapLegend.vue';
+import StatusPill from '../components/common/StatusPill.vue';
 import Reveal from '../components/common/Reveal.vue';
 
 const { filters, facilities, results, selectedId, select, status, loadError } = useFacilities();
 
+const selectedFacility = computed(() => results.value.find((facility) => facility.id === selectedId.value) ?? null);
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size);
 </script>
@@ -91,6 +95,22 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                     <div v-if="status === 'gagal'" class="notice" role="alert">
                         <b>Gagal memuat data</b>
                         <span>Server tidak mengirim daftar fasilitas ({{ loadError }}). Muat ulang halaman untuk mencoba lagi.</span>
+                    </div>
+                    <div v-if="selectedFacility" class="panel stack--sm" aria-live="polite">
+                        <div class="cluster cluster--between">
+                            <div>
+                                <p class="label">Fasilitas terpilih</p>
+                                <h3 class="card__title card__title--sm">{{ selectedFacility.name }}</h3>
+                                <p class="help">{{ categoryLabel(selectedFacility.category) }} · {{ selectedFacility.city }}</p>
+                            </div>
+                            <StatusPill kind="verification" :value="selectedFacility.verification" />
+                        </div>
+                        <p class="card__text">{{ selectedFacility.address || 'Alamat belum tersedia.' }}</p>
+                        <AccessibilityPanel :facility="selectedFacility" />
+                        <div class="inline-actions">
+                            <RouterLink class="btn btn--sm" :to="`/fasilitas/${selectedFacility.id}`">Buka detail lengkap</RouterLink>
+                            <span class="meta">Diperbarui {{ formatDate(selectedFacility.updatedAt) }}</span>
+                        </div>
                     </div>
                     <FacilityList :facilities="results" :selected-id="selectedId" @select="select" />
                 </div>

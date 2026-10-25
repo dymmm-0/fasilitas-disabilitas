@@ -20,6 +20,76 @@ const container = ref(null);
 let map = null;
 let layer = null;
 let pickMarker = null;
+const markers = new Map();
+const markerElements = new Map();
+
+const applyMarkerElement = (marker, facility) => {
+    const element = marker.getElement();
+    if (!element) return;
+
+    element.setAttribute('tabindex', '0');
+    element.setAttribute('role', 'button');
+    element.setAttribute('aria-label', facilityLabel(facility));
+    if (markerElements.get(facility.id) === element) return;
+
+    element.addEventListener('focus', () => emit('select', facility.id));
+    element.addEventListener('click', () => emit('select', facility.id));
+    element.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            emit('select', facility.id);
+        }
+    });
+    markerElements.set(facility.id, element);
+};
+
+const markerHandlers = (marker, facility) => {
+    marker.on('add', () => applyMarkerElement(marker, facility));
+};
+
+const createMarker = (facility) => {
+    const marker = L.marker([facility.lat, facility.lng], {
+        icon: pinIcon(facility, facility.id === props.selectedId),
+        title: facility.name,
+        alt: facilityLabel(facility),
+    });
+
+    marker.bindTooltip(facility.name, { direction: 'top', offset: [0, -14] });
+    markerHandlers(marker, facility);
+    marker.addTo(layer);
+    markers.set(facility.id, marker);
+};
+
+const updateMarkers = (fit = true) => {
+    if (!map || !layer) return;
+
+    const facilityIds = new Set(props.facilities.map((facility) => facility.id));
+
+    markers.forEach((marker, id) => {
+        if (!facilityIds.has(id)) {
+            marker.remove();
+            markers.delete(id);
+            markerElements.delete(id);
+        }
+    });
+
+    props.facilities.forEach((facility) => {
+        const marker = markers.get(facility.id);
+        if (marker) {
+            marker.setLatLng([facility.lat, facility.lng]);
+            marker.setIcon(pinIcon(facility, facility.id === props.selectedId));
+            marker.setTooltipContent(facility.name);
+            applyMarkerElement(marker, facility);
+            return;
+        }
+
+        createMarker(facility);
+    });
+
+    if (fit && props.mode === 'view' && props.facilities.length > 1) {
+        map.fitBounds(L.latLngBounds(props.facilities.map((f) => [f.lat, f.lng])), { padding: [40, 40] });
+    }
+};
 let accuracyCircle = null;
 let resizeObserver = null;
 let resizeFrame = null;
@@ -55,44 +125,6 @@ const pinIcon = (facility, selected) => {
 const facilityLabel = (facility) =>
     `${facility.name}. Kategori ${categoryLabel(facility.category)}. Status ${VERIFICATION[facility.verification].label}`;
 
-const render = (fit = true) => {
-    if (!map) return;
-
-    layer?.clearLayers();
-
-    props.facilities.forEach((facility) => {
-        const marker = L.marker([facility.lat, facility.lng], {
-            icon: pinIcon(facility, facility.id === props.selectedId),
-            title: facility.name,
-            alt: facilityLabel(facility),
-        });
-
-        marker.bindTooltip(facility.name, { direction: 'top', offset: [0, -14] });
-
-        marker.on('add', () => {
-            const element = marker.getElement();
-            if (!element) return;
-
-            element.setAttribute('tabindex', '0');
-            element.setAttribute('role', 'button');
-            element.setAttribute('aria-label', facilityLabel(facility));
-            element.addEventListener('focus', () => emit('select', facility.id));
-            element.addEventListener('click', () => emit('select', facility.id));
-            element.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    emit('select', facility.id);
-                }
-            });
-        });
-
-        marker.addTo(layer);
-    });
-
-    if (fit && props.mode === 'view' && props.facilities.length > 1) {
-        map.fitBounds(L.latLngBounds(props.facilities.map((f) => [f.lat, f.lng])), { padding: [40, 40] });
-    }
-};
 
 /** Penanda awal pada mode pemilihan koordinat. */
 const drawPickMarker = () => {
@@ -146,17 +178,31 @@ onMounted(() => {
         drawPickMarker();
     }
 
-    render();
+    updateMarkers();
     resizeObserver = new ResizeObserver(scheduleMapRefresh);
     resizeObserver.observe(container.value);
     nextTick(scheduleMapRefresh);
 });
 
-watch(() => props.facilities, () => render(true), { deep: true });
+watch(() => props.facilities, () => updateMarkers(true), { deep: true });
+
+const updateMarkerSelection = (id) => {
+    if (!id) return;
+
+    const facility = props.facilities.find((item) => item.id === id);
+    const marker = markers.get(id);
+    if (!facility || !marker) return;
+
+    marker.setIcon(pinIcon(facility, id === props.selectedId));
+    applyMarkerElement(marker, facility);
+};
 
 watch(
     () => props.selectedId,
-    () => render(false),
+    (selectedId, previousId) => {
+        updateMarkerSelection(previousId);
+        updateMarkerSelection(selectedId);
+    },
 );
 
 // Marker sementara pada mode pemilihan koordinat.

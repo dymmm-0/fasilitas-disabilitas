@@ -1369,6 +1369,11 @@ fieldset {
     padding-right: 6px;
 }
 
+.list-scroll--facilities {
+    max-height: none;
+    overflow-y: visible;
+}
+
 .empty-state {
     border: 1px dashed var(--ink-a20);
     padding: 32px;

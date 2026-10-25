@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { ATTRIBUTES, categoryLabel } from '../data/meta';
 
 /**
@@ -92,6 +92,12 @@ const results = computed(() => {
             .toLowerCase()
             .includes(q);
     });
+});
+
+watch(results, (nextResults) => {
+    if (selectedId.value && !nextResults.some((facility) => facility.id === selectedId.value)) {
+        selectedId.value = null;
+    }
 });
 
 const hasFilters = computed(
