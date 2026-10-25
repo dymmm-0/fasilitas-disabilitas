@@ -47,6 +47,12 @@ const markerHandlers = (marker, facility) => {
     marker.on('add', () => applyMarkerElement(marker, facility));
 };
 
+const tooltipContent = (name) => {
+    const content = document.createElement('span');
+    content.textContent = name;
+    return content;
+};
+
 const createMarker = (facility) => {
     const marker = L.marker([facility.lat, facility.lng], {
         icon: pinIcon(facility, facility.id === props.selectedId),
@@ -54,7 +60,7 @@ const createMarker = (facility) => {
         alt: facilityLabel(facility),
     });
 
-    marker.bindTooltip(facility.name, { direction: 'top', offset: [0, -14] });
+    marker.bindTooltip(tooltipContent(facility.name), { direction: 'top', offset: [0, -14] });
     markerHandlers(marker, facility);
     marker.addTo(layer);
     markers.set(facility.id, marker);
@@ -78,7 +84,7 @@ const updateMarkers = (fit = true) => {
         if (marker) {
             marker.setLatLng([facility.lat, facility.lng]);
             marker.setIcon(pinIcon(facility, facility.id === props.selectedId));
-            marker.setTooltipContent(facility.name);
+            marker.setTooltipContent(tooltipContent(facility.name));
             applyMarkerElement(marker, facility);
             return;
         }

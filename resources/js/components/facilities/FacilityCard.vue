@@ -18,7 +18,6 @@ const verified = computed(() => VERIFICATION[props.facility.verification]);
         class="card card--hover"
         :class="{ 'card--compact': compact }"
         :to="`/fasilitas/${facility.id}`"
-        :aria-current="selected ? 'true' : undefined"
         :style="selected ? { borderColor: 'var(--ink)', transform: 'translateY(-6px)' } : null"
         @mouseenter="emit('select', facility.id)"
         @focus="emit('select', facility.id)"

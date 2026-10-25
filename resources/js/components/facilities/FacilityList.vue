@@ -1,5 +1,4 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
 import FacilityCard from './FacilityCard.vue';
 
 const props = defineProps({
@@ -11,20 +10,11 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['select']);
-
-// Dataset berisi ribuan fasilitas: kartu ditampilkan bertahap, bukan sekaligus.
-const PAGE = 40;
-const visible = ref(PAGE);
-const shown = computed(() => props.facilities.slice(0, visible.value));
-
-watch(() => props.facilities, () => {
-    visible.value = PAGE;
-});
 </script>
 
 <template>
-    <ul v-if="shown.length" class="list-scroll list-scroll--facilities" style="list-style: none">
-        <li v-for="facility in shown" :key="facility.id">
+    <ul v-if="facilities.length" class="list-scroll list-scroll--facilities" style="list-style: none">
+        <li v-for="facility in facilities" :key="facility.id">
             <FacilityCard
                 :facility="facility"
                 :compact="compact"
@@ -40,7 +30,4 @@ watch(() => props.facilities, () => {
         <p class="card__text">{{ emptyText }}</p>
     </div>
 
-    <button v-if="facilities.length > shown.length" type="button" class="btn btn--sm" @click="visible += PAGE">
-        Tampilkan {{ Math.min(PAGE, facilities.length - shown.length) }} lagi ({{ shown.length }} dari {{ facilities.length }})
-    </button>
 </template>

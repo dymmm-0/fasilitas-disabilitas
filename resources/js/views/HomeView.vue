@@ -1,18 +1,37 @@
 <script setup>
-import { computed } from 'vue';
-import { categoryLabel, formatDate } from '../data/meta';
+import { computed, ref, watch } from 'vue';
 import { useFacilities } from '../composables/useFacilities';
-import AccessibilityPanel from '../components/facilities/AccessibilityPanel.vue';
 import FacilityFilters from '../components/facilities/FacilityFilters.vue';
 import FacilityList from '../components/facilities/FacilityList.vue';
 import FacilityMap from '../components/map/FacilityMap.vue';
 import MapLegend from '../components/map/MapLegend.vue';
-import StatusPill from '../components/common/StatusPill.vue';
 import Reveal from '../components/common/Reveal.vue';
 
 const { filters, facilities, results, selectedId, select, status, loadError } = useFacilities();
+const page = ref(1);
+const PAGE_SIZE = 5;
+const pageCount = computed(() => Math.max(1, Math.ceil(results.value.length / PAGE_SIZE)));
+watch(results, () => {
+    page.value = 1;
+});
 
-const selectedFacility = computed(() => results.value.find((facility) => facility.id === selectedId.value) ?? null);
+const selectFacility = (id) => {
+    const index = results.value.findIndex((facility) => facility.id === id);
+    if (index >= 0) page.value = Math.floor(index / PAGE_SIZE) + 1;
+    select(id);
+};
+
+const pageFacilities = computed(() => results.value.slice((page.value - 1) * PAGE_SIZE, page.value * PAGE_SIZE));
+const rangeStart = computed(() => (results.value.length ? (page.value - 1) * PAGE_SIZE + 1 : 0));
+const rangeEnd = computed(() => Math.min(page.value * PAGE_SIZE, results.value.length));
+const paginationPages = computed(() => {
+    const start = Math.max(1, Math.min(page.value - 2, pageCount.value - 4));
+    const end = Math.min(pageCount.value, start + 4);
+
+    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+});
+const showPage = (number) => { page.value = Math.min(Math.max(number, 1), pageCount.value); };
+
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size);
 </script>
@@ -76,7 +95,7 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                     <FacilityMap
                         :facilities="results"
                         :selected-id="selectedId"
-                        @select="select"
+                        @select="selectFacility"
                     />
                     <MapLegend />
                     <p class="help">
@@ -96,23 +115,23 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                         <b>Gagal memuat data</b>
                         <span>Server tidak mengirim daftar fasilitas ({{ loadError }}). Muat ulang halaman untuk mencoba lagi.</span>
                     </div>
-                    <div v-if="selectedFacility" class="panel stack--sm" aria-live="polite">
-                        <div class="cluster cluster--between">
-                            <div>
-                                <p class="label">Fasilitas terpilih</p>
-                                <h3 class="card__title card__title--sm">{{ selectedFacility.name }}</h3>
-                                <p class="help">{{ categoryLabel(selectedFacility.category) }} · {{ selectedFacility.city }}</p>
-                            </div>
-                            <StatusPill kind="verification" :value="selectedFacility.verification" />
+                    <FacilityList :facilities="pageFacilities" :selected-id="selectedId" @select="selectFacility" />
+                    <nav v-if="results.length" class="pagination" aria-label="Pagination fasilitas">
+                        <span class="meta">{{ rangeStart }}–{{ rangeEnd }} dari {{ results.length }} fasilitas</span>
+                        <div class="pagination__controls">
+                            <button class="btn btn--sm" type="button" :disabled="page === 1" @click="showPage(page - 1)">Sebelumnya</button>
+                            <button
+                                v-for="number in paginationPages"
+                                :key="number"
+                                class="btn btn--sm"
+                                :class="{ 'btn--primary': number === page }"
+                                type="button"
+                                :aria-current="number === page ? 'page' : undefined"
+                                @click="showPage(number)"
+                            >{{ number }}</button>
+                            <button class="btn btn--sm" type="button" :disabled="page === pageCount" @click="showPage(page + 1)">Berikutnya</button>
                         </div>
-                        <p class="card__text">{{ selectedFacility.address || 'Alamat belum tersedia.' }}</p>
-                        <AccessibilityPanel :facility="selectedFacility" />
-                        <div class="inline-actions">
-                            <RouterLink class="btn btn--sm" :to="`/fasilitas/${selectedFacility.id}`">Buka detail lengkap</RouterLink>
-                            <span class="meta">Diperbarui {{ formatDate(selectedFacility.updatedAt) }}</span>
-                        </div>
-                    </div>
-                    <FacilityList :facilities="results" :selected-id="selectedId" @select="select" />
+                    </nav>
                 </div>
             </div>
         </div>

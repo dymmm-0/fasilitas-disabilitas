@@ -30,6 +30,23 @@ class Facility extends Model
         'transport_station_terminal' => 'transportasi',
     ];
 
+    /**
+     * Kategori sumber yang isinya bercampur, sehingga hanya bisa dipetakan lewat detailnya.
+     * Detail di luar daftar ini belum punya kategori aplikasi yang benar — jangan dipaksa.
+     */
+    public const CATEGORY_DETAIL_MAP = [
+        'other_public_facility' => ['place_of_worship' => 'ibadah'],
+        'park_tourism_public_space' => ['sports_centre' => 'olahraga', 'stadium' => 'olahraga'],
+    ];
+
+    /** Kategori aplikasi untuk satu baris dataset; detail menang atas kategori kasar. */
+    public static function categoryFor(string $sourceCategory, ?string $detail): ?string
+    {
+        return self::CATEGORY_DETAIL_MAP[$sourceCategory][(string) $detail]
+            ?? self::CATEGORY_MAP[$sourceCategory]
+            ?? null;
+    }
+
     /** Kategori yang boleh dipilih pengaju (sama dengan `resources/js/data/meta.js`). */
     public const CATEGORIES = [
         'transportasi', 'kesehatan', 'pendidikan', 'pemerintahan', 'perbelanjaan',

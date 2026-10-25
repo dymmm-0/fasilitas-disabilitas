@@ -11,7 +11,8 @@ class ImportFacilities extends Command
 {
     protected $signature = 'facilities:import
         {file=Dataset/akseskita_facilities_medan.csv : CSV dataset, relatif root project atau absolut}
-        {--dry-run : Validasi dan laporkan saja, tanpa menulis ke database}';
+        {--dry-run : Validasi dan laporkan saja, tanpa menulis ke database}
+        {--sync : Cocokkan berdasarkan identitas sumber dan sinkronkan tanpa mengganti ID database}';
 
     protected $description = 'Impor dataset fasilitas AksesKita ke tabel facilities (idempoten, tidak menghapus data lama)';
 
@@ -51,6 +52,7 @@ class ImportFacilities extends Command
         $header = null;
         $records = [];
         $errors = [];
+        $review = [];
 
         foreach ($this->lines($path) as $number => $line) {
             if ($header === null) {
@@ -85,7 +87,12 @@ class ImportFacilities extends Command
             [$attributes, $error] = $this->mapRow($row);
 
             if ($error !== null) {
-                $errors[] = [$number, $row['facility_id'], $error];
+                // Satu baris tanpa kategori aplikasi tidak membatalkan baris lain.
+                if ($this->option('sync')) {
+                    $review[] = [$number, $row['facility_id'], $error];
+                } else {
+                    $errors[] = [$number, $row['facility_id'], $error];
+                }
 
                 continue;
             }
@@ -97,6 +104,16 @@ class ImportFacilities extends Command
             $this->error('Dataset tidak berisi baris data.');
 
             return self::FAILURE;
+        }
+
+        if ($this->option('sync')) {
+            foreach ($records as [$line, $attributes]) {
+                if (blank($attributes['source_ref_type']) || blank($attributes['source_ref_id'])) {
+                    $errors[] = [$line, $attributes['external_id'], 'source identity kosong'];
+                }
+            }
+
+            return $this->sync($records, $errors, $review, (bool) $this->option('dry-run'));
         }
 
         $result = $this->store($records, (bool) $this->option('dry-run'));
@@ -207,8 +224,10 @@ class ImportFacilities extends Command
             return [null, 'facility_name kosong'];
         }
 
-        if (! isset(Facility::CATEGORY_MAP[$row['category']])) {
-            return [null, "kategori tidak dikenal: {$row['category']}"];
+        $category = Facility::categoryFor($row['category'], $row['category_detail'] ?: null);
+
+        if ($category === null) {
+            return [null, 'kategori belum ada di aplikasi: '.trim("{$row['category']}/{$row['category_detail']}", '/')];
         }
 
         if (! is_numeric($row['latitude']) || ! is_numeric($row['longitude'])) {
@@ -250,7 +269,7 @@ class ImportFacilities extends Command
         return [[
             'external_id' => $id,
             'name' => $row['facility_name'],
-            'category' => Facility::CATEGORY_MAP[$row['category']],
+            'category' => $category,
             'source_category' => $row['category'],
             'source_category_detail' => $row['category_detail'] ?: null,
             'address' => $row['address'] ?: null,
@@ -337,17 +356,150 @@ class ImportFacilities extends Command
         return $counts;
     }
 
-    /** @param array<int, array{0: int, 1: string, 2: string}> $errors */
-    private function report(array $errors): void
+    /**
+     * Sinkronisasi hanya menulis kolom kategori. Koordinat, alamat, atribut aksesibilitas,
+     * sumber, tanggal, dan status verifikasi tidak pernah disentuh; fasilitas berstatus
+     * selain `pending` tetap diperbarui kategorinya karena kategori bukan hasil pemeriksaan.
+     *
+     * @param  array<int, array{0: int, 1: array<string, mixed>}>  $records
+     * @param  array<int, array{0: int, 1: string, 2: string}>  $errors
+     * @param  array<int, array{0: int, 1: string, 2: string}>  $review
+     */
+    private function sync(array $records, array $errors, array $review, bool $dryRun): int
     {
-        $name = 'import-reports/facilities-'.now()->format('Ymd-His').'.csv';
-        $rows = "baris,facility_id,alasan\n";
+        $inputRefs = [];
+        $inputIds = [];
+        $duplicateRefs = [];
+        $duplicateIds = [];
 
-        foreach ($errors as [$number, $id, $reason]) {
-            $rows .= sprintf("%d,%s,\"%s\"\n", $number, $id, str_replace('"', '""', $reason));
+        foreach ($records as [$line, $attributes]) {
+            $ref = $this->sourceKey($attributes);
+            if (isset($inputRefs[$ref])) {
+                $duplicateRefs[] = [$line, $attributes['external_id'], "source identity duplikat: {$ref}"];
+            }
+            if (isset($inputIds[$attributes['external_id']])) {
+                $duplicateIds[] = [$line, $attributes['external_id'], 'facility_id duplikat'];
+            }
+            $inputRefs[$ref] = [$line, $attributes];
+            $inputIds[$attributes['external_id']] = [$line, $attributes];
         }
 
-        Storage::disk('local')->put($name, $rows);
-        $this->info('Laporan validasi: '.Storage::disk('local')->path($name));
+        $references = collect($records)->map(fn ($record) => $record[1]);
+        $existing = Facility::query()
+            ->whereIn('source_ref_type', $references->pluck('source_ref_type')->unique())
+            ->whereIn('source_ref_id', $references->pluck('source_ref_id')->unique())
+            ->get();
+        $existingByRef = $existing->groupBy(fn (Facility $facility) => $this->sourceKey($facility->toArray()));
+        $conflicts = [];
+
+        foreach ($existingByRef as $ref => $matches) {
+            if ($matches->count() > 1) {
+                $conflicts[] = [0, '', "source identity database duplikat: {$ref}"];
+            }
+        }
+
+        // CSV facility_id hanya metadata ekspor; ID publik database dipertahankan apa adanya,
+        // jadi `external_id` tidak pernah ditulis dan tidak bisa berkonflik.
+        $conflicts = array_merge($duplicateRefs, $duplicateIds, $conflicts);
+        if ($errors || $conflicts) {
+            $this->error('Sinkronisasi dibatalkan: identitas sumber bermasalah. Tidak ada perubahan ditulis.');
+            $this->report(array_merge($errors, $review, $conflicts));
+
+            return self::FAILURE;
+        }
+
+        $apply = [];
+        $changes = [];
+        $missing = [];
+
+        foreach ($records as [$line, $attributes]) {
+            $facility = $existingByRef->get($this->sourceKey($attributes))?->first();
+
+            if (! $facility) {
+                $missing[] = [$line, $attributes['external_id'], 'tidak ada di database: '.$attributes['name']];
+                $review[] = [$line, $attributes['external_id'], 'belum ada di database — tidak dibuat otomatis'];
+
+                continue;
+            }
+
+            $columns = ['category', 'source_category', 'source_category_detail'];
+            $diff = array_filter($columns, fn ($column) => $facility->{$column} !== $attributes[$column]);
+
+            if (! $diff) {
+                continue;
+            }
+
+            $apply[] = [$facility, $attributes];
+            $changes[] = [$line, $facility->external_id, sprintf(
+                '%s: %s -> %s (kategori aplikasi %s -> %s)',
+                implode('+', $diff),
+                implode('/', array_map(fn ($c) => (string) $facility->{$c}, $diff)),
+                implode('/', array_map(fn ($c) => (string) $attributes[$c], $diff)),
+                $facility->category,
+                $attributes['category'],
+            )];
+        }
+
+        $this->table(
+            ['Diperiksa', 'Sudah benar', 'Diperbarui', 'Tinjauan manual', 'Tanpa padanan'],
+            [[count($records), count($records) - count($apply) - count($missing), count($apply), count($review), count($missing)]],
+        );
+
+        foreach ($changes as [, $id, $reason]) {
+            $this->line("  {$id} — {$reason}");
+        }
+
+        if ($review) {
+            $this->warn('Tinjauan manual (tidak ditulis ke database):');
+            foreach ($review as [, $id, $reason]) {
+                $this->line("  {$id} — {$reason}");
+            }
+        }
+
+        if ($missing) {
+            $this->warn('Baris CSV tanpa padanan database (tidak dibuat, tidak dihapus):');
+            foreach ($missing as [, $id, $reason]) {
+                $this->line("  {$id} — {$reason}");
+            }
+        }
+
+        if ($dryRun) {
+            $this->info('Mode dry-run: tidak ada perubahan pada database.');
+        } else {
+            DB::transaction(function () use ($apply) {
+                foreach ($apply as [$facility, $attributes]) {
+                    // Hanya tiga kolom kategori yang ditulis; ID dan atribut lain tidak disentuh.
+                    $facility->fill(collect($attributes)->only(['category', 'source_category', 'source_category_detail'])->all());
+                    $facility->external_id = $facility->getOriginal('external_id');
+                    $facility->save();
+                }
+            });
+
+            $this->info('Sinkronisasi selesai dalam satu transaksi: '.count($apply).' baris diperbarui.');
+        }
+
+        $this->report(array_merge($changes, $review, $missing), 'perubahan');
+
+        return self::SUCCESS;
+    }
+
+    /** @param array<string, mixed> $attributes */
+    private function sourceKey(array $attributes): string
+    {
+        return strtolower(trim((string) ($attributes['source_ref_type'] ?? ''))).'/'.trim((string) ($attributes['source_ref_id'] ?? ''));
+    }
+
+    /** @param array<int, array{0: int, 1: string, 2: string}> $rows */
+    private function report(array $rows, string $kind = 'validasi'): void
+    {
+        $name = 'import-reports/facilities-'.now()->format('Ymd-His').'.csv';
+        $content = "baris,facility_id,alasan\n";
+
+        foreach ($rows as [$number, $id, $reason]) {
+            $content .= sprintf("%d,%s,\"%s\"\n", $number, $id, str_replace('"', '""', $reason));
+        }
+
+        Storage::disk('local')->put($name, $content);
+        $this->info("Laporan {$kind}: ".Storage::disk('local')->path($name));
     }
 }

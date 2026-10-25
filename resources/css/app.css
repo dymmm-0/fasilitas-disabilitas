@@ -1374,6 +1374,22 @@ fieldset {
     overflow-y: visible;
 }
 
+.pagination {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pagination__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pagination__controls .btn[aria-current='page'] {
+    border-color: var(--ink);
+}
+
 .empty-state {
     border: 1px dashed var(--ink-a20);
     padding: 32px;
