@@ -216,7 +216,7 @@ em {
     align-items: start;
 }
 
-.grid--sidebar > * {
+.grid--sidebar>* {
     min-width: 0;
 }
 
@@ -305,7 +305,7 @@ em {
 .display-lg em,
 .display-md em,
 .display-sm em,
-.label + .display-lg em {
+.label+.display-lg em {
     color: var(--rust);
     font-weight: 500;
 }
@@ -760,7 +760,7 @@ em {
     gap: 6px;
 }
 
-.field > label,
+.field>label,
 .fieldset__legend {
     font-family: var(--font-mono);
     font-size: 11px;
@@ -1430,12 +1430,12 @@ fieldset {
     white-space: normal;
 }
 
-.verification-row > :nth-child(2) {
+.verification-row> :nth-child(2) {
     min-width: 0;
     overflow-wrap: anywhere;
 }
 
-.verification-row > :nth-child(3) {
+.verification-row> :nth-child(3) {
     min-width: 0;
     overflow-wrap: anywhere;
 }
