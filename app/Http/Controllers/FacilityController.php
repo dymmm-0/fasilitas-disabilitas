@@ -20,13 +20,19 @@ class FacilityController extends Controller
      * sekaligus dan dashboard menghitung agregat dari semua baris.
      * Dengan `per_page`: satu halaman saja, untuk tabel Pengelolaan fasilitas.
      *
+     * Hanya fasilitas publik yang dikirim: yang ditolak tetap tersimpan di basis
+     * data untuk audit, tetapi tidak pernah bocor ke peta, daftar, pencarian, atau
+     * halaman detail — riwayatnya hanya tampil di antrean petugas (bucket "selesai").
+     *
      * shortcut: urutan memakai `external_id` (unik) supaya tidak ada baris yang
      * muncul dua kali atau hilang saat berpindah halaman. Ganti ke kolom lain hanya
      * bila kolom itu juga unik.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Facility::query()->orderBy('external_id');
+        $query = Facility::query()
+            ->where('verification_status', '!=', 'rejected')
+            ->orderBy('external_id');
 
         if (! $request->filled('per_page')) {
             $facilities = $query->get();

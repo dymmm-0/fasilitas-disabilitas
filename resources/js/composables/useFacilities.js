@@ -29,41 +29,10 @@ const load = async () => {
 load();
 
 /**
- * Satu halaman tabel "Pengelolaan fasilitas" (dashboard admin). Diambil per halaman
- * lewat `?page=&per_page=` supaya tidak ada ribuan baris yang dipotong di klien;
- * `facilities` di atas tetap dipakai peta dan agregat dashboard.
+ * Filter fasilitas dipakai bersama beranda dan tabel Pengelolaan fasilitas di
+ * dashboard admin: pencarian nama/alamat/kota plus kategori, status verifikasi,
+ * dan atribut aksesibilitas. Penyaringan di klien dari `facilities` yang sudah dimuat.
  */
-const tablePage = reactive({ rows: [], total: 0, meta: null, status: 'memuat', error: null });
-
-const loadTablePage = async (number = 1, perPage = 10) => {
-    tablePage.status = 'memuat';
-    tablePage.error = null;
-
-    try {
-        const response = await fetch(`/api/facilities?page=${number}&per_page=${perPage}`, {
-            headers: { Accept: 'application/json' },
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const data = await response.json();
-        const meta = data.meta ?? null;
-
-        tablePage.rows = data.facilities ?? [];
-        tablePage.total = data.total ?? 0;
-        tablePage.meta = meta;
-        tablePage.status = 'siap';
-
-        // Data bisa menyusut (mis. baris terhapus); mundur supaya halaman tidak kosong.
-        if (!tablePage.rows.length && meta && meta.lastPage < meta.currentPage) {
-            await loadTablePage(meta.lastPage, meta.perPage);
-        }
-    } catch (error) {
-        tablePage.error = error.message;
-        tablePage.status = 'gagal';
-    }
-};
-
 const filters = reactive({
     query: '',
     category: 'all',
@@ -123,8 +92,6 @@ export function useFacilities() {
         status,
         loadError,
         reload: load,
-        tablePage,
-        loadTablePage,
         filters,
         results,
         hasFilters,

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { t } from '../i18n';
 import { completeness } from '../data/facilities';
 import { daysSince, needsVerification, STALE_DAYS, VERIFICATION } from '../data/meta';
@@ -7,10 +7,11 @@ import { useFacilities } from '../composables/useFacilities';
 import StatCard from '../components/dashboard/StatCard.vue';
 import CompletenessChart from '../components/dashboard/CompletenessChart.vue';
 import FacilityTable from '../components/dashboard/FacilityTable.vue';
+import FacilityFilters from '../components/facilities/FacilityFilters.vue';
 import CategoryManager from '../components/dashboard/CategoryManager.vue';
 import UserRolesPanel from '../components/dashboard/UserRolesPanel.vue';
 
-const { facilities, tablePage, loadTablePage } = useFacilities();
+const { facilities, results, status, loadError } = useFacilities();
 
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const pending = computed(() => facilities.value.filter(needsVerification).length);
@@ -23,28 +24,37 @@ const stale = computed(() =>
     facilities.value.filter((f) => daysSince(f.lastChecked) > STALE_DAYS),
 );
 
-// Tabel Pengelolaan fasilitas: satu halaman per permintaan, bukan 1.117 baris sekaligus.
-const perPage = computed(() => tablePage.meta?.perPage ?? 10);
-const currentPage = computed(() => tablePage.meta?.currentPage ?? 1);
-const lastPage = computed(() => tablePage.meta?.lastPage ?? 1);
+// Tabel Pengelolaan fasilitas disaring di klien dari daftar yang sudah dimuat peta,
+// sama seperti pencarian beranda (`FacilityFilters` + `filters`/`results`). Pagination
+// mengikuti hasil saringan, bukan seluruh 1.118 baris.
+const perPage = ref(10);
+const page = ref(1);
+const pageCount = computed(() => Math.max(1, Math.ceil(results.value.length / perPage.value)));
+watch(results, () => { page.value = 1; });
+
+const pageRows = computed(() =>
+    results.value.slice((page.value - 1) * perPage.value, page.value * perPage.value),
+);
 
 const rangeLabel = computed(() =>
-    tablePage.meta?.from
-        ? t('Menampilkan {0}–{1} dari {2} fasilitas', [tablePage.meta.from, tablePage.meta.to, tablePage.total])
+    results.value.length
+        ? t('Menampilkan {0}–{1} dari {2} fasilitas', [
+            (page.value - 1) * perPage.value + 1,
+            Math.min(page.value * perPage.value, results.value.length),
+            results.value.length,
+        ])
         : t('Tidak ada fasilitas pada halaman ini'),
 );
 
 /** Jendela 5 nomor di sekitar halaman aktif; sisanya lewat tombol sebelumnya/berikutnya. */
 const pageNumbers = computed(() => {
-    const start = Math.max(1, Math.min(currentPage.value - 2, lastPage.value - 4));
+    const start = Math.max(1, Math.min(page.value - 2, pageCount.value - 4));
 
-    return Array.from({ length: Math.min(5, lastPage.value) }, (_, index) => start + index);
+    return Array.from({ length: Math.min(5, pageCount.value) }, (_, index) => start + index);
 });
 
-const goToPage = (number) => loadTablePage(number, perPage.value);
-const changePerPage = (event) => loadTablePage(1, Number(event.target.value));
-
-onMounted(() => loadTablePage(1, 10));
+const goToPage = (number) => { page.value = Math.min(Math.max(number, 1), pageCount.value); };
+const changePerPage = (event) => { perPage.value = Number(event.target.value); page.value = 1; };
 </script>
 
 <template>
@@ -90,6 +100,13 @@ onMounted(() => loadTablePage(1, 10));
             <div id="pengelolaan-fasilitas" class="panel stack--sm">
                 <h2 class="display-sm">{{ $t('Pengelolaan fasilitas') }}</h2>
 
+                <FacilityFilters />
+
+                <div v-if="status === 'gagal'" class="notice" role="alert">
+                    <b>{{ $t('Gagal memuat data') }}</b>
+                    <span><i18n-t keypath="Server tidak mengirim daftar fasilitas ({a}). Muat ulang halaman untuk mencoba lagi." tag="span" scope="global"><template #a>{{ loadError }}</template></i18n-t></span>
+                </div>
+
                 <div class="cluster cluster--between">
                     <p class="help" role="status" aria-live="polite">{{ rangeLabel }}</p>
                     <div class="field" style="width: 110px">
@@ -101,24 +118,30 @@ onMounted(() => loadTablePage(1, 10));
                     </div>
                 </div>
 
-                <FacilityTable :facilities="tablePage.rows" />
+                <FacilityTable v-if="pageRows.length" :facilities="pageRows" />
+                <div v-else-if="status !== 'gagal'" class="empty-state" role="status">
+                    <span class="label">{{ $t('Hasil kosong') }}</span>
+                    <p class="card__title card__title--sm">{{ $t('Tidak ada fasilitas yang cocok') }}</p>
+                    <p class="card__text">{{ $t('Ubah kata kunci atau kosongkan filter untuk melihat semua fasilitas.') }}</p>
+                </div>
 
-                <nav v-if="tablePage.meta" class="cluster" :aria-label="$t('Navigasi halaman fasilitas')">
-                    <button type="button" class="btn btn--sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">{{ $t('Sebelumnya') }}</button>
-                    <button
-                        v-for="number in pageNumbers"
-                        :key="number"
-                        type="button"
-                        class="tab"
-                        :aria-pressed="number === currentPage"
-                        @click="goToPage(number)"
-                    >
-                        {{ number }}
-                    </button>
-                    <button type="button" class="btn btn--sm" :disabled="currentPage === lastPage" @click="goToPage(currentPage + 1)">{{ $t('Berikutnya') }}</button>
+                <nav v-if="pageCount > 1" class="pagination" :aria-label="$t('Navigasi halaman fasilitas')">
+                    <div class="pagination__controls">
+                        <button type="button" class="btn btn--sm" :disabled="page === 1" @click="goToPage(page - 1)">{{ $t('Sebelumnya') }}</button>
+                        <button
+                            v-for="number in pageNumbers"
+                            :key="number"
+                            type="button"
+                            class="btn btn--sm"
+                            :class="{ 'btn--primary': number === page }"
+                            :aria-current="number === page ? 'page' : undefined"
+                            @click="goToPage(number)"
+                        >
+                            {{ number }}
+                        </button>
+                        <button type="button" class="btn btn--sm" :disabled="page === pageCount" @click="goToPage(page + 1)">{{ $t('Berikutnya') }}</button>
+                    </div>
                 </nav>
-
-                <p v-if="tablePage.status === 'gagal'" class="error-text"><i18n-t keypath="Gagal memuat halaman fasilitas ({a}). Coba muat ulang halaman." tag="span" scope="global"><template #a>{{ tablePage.error }}</template></i18n-t></p>
             </div>
 
             <div class="grid grid--2 grid--stack">

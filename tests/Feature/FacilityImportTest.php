@@ -321,4 +321,24 @@ class FacilityImportTest extends TestCase
             ->assertJsonPath('meta.perPage', 100)
             ->assertJsonPath('meta.lastPage', 1);
     }
+
+    public function test_api_publik_menyembunyikan_fasilitas_yang_ditolak(): void
+    {
+        $this->artisan('facilities:import', ['file' => self::FIXTURE]);
+
+        Facility::firstWhere('external_id', 'AKS-9001')->update(['verification_status' => 'rejected']);
+
+        $response = $this->getJson('/api/facilities');
+        $response->assertOk()->assertJsonPath('total', self::VALID_ROWS - 1);
+
+        $ids = array_column($response->json('facilities'), 'id');
+        $this->assertNotContains('AKS-9001', $ids);
+        // Baris lain tetap tampil, termasuk yang sudah terverifikasi.
+        $this->assertContains('AKS-9005', $ids);
+
+        // Pagination dihitung dari hasil tersaring, bukan seluruh tabel.
+        $this->getJson('/api/facilities?page=1&per_page=999')
+            ->assertOk()
+            ->assertJsonPath('total', self::VALID_ROWS - 1);
+    }
 }

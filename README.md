@@ -116,7 +116,9 @@ petugas.
 - 🗺️ Peta interaktif dengan 1.117 fasilitas asli dalam 7 kategori: kesehatan,
   pemerintahan, pendidikan, penginapan, perbelanjaan, rekreasi, dan transportasi.
 - 🔌 `GET /api/facilities` membaca tabel `facilities`; frontend tidak lagi memuat data
-  fasilitas dari berkas JavaScript.
+  fasilitas dari berkas JavaScript. Penyaring status dijalankan di server: fasilitas
+  yang ditolak tidak ikut terkirim, jadi tidak muncul di peta, daftar, pencarian,
+  filter, maupun halaman detail, dan barisnya tetap utuh di basis data untuk audit.
 - 🔐 Login admin berbasis sesi (`POST /api/login`, `POST /api/logout`, `GET /api/me`),
   dengan `/admin` dan `/verifikasi` diproteksi middleware `auth`.
 - 📥 Kontribusi warga tersimpan di basis data: `POST /api/submissions` memvalidasi isian,
@@ -632,7 +634,7 @@ CSRF dikirim lewat cookie `XSRF-TOKEN`.
 | `POST /api/logout` | `auth` | Mengakhiri sesi |
 | `GET /api/me` | — | Profil pengguna yang sedang masuk, atau `null` untuk pengunjung |
 | `GET /api/users` | `auth` | Daftar akun (hanya untuk admin) |
-| `GET /api/facilities` | — | Seluruh fasilitas (1.117 baris) untuk peta dan agregat dashboard |
+| `GET /api/facilities` | — | Fasilitas publik untuk peta dan agregat dashboard. Baris `verification_status = rejected` tidak pernah dikirim — hanya tampil di antrean petugas (`?bucket=selesai`) |
 | `GET /api/facilities?page=1&per_page=10` | — | Satu halaman untuk tabel Pengelolaan fasilitas di `/admin` (maks. 100 baris per permintaan) |
 | `POST /api/submissions` | `throttle:10,1` | Pengajuan warga (usulan atau koreksi) beserta bukti foto opsional; terbuka untuk pengunjung tanpa akun |
 | `GET /api/submissions/status` | `throttle:10,1` | Status pengajuan warga dicari lewat surel pengaju (`?email=`, `?name=` opsional); terbuka tanpa akun, maks. 50 pengajuan terbaru |
