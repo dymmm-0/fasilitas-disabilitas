@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useFacilities } from '../composables/useFacilities';
 import FacilityFilters from '../components/facilities/FacilityFilters.vue';
 import FacilityList from '../components/facilities/FacilityList.vue';
@@ -34,6 +34,17 @@ const showPage = (number) => { page.value = Math.min(Math.max(number, 1), pageCo
 
 const verified = computed(() => facilities.value.filter((f) => f.verification === 'terverifikasi').length);
 const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size);
+
+// Foto hero. Tambah berkas ke public/images/hero lalu daftarkan di sini.
+const heroSlides = ['/images/hero/1-facility.jpg', '/images/hero/2-community.jpg'];
+const heroSlide = ref(0);
+let heroTimer;
+onMounted(() => {
+    // Auto-rotate diam saat prefers-reduced-motion; tidak ada kontrol manual.
+    if (heroSlides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    heroTimer = setInterval(() => { heroSlide.value = (heroSlide.value + 1) % heroSlides.length; }, 6000);
+});
+onUnmounted(() => clearInterval(heroTimer));
 </script>
 
 <template>
@@ -64,7 +75,16 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
         </Reveal>
 
         <Reveal class="hero__media hero-shadow">
-            <div class="hero__frame"></div>
+            <div class="hero__frame">
+                <img
+                    v-for="(slide, index) in heroSlides"
+                    :key="slide"
+                    :src="slide"
+                    :class="{ 'is-active': index === heroSlide }"
+                    :loading="index === 0 ? 'eager' : 'lazy'"
+                    alt=""
+                >
+            </div>
             <p class="stamp">
                 {{ $t('{0} fasilitas', [facilities.length]) }}<b>{{ $t('dipetakan warga') }}</b>
             </p>
