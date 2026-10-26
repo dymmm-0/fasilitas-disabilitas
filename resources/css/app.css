@@ -482,6 +482,39 @@ em {
     font-weight: 700;
 }
 
+/* Dropdown bahasa di header: setinggi chip/btn--sm, tanpa panah bawaan. */
+.lang-select {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.site-header .lang-select__control {
+    width: auto;
+    min-height: 36px;
+    padding: 8px 28px 8px 14px;
+    appearance: none;
+    border: 1px solid var(--ink-a20);
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.site-header .lang-select__control:hover {
+    border-color: var(--ink);
+}
+
+.lang-select__arrow {
+    position: absolute;
+    right: 10px;
+    pointer-events: none;
+    font-size: 10px;
+    color: var(--ink-muted);
+}
+
 .tab {
     padding: 12px 16px;
     border: 1px solid var(--ink-a20);

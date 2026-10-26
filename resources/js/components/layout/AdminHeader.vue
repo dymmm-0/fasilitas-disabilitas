@@ -66,9 +66,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
                 <span v-if="user" class="meta desktop-only">{{ user.name }}</span>
                 <a class="btn btn--sm desktop-only" :href="PUBLIC_SITE" target="_blank" rel="noopener noreferrer">{{ $t('Kunjungi Situs') }}<span aria-hidden="true">↗</span>
                 </a>
-                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">{{ $t('Keluar') }}</button>
-
                 <LanguageSwitch />
+
+                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">{{ $t('Keluar') }}</button>
 
                 <button
                     type="button"

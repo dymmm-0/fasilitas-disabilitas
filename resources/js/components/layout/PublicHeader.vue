@@ -46,10 +46,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
             <div class="cluster" style="gap: 8px">
                 <span v-if="user" class="meta desktop-only">{{ user.name }}</span>
                 <RouterLink v-if="user" class="btn btn--sm desktop-only" to="/admin">Dashboard</RouterLink>
-                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">{{ $t('Keluar') }}</button>
-                <RouterLink v-else class="btn btn--primary btn--sm desktop-only" to="/masuk">{{ $t('Masuk') }}</RouterLink>
 
                 <LanguageSwitch />
+
+                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">{{ $t('Keluar') }}</button>
+                <RouterLink v-else class="btn btn--primary btn--sm desktop-only" to="/masuk">{{ $t('Masuk') }}</RouterLink>
 
                 <button
                     type="button"

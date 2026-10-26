@@ -9,20 +9,22 @@ const LOCALES = [
 ];
 
 const { locale } = useI18n();
+
+const onChange = (event) => setLocale(event.target.value);
 </script>
 
 <template>
-    <div class="cluster" role="group" :aria-label="$t('Pilih bahasa')" style="gap: 8px">
-        <button
-            v-for="item in LOCALES"
-            :key="item.id"
-            type="button"
-            class="chip"
-            :lang="item.id"
-            :aria-pressed="locale === item.id"
-            @click="setLocale(item.id)"
+    <div class="lang-select">
+        <select
+            class="select lang-select__control"
+            :value="locale"
+            :aria-label="$t('Pilih bahasa')"
+            @change="onChange"
         >
-            {{ item.label }}
-        </button>
+            <option v-for="item in LOCALES" :key="item.id" :value="item.id" :lang="item.id">
+                {{ item.label }}
+            </option>
+        </select>
+        <span class="lang-select__arrow" aria-hidden="true">▾</span>
     </div>
 </template>
