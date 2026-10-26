@@ -1,12 +1,13 @@
 <script setup>
 import FacilityCard from './FacilityCard.vue';
+import { t } from '../../i18n';
 
 const props = defineProps({
     facilities: { type: Array, required: true },
     selectedId: { type: String, default: null },
     compact: { type: Boolean, default: true },
-    emptyTitle: { type: String, default: 'Tidak ada fasilitas yang cocok' },
-    emptyText: { type: String, default: 'Ubah kata kunci atau kosongkan filter untuk melihat semua fasilitas.' },
+    emptyTitle: { type: String, default: t('Tidak ada fasilitas yang cocok') },
+    emptyText: { type: String, default: t('Ubah kata kunci atau kosongkan filter untuk melihat semua fasilitas.') },
 });
 
 const emit = defineEmits(['select']);
@@ -25,7 +26,7 @@ const emit = defineEmits(['select']);
     </ul>
 
     <div v-else class="empty-state" role="status">
-        <span class="label">Hasil kosong</span>
+        <span class="label">{{ $t('Hasil kosong') }}</span>
         <p class="card__title card__title--sm">{{ emptyTitle }}</p>
         <p class="card__text">{{ emptyText }}</p>
     </div>

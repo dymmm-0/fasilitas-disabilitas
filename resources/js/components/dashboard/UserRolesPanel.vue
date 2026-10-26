@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { t } from '../../i18n';
 import { request } from '../../composables/useAuth';
 
 const users = ref([]);
@@ -9,22 +10,19 @@ onMounted(async () => {
     try {
         users.value = await request('/api/users');
     } catch {
-        error.value = 'Daftar akun hanya dapat dibaca setelah masuk sebagai admin.';
+        error.value = t('Daftar akun hanya dapat dibaca setelah masuk sebagai admin.');
     }
 });
 </script>
 
 <template>
-    <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel akun admin">
+    <div class="table-wrap" tabindex="0" role="region" :aria-label="$t('Tabel akun admin')">
         <table class="table">
-            <caption class="help" style="text-align: left; padding-bottom: 12px">
-                Satu-satunya akun adalah admin. Masyarakat tidak memiliki akun — kontribusi cukup mengisi nama pada
-                formulir.
-            </caption>
+            <caption class="help" style="text-align: left; padding-bottom: 12px">{{ $t('Satu-satunya akun adalah admin. Masyarakat tidak memiliki akun — kontribusi cukup mengisi nama pada formulir.') }}</caption>
             <thead>
                 <tr>
-                    <th scope="col">Nama</th>
-                    <th scope="col">Surel</th>
+                    <th scope="col">{{ $t('Nama') }}</th>
+                    <th scope="col">{{ $t('Surel') }}</th>
                 </tr>
             </thead>
             <tbody>

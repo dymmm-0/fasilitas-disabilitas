@@ -1,5 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { t } from '../i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 
@@ -42,7 +43,7 @@ const submit = async () => {
     } catch (e) {
         error.value =
             e.errors?.email?.[0] ??
-            (e.status === 419 ? 'Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.' : 'Tidak dapat masuk. Periksa koneksi lalu coba lagi.');
+            (e.status === 419 ? t('Sesi kedaluwarsa. Muat ulang halaman lalu coba lagi.') : t('Tidak dapat masuk. Periksa koneksi lalu coba lagi.'));
     } finally {
         sending.value = false;
     }
@@ -52,21 +53,19 @@ const submit = async () => {
 <template>
     <section ref="section" class="container section">
         <div class="panel stack" style="max-width: 420px; margin: 0 auto">
-            <p class="label">Akun admin</p>
-            <h1 class="display-md">Masuk untuk <em>mengelola data.</em></h1>
-            <p class="body-copy">
-                Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar
-            </p>
+            <p class="label">{{ $t('Akun admin') }}</p>
+            <h1 class="display-md"><i18n-t keypath="Masuk untuk {a}" tag="span" scope="global"><template #a><em>{{ $t('mengelola data.') }}</em></template></i18n-t></h1>
+            <p class="body-copy">{{ $t('Hanya admin yang memiliki akun. Masyarakat tidak perlu mendaftar') }}</p>
 
             <form class="stack" novalidate @submit.prevent="submit">
                 <div class="field">
-                    <label for="masuk-surel">Surel</label>
+                    <label for="masuk-surel">{{ $t('Surel') }}</label>
                     <input id="masuk-surel" v-model="form.email" class="input" type="email" autocomplete="username"
                         required :aria-invalid="Boolean(error)">
                 </div>
 
                 <div class="field">
-                    <label for="masuk-sandi">Kata sandi</label>
+                    <label for="masuk-sandi">{{ $t('Kata sandi') }}</label>
                     <input id="masuk-sandi" v-model="form.password" class="input" type="password"
                         autocomplete="current-password" required :aria-invalid="Boolean(error)"
                         :aria-describedby="error ? 'masuk-error' : undefined">
@@ -75,13 +74,11 @@ const submit = async () => {
                 <p v-if="error" id="masuk-error" class="error-text" role="alert">{{ error }}</p>
 
                 <button type="submit" class="btn btn--primary" :disabled="sending">
-                    {{ sending ? 'Memproses…' : 'Masuk' }}
+                    {{ sending ? $t('Memproses…') : $t('Masuk') }}
                 </button>
             </form>
 
-            <p class="help">
-                Peta, detail fasilitas, dan halaman kontribusi tetap dapat dibuka tanpa masuk.
-            </p>
+            <p class="help">{{ $t('Peta, detail fasilitas, dan halaman kontribusi tetap dapat dibuka tanpa masuk.') }}</p>
         </div>
     </section>
 </template>

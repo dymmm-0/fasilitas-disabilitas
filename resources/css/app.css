@@ -1289,30 +1289,10 @@ fieldset {
     aspect-ratio: 3 / 4;
     position: relative;
     overflow: hidden;
-    border: 1px solid var(--ink-a15);
     background-color: var(--paper);
-    background-image:
-        repeating-linear-gradient(0deg, var(--ink-a10) 0 1px, transparent 1px 52px),
-        repeating-linear-gradient(90deg, var(--ink-a10) 0 1px, transparent 1px 52px);
-}
-
-.hero__frame::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(var(--rust) 0 3px, transparent 3px);
-    background-size: 104px 104px;
-    background-position: 24px 36px;
-    opacity: 0.85;
-}
-
-.hero__frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--rail);
-    height: 1px;
-    top: 62%;
+    background-image: url('/images/hero-facilities.jpg');
+    background-size: cover;
+    background-position: center;
 }
 
 .stamp {

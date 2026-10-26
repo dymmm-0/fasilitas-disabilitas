@@ -49,22 +49,15 @@ const onSubmitted = async (payload) => {
     <section class="container section">
         <div class="stack">
             <div class="section__head" style="max-width: none">
-                <p class="label">Kontribusi masyarakat</p>
-                <h1 class="display-lg">Tambahkan fasilitas, atau <em>perbaiki data yang keliru.</em></h1>
-                <p class="body-copy">
-                    Setiap pengajuan divalidasi dan disimpan server, lalu masuk antrean verifikasi yang dibaca
-                    petugas dari basis data. Nomor pengajuan diberikan server setelah pengajuan tersimpan.
-                </p>
+                <p class="label">{{ $t('Kontribusi masyarakat') }}</p>
+                <h1 class="display-lg"><i18n-t keypath="Tambahkan fasilitas, atau {a}" tag="span" scope="global"><template #a><em>{{ $t('perbaiki data yang keliru.') }}</em></template></i18n-t></h1>
+                <p class="body-copy">{{ $t('Setiap pengajuan divalidasi dan disimpan server, lalu masuk antrean verifikasi yang dibaca petugas dari basis data. Nomor pengajuan diberikan server setelah pengajuan tersimpan.') }}</p>
             </div>
 
             <div v-if="!result" class="stack">
-                <div class="cluster" role="group" aria-label="Pilih jenis pengajuan">
-                    <button type="button" class="tab" :aria-pressed="tab === 'usulan'" @click="tab = 'usulan'">
-                        + Usulan fasilitas baru
-                    </button>
-                    <button type="button" class="tab" :aria-pressed="tab === 'koreksi'" @click="tab = 'koreksi'">
-                        ≠ Laporan koreksi data
-                    </button>
+                <div class="cluster" role="group" :aria-label="$t('Pilih jenis pengajuan')">
+                    <button type="button" class="tab" :aria-pressed="tab === 'usulan'" @click="tab = 'usulan'">{{ $t('+ Usulan fasilitas baru') }}</button>
+                    <button type="button" class="tab" :aria-pressed="tab === 'koreksi'" @click="tab = 'koreksi'">{{ $t('≠ Laporan koreksi data') }}</button>
                 </div>
 
                 <div class="panel">
@@ -84,34 +77,26 @@ const onSubmitted = async (payload) => {
                 </div>
 
                 <div class="notice">
-                    <b>Pengajuan tersimpan di basis data</b>
-                    <span>
-                        Server memeriksa isian sebelum menyimpan. Bukti foto (opsional) disimpan sebagai berkas
-                        privat dan hanya dapat dibuka petugas verifikasi.
-                    </span>
+                    <b>{{ $t('Pengajuan tersimpan di basis data') }}</b>
+                    <span>{{ $t('Server memeriksa isian sebelum menyimpan. Bukti foto (opsional) disimpan sebagai berkas privat dan hanya dapat dibuka petugas verifikasi.') }}</span>
                 </div>
             </div>
 
             <div v-else class="panel stack" role="status" aria-live="polite">
-                <p class="label">Pengajuan terkirim</p>
-                <h2 class="display-md">{{ result.id }} masuk antrean verifikasi.</h2>
+                <p class="label">{{ $t('Pengajuan terkirim') }}</p>
+                <h2 class="display-md"><i18n-t keypath="{a} masuk antrean verifikasi." tag="span" scope="global"><template #a>{{ result.id }}</template></i18n-t></h2>
                 <div class="inline-actions">
                     <StatusPill kind="submission" :value="result.status" />
-                    <span class="meta">{{ result.label }} · {{ result.name }} · {{ result.submittedBy }}</span>
+                    <span class="meta">{{ $t(result.label) }} · {{ result.name }} · {{ result.submittedBy }}</span>
                 </div>
-                <p class="body-copy">
-                    Pengajuan tersimpan di basis data dan masuk jeda antrean. Setelah diproses otomatis, statusnya
-                    berubah menjadi menunggu verifikasi dan muncul di meja petugas.
-                </p>
+                <p class="body-copy">{{ $t('Pengajuan tersimpan di basis data dan masuk jeda antrean. Setelah diproses otomatis, statusnya berubah menjadi menunggu verifikasi dan muncul di meja petugas.') }}</p>
                 <div class="inline-actions">
                     <RouterLink
                         class="btn btn--primary"
                         :to="{ path: '/status', query: { email: result.email } }"
-                    >
-                        Cek status pengajuan
-                    </RouterLink>
-                    <RouterLink v-if="user" class="btn" to="/verifikasi">Buka dashboard verifikasi</RouterLink>
-                    <button type="button" class="btn" @click="result = null">Kirim pengajuan lain</button>
+                    >{{ $t('Cek status pengajuan') }}</RouterLink>
+                    <RouterLink v-if="user" class="btn" to="/verifikasi">{{ $t('Buka dashboard verifikasi') }}</RouterLink>
+                    <button type="button" class="btn" @click="result = null">{{ $t('Kirim pengajuan lain') }}</button>
                 </div>
             </div>
         </div>

@@ -2,6 +2,9 @@
 
 return [
 
+
+    'locale' => env('APP_LOCALE', 'en'),
+    'fallback_locale' => env('APPP_FALLBACK_LOCALE', 'en'),
     /*
     |--------------------------------------------------------------------------
     | Application Name

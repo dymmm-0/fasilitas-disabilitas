@@ -20,7 +20,7 @@ let timer = null;
 
 const queued = computed(() => submissions.value.some((item) => item.status === 'queued'));
 
-const time = (iso) => (iso ? new Date(iso).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '');
+const time = (iso) => (iso ? new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '');
 
 const lookup = async () => {
     if (state.value === 'memuat' || !email.value.trim()) return;
@@ -55,18 +55,15 @@ onBeforeUnmount(() => clearTimeout(timer));
     <section class="container section">
         <div class="stack">
             <div class="section__head" style="max-width: none">
-                <p class="label">Status pengajuan</p>
-                <h1 class="display-lg">Periksa pengajuan <em>tanpa perlu akun.</em></h1>
-                <p class="body-copy">
-                    Masukkan surel yang dipakai saat mengirim usulan atau laporan koreksi. Nama boleh sama antara
-                    dua orang, karena itu surel yang menjadi penanda pengajuan Anda.
-                </p>
+                <p class="label">{{ $t('Status pengajuan') }}</p>
+                <h1 class="display-lg"><i18n-t keypath="Periksa pengajuan {a}" tag="span" scope="global"><template #a><em>{{ $t('tanpa perlu akun.') }}</em></template></i18n-t></h1>
+                <p class="body-copy">{{ $t('Masukkan surel yang dipakai saat mengirim usulan atau laporan koreksi. Nama boleh sama antara dua orang, karena itu surel yang menjadi penanda pengajuan Anda.') }}</p>
             </div>
 
             <form class="panel stack" @submit.prevent="lookup">
                 <div class="grid grid--form">
                     <div class="field">
-                        <label for="status-email">Surel pengaju</label>
+                        <label for="status-email">{{ $t('Surel pengaju') }}</label>
                         <input
                             id="status-email"
                             v-model="email"
@@ -78,16 +75,16 @@ onBeforeUnmount(() => clearTimeout(timer));
                     </div>
 
                     <div class="field">
-                        <label for="status-nama">Nama pengaju (opsional)</label>
+                        <label for="status-nama">{{ $t('Nama pengaju (opsional)') }}</label>
                         <input id="status-nama" v-model="name" class="input" autocomplete="name">
                     </div>
                 </div>
 
                 <div class="inline-actions">
                     <button type="submit" class="btn btn--primary" :disabled="state === 'memuat'">
-                        {{ state === 'memuat' ? 'Memeriksa...' : 'Cek status' }}
+                        {{ state === 'memuat' ? $t('Memeriksa...') : $t('Cek status') }}
                     </button>
-                    <span class="meta">Cek ulang otomatis selama pengajuan masih dalam antrean.</span>
+                    <span class="meta">{{ $t('Cek ulang otomatis selama pengajuan masih dalam antrean.') }}</span>
                 </div>
 
                 <p v-if="error" class="error-text" role="alert">{{ error }}</p>
@@ -95,25 +92,22 @@ onBeforeUnmount(() => clearTimeout(timer));
 
             <div v-if="searched" class="stack" role="status" aria-live="polite">
                 <p v-if="!submissions.length" class="notice">
-                    <b>Tidak ada pengajuan</b>
-                    <span>Periksa kembali penulisan surel, atau kirim pengajuan baru dari halaman kontribusi.</span>
+                    <b>{{ $t('Tidak ada pengajuan') }}</b>
+                    <span>{{ $t('Periksa kembali penulisan surel, atau kirim pengajuan baru dari halaman kontribusi.') }}</span>
                 </p>
 
                 <div v-else>
-                    <p class="label">{{ submissions.length }} pengajuan ditemukan</p>
-                    <div class="table-wrap" tabindex="0" role="region" aria-label="Daftar pengajuan">
+                    <p class="label"><i18n-t keypath="{a} pengajuan ditemukan" tag="span" scope="global"><template #a>{{ submissions.length }}</template></i18n-t></p>
+                    <div class="table-wrap" tabindex="0" role="region" :aria-label="$t('Daftar pengajuan')">
                         <table class="table">
-                            <caption class="help" style="text-align: left; padding-bottom: 12px">
-                                Status pengajuan atas surel Anda. Bukti foto, surel, dan catatan internal petugas tidak
-                                ditampilkan di halaman publik ini.
-                            </caption>
+                            <caption class="help" style="text-align: left; padding-bottom: 12px">{{ $t('Status pengajuan atas surel Anda. Bukti foto, surel, dan catatan internal petugas tidak ditampilkan di halaman publik ini.') }}</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Nomor</th>
-                                    <th scope="col">Jenis</th>
-                                    <th scope="col">Fasilitas</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Dikirim</th>
+                                    <th scope="col">{{ $t('Nomor') }}</th>
+                                    <th scope="col">{{ $t('Jenis') }}</th>
+                                    <th scope="col">{{ $t('Fasilitas') }}</th>
+                                    <th scope="col">{{ $t('Status') }}</th>
+                                    <th scope="col">{{ $t('Dikirim') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,8 +125,7 @@ onBeforeUnmount(() => clearTimeout(timer));
                                     </td>
                                     <td>
                                         <StatusPill kind="submission" :value="item.status" />
-                                        <span v-if="item.status === 'queued'" class="help">
-                                            diproses otomatis sekitar {{ time(item.readyAt) }}
+                                        <span v-if="item.status === 'queued'" class="help"><i18n-t keypath="diproses otomatis sekitar {a}" tag="span" scope="global"><template #a>{{ time(item.readyAt) }}</template></i18n-t>
                                         </span>
                                     </td>
                                     <td>{{ formatDate(item.submittedAt) }}</td>

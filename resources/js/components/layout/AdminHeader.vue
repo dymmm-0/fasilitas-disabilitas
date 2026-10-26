@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '../../composables/useAuth';
+import LanguageSwitch from '../common/LanguageSwitch.vue';
 
 // Navigasi area admin. "Fasilitas" dan "Kategori" adalah bagian di dalam
 // dashboard, jadi tautannya berupa lompatan bagian halaman (`active-class=""`
@@ -50,24 +51,24 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
     <header class="site-header">
         <div class="container site-header__row">
             <div class="cluster" style="gap: 10px">
-                <RouterLink class="wordmark" to="/admin" aria-label="AksesKita admin, ke dashboard">Akses<em>Kita</em></RouterLink>
+                <RouterLink class="wordmark" to="/admin" :aria-label="$t('AksesKita admin, ke dashboard')">Akses<em>Kita</em></RouterLink>
                 <span class="pill pill--accent">Admin</span>
             </div>
 
-            <nav class="site-nav" aria-label="Navigasi administrasi">
+            <nav class="site-nav" :aria-label="$t('Navigasi administrasi')">
                 <template v-for="link in LINKS" :key="link.to">
-                    <a v-if="link.jump" :href="link.to" @click.prevent="go(link.to)">{{ link.label }}</a>
-                    <RouterLink v-else :to="link.to">{{ link.label }}</RouterLink>
+                    <a v-if="link.jump" :href="link.to" @click.prevent="go(link.to)">{{ $t(link.label) }}</a>
+                    <RouterLink v-else :to="link.to">{{ $t(link.label) }}</RouterLink>
                 </template>
             </nav>
 
             <div class="cluster" style="gap: 8px">
                 <span v-if="user" class="meta desktop-only">{{ user.name }}</span>
-                <a class="btn btn--sm desktop-only" :href="PUBLIC_SITE" target="_blank" rel="noopener noreferrer">
-                    Kunjungi Situs
-                    <span aria-hidden="true">↗</span>
+                <a class="btn btn--sm desktop-only" :href="PUBLIC_SITE" target="_blank" rel="noopener noreferrer">{{ $t('Kunjungi Situs') }}<span aria-hidden="true">↗</span>
                 </a>
-                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">Keluar</button>
+                <button v-if="user" type="button" class="btn btn--sm desktop-only" @click="onLogout">{{ $t('Keluar') }}</button>
+
+                <LanguageSwitch />
 
                 <button
                     type="button"
@@ -77,19 +78,19 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
                     @click="open = !open"
                 >
                     <span aria-hidden="true">{{ open ? '×' : '≡' }}</span>
-                    <span class="visually-hidden">{{ open ? 'Tutup menu' : 'Buka menu' }}</span>
+                    <span class="visually-hidden">{{ open ? $t('Tutup menu') : $t('Buka menu') }}</span>
                 </button>
             </div>
         </div>
 
         <div v-if="open" id="navigasi-seluler" class="container mobile-only">
-            <nav class="mobile-nav" aria-label="Navigasi administrasi seluler">
+            <nav class="mobile-nav" :aria-label="$t('Navigasi administrasi seluler')">
                 <template v-for="link in LINKS" :key="link.to">
-                    <a v-if="link.jump" :href="link.to" @click.prevent="go(link.to)">{{ link.label }}</a>
-                    <RouterLink v-else :to="link.to">{{ link.label }}</RouterLink>
+                    <a v-if="link.jump" :href="link.to" @click.prevent="go(link.to)">{{ $t(link.label) }}</a>
+                    <RouterLink v-else :to="link.to">{{ $t(link.label) }}</RouterLink>
                 </template>
-                <a :href="PUBLIC_SITE" target="_blank" rel="noopener noreferrer">Kunjungi Situs ↗</a>
-                <button v-if="user" type="button" class="btn btn--sm" @click="onLogout">Keluar ({{ user.name }})</button>
+                <a :href="PUBLIC_SITE" target="_blank" rel="noopener noreferrer">{{ $t('Kunjungi Situs ↗') }}</a>
+                <button v-if="user" type="button" class="btn btn--sm" @click="onLogout"><i18n-t keypath="Keluar ({a})" tag="span" scope="global"><template #a>{{ user.name }}</template></i18n-t></button>
             </nav>
         </div>
     </header>

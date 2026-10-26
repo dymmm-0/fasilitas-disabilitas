@@ -17,18 +17,26 @@ export const CATEGORIES = [
     { id: 'pengiriman', label: 'Jasa Pengiriman', glyph: 'JP' },
 ];
 
+/**
+ * Kunci atribut netral bahasa dan sama persis dengan `Facility::ATTRIBUTE_COLUMNS`
+ * di backend. Label Indonesia adalah kunci katalog terjemahan (`$t(label)`).
+ */
 export const ATTRIBUTES = [
-    { id: 'ramp', label: 'Ramp / jalur landai', hint: 'Jalur landai di pintu masuk, kemiringan ramah kursi roda.' },
-    { id: 'toilet', label: 'Toilet aksesibel', hint: 'Toilet dengan ruang manuver, pegangan, dan pintu lebar.' },
-    { id: 'lift', label: 'Lift', hint: 'Lift dengan tombol braille dan penanda suara.' },
-    { id: 'path', label: 'Jalur kursi roda', hint: 'Jalur dalam area bebas tangga dan hambatan.' },
-    { id: 'entrance', label: 'Akses masuk', hint: 'Pintu masuk bebas hambatan, lebar minimal 80 cm.' },
+    { id: 'accessible_ramp', label: 'Ramp / Jalur Landai', hint: 'Jalur landai di pintu masuk, kemiringan ramah kursi roda.' },
+    { id: 'accessible_toilet', label: 'Toilet Aksesibel', hint: 'Toilet dengan ruang manuver, pegangan, dan pintu lebar.' },
+    { id: 'accessible_elevator', label: 'Lift Aksesibel', hint: 'Lift dengan tombol braille dan penanda suara.' },
+    { id: 'accessible_pedestrian_pathway', label: 'Jalur Pejalan Kaki Aksesibel', hint: 'Jalur dalam area bebas tangga dan hambatan.' },
+    { id: 'accessible_entrance', label: 'Pintu Masuk Aksesibel', hint: 'Pintu masuk bebas hambatan, lebar minimal 80 cm.' },
+    { id: 'tactile_guidance_path', label: 'Guiding Block / Jalur Pemandu Tunanetra', hint: 'Ubin pemandu taktil yang mengarahkan tunanetra di area publik.' },
+    { id: 'accessible_information_signage', label: 'Informasi dan Petunjuk Aksesibel', hint: 'Papan informasi dengan huruf jelas, kontras, dan braille.' },
+    { id: 'accessible_parking', label: 'Parkir Khusus Disabilitas', hint: 'Ruang parkir khusus dengan akses datar ke pintu masuk.' },
 ];
 
+/** Status tiga nilai; label adalah kunci terjemahan, bukan nilai yang disimpan. */
 export const AVAILABILITY = {
-    tersedia: { label: 'Tersedia', glyph: '✓', pill: 'pill--ok' },
-    tidak: { label: 'Tidak tersedia', glyph: '✕', pill: 'pill--no' },
-    belum: { label: 'Belum diketahui', glyph: '?', pill: 'pill--unknown' },
+    yes: { label: 'Tersedia', glyph: '✓', pill: 'pill--ok' },
+    no: { label: 'Tidak tersedia', glyph: '✕', pill: 'pill--no' },
+    unknown: { label: 'Belum diketahui', glyph: '?', pill: 'pill--unknown' },
 };
 
 export const VERIFICATION = {
@@ -95,4 +103,4 @@ export const daysSince = (iso, today = new Date()) =>
     Math.round((today - new Date(iso)) / 86400000);
 
 export const formatDate = (iso) =>
-    new Date(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });

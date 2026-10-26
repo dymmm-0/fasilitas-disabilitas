@@ -39,9 +39,9 @@ const verified = computed(() => VERIFICATION[props.facility.verification]);
 
             <div class="card__foot">
                 <span class="pill" :class="verified.pill">
-                    <span class="pill__glyph" aria-hidden="true">{{ verified.glyph }}</span>{{ verified.label }}
+                    <span class="pill__glyph" aria-hidden="true">{{ verified.glyph }}</span>{{ $t(verified.label) }}
                 </span>
-                <span class="meta">Diperbarui {{ formatDate(facility.updatedAt) }}</span>
+                <span class="meta"><i18n-t keypath="Diperbarui {a}" tag="span" scope="global"><template #a>{{ formatDate(facility.updatedAt) }}</template></i18n-t></span>
             </div>
         </div>
     </RouterLink>

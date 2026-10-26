@@ -81,7 +81,7 @@ mereka tuju dapat diakses semua orang.
 
 | Permasalahan | Pendekatan AksesKita | Status |
 | --- | --- | --- |
-| Informasi aksesibilitas tersebar dan tidak seragam | Satu skema data: 5 indikator aksesibilitas dengan tiga nilai baku (`tersedia`, `tidak`, `belum`) | ✅ Skema, basis data, dan tampilan sudah ada |
+| Informasi aksesibilitas tersebar dan tidak seragam | Satu skema data: 8 indikator aksesibilitas dengan tiga nilai baku (`yes`, `no`, `unknown`) | ✅ Skema, basis data, dan tampilan sudah ada |
 | Sulit menilai kesiapan fasilitas sebelum berkunjung | Peta, daftar kartu dengan pemuatan bertahap, filter atribut, dan halaman detail per fasilitas | ✅ Berjalan dari data basis data |
 | Data fasilitas belum terkumpul dalam satu tempat | Dataset OpenStreetMap Kota Medan diimpor ke tabel `facilities` lewat satu perintah idempoten | ✅ 1.117 fasilitas tersimpan |
 | Data yang tidak lengkap tampak sama dengan data yang buruk | Indikator `belum diketahui` ditampilkan terpisah dari `tidak tersedia`, plus persentase kelengkapan data | ✅ Berjalan |
@@ -230,7 +230,7 @@ dan `NEEDS_VERIFICATION` di `meta.js`):
    adalah jalur alternatif untuk pengguna keyboard dan pembaca layar.
 2. **Cari atau saring** — ketik nama/alamat/kota, pilih kategori, status verifikasi,
    atau atribut yang wajib ada. Jumlah hasil ikut berubah di peta dan daftar.
-3. **Buka detail** (`/fasilitas/AKS-0001`) — periksa lima indikator, catatan sumber,
+3. **Buka detail** (`/fasilitas/AKS-0001`) — periksa delapan indikator, catatan sumber,
    koordinat, dan tautan ke data OpenStreetMap aslinya.
 4. **Kirim kontribusi** (`/kontribusi`) — pilih "usulan fasilitas baru" atau "koreksi
    data", isi lokasi lewat peta, lampirkan foto bila ada, lalu kirim. Server menolak
@@ -271,7 +271,7 @@ bersama memakai composable singleton (`useFacilities`, `useVerification`,
 | Halaman | Isi utama |
 | --- | --- |
 | Beranda | Hero ringkas, peta fasilitas, panel filter, daftar kartu bertahap, legenda peta |
-| Detail fasilitas | Nama, kategori, alamat, lima indikator, catatan sumber, koordinat, status verifikasi |
+| Detail fasilitas | Nama, kategori, alamat, delapan indikator, catatan sumber, koordinat, status verifikasi |
 | Kontribusi | Dua jenis formulir, pemilih lokasi di peta, pratinjau foto, daftar kesalahan |
 | Masuk | Formulir surel + kata sandi dengan pesan kesalahan yang terbaca pembaca layar |
 | Verifikasi | Antrean gabungan berhalaman (fasilitas + pengajuan), penyaring, detail fasilitas atau pengajuan, aksi keputusan, riwayat keputusan |
@@ -669,7 +669,7 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 - [x] Autentikasi sesi untuk admin dan proteksi `/admin` serta `/verifikasi`
 - [x] Peta Leaflet + OpenStreetMap dengan penanda berkode kategori
 - [x] Pencarian, filter kategori, status verifikasi, dan kombinasi atribut
-- [x] Halaman detail dengan lima indikator, catatan sumber, dan status verifikasi
+- [x] Halaman detail dengan delapan indikator, catatan sumber, dan status verifikasi
 - [x] Formulir usulan fasilitas dan koreksi data dengan validasi di klien dan server
 - [x] Tabel `submissions`, `submission_proofs`, dan `verification_events` + API tulis pengajuan
 - [x] Keputusan verifikasi tersimpan di basis data beserta identitas petugas, waktu, dan riwayatnya

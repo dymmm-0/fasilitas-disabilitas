@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { t } from '../i18n';
 
 /**
  * Sesi admin. Pengunjung (guest) tidak punya akun — kontribusi cukup mengisi
@@ -34,7 +35,7 @@ export const request = async (path, options = {}) => {
     const data = response.status === 204 ? null : await response.json().catch(() => null);
 
     if (!response.ok) {
-        const error = new Error(data?.message ?? 'Permintaan gagal.');
+        const error = new Error(data?.message ?? t('Permintaan gagal.'));
         error.status = response.status;
         error.errors = data?.errors ?? {};
         throw error;

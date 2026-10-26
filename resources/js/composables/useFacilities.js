@@ -81,7 +81,7 @@ const results = computed(() => {
         if (filters.category !== 'all' && f.category !== filters.category) return false;
         if (filters.verification !== 'all' && f.verification !== filters.verification) return false;
 
-        if (filters.attributes.length && !filters.attributes.every((id) => f.accessibility[id] === 'tersedia')) {
+        if (filters.attributes.length && !filters.attributes.every((id) => f.accessibility[id] === 'yes')) {
             return false;
         }
 

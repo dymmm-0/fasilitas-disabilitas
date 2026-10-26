@@ -9,38 +9,38 @@ const { filters, attributes, results, hasFilters, toggleAttribute, resetFilters 
     <form class="filter-bar" role="search" @submit.prevent>
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))">
             <div class="field">
-                <label for="filter-cari">Cari fasilitas</label>
+                <label for="filter-cari">{{ $t('Cari fasilitas') }}</label>
                 <input
                     id="filter-cari"
                     v-model="filters.query"
                     class="input"
                     type="search"
-                    placeholder="Nama, alamat, atau kota"
+                    :placeholder="$t('Nama, alamat, atau kota')"
                     autocomplete="off"
                 >
             </div>
 
             <div class="field">
-                <label for="filter-kategori">Kategori</label>
+                <label for="filter-kategori">{{ $t('Kategori') }}</label>
                 <select id="filter-kategori" v-model="filters.category" class="select">
-                    <option value="all">Semua kategori</option>
+                    <option value="all">{{ $t('Semua kategori') }}</option>
                     <option v-for="category in CATEGORIES" :key="category.id" :value="category.id">
-                        {{ category.label }}
+                        {{ $t(category.label) }}
                     </option>
                 </select>
             </div>
 
             <div class="field">
-                <label for="filter-status">Status verifikasi</label>
+                <label for="filter-status">{{ $t('Status verifikasi') }}</label>
                 <select id="filter-status" v-model="filters.verification" class="select">
-                    <option value="all">Semua status</option>
-                    <option v-for="(meta, key) in VERIFICATION" :key="key" :value="key">{{ meta.label }}</option>
+                    <option value="all">{{ $t('Semua status') }}</option>
+                    <option v-for="(meta, key) in VERIFICATION" :key="key" :value="key">{{ $t(meta.label) }}</option>
                 </select>
             </div>
         </div>
 
         <fieldset>
-            <legend class="fieldset__legend">Atribut aksesibilitas yang harus tersedia</legend>
+            <legend class="fieldset__legend">{{ $t('Atribut aksesibilitas yang harus tersedia') }}</legend>
             <div class="cluster">
                 <button
                     v-for="attribute in attributes"
@@ -51,17 +51,16 @@ const { filters, attributes, results, hasFilters, toggleAttribute, resetFilters 
                     @click="toggleAttribute(attribute.id)"
                 >
                     <span class="chip__mark" aria-hidden="true">{{ filters.attributes.includes(attribute.id) ? '✓' : '+' }}</span>
-                    {{ attribute.label }}
+                    {{ $t(attribute.label) }}
                 </button>
             </div>
         </fieldset>
 
         <div class="cluster cluster--between">
             <p class="meta" role="status" aria-live="polite">
-                {{ results.length }} fasilitas ditampilkan
-                <span v-if="hasFilters">· filter aktif</span>
+                {{ results.length }} {{ $t('fasilitas ditampilkan') }}<span v-if="hasFilters"> · {{ $t('filter aktif') }}</span>
             </p>
-            <button v-if="hasFilters" type="button" class="btn btn--sm" @click="resetFilters">Kosongkan filter</button>
+            <button v-if="hasFilters" type="button" class="btn btn--sm" @click="resetFilters">{{ $t('Kosongkan filter') }}</button>
         </div>
     </form>
 </template>

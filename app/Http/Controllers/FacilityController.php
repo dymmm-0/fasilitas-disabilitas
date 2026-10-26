@@ -55,7 +55,7 @@ class FacilityController extends Controller
     /**
      * Hasil pemeriksaan atas satu fasilitas. Yang disimpan adalah keputusan
      * verifikasi tingkat fasilitas: identitas petugas, waktu, metode, dan catatan.
-     * Lima indikator aksesibilitas tidak disentuh — status fasilitas dan status tiap
+     * Delapan indikator aksesibilitas tidak disentuh — status fasilitas dan status tiap
      * indikator adalah dua hal berbeda, dan indikator tidak boleh menjadi `yes`
      * tanpa bukti.
      */

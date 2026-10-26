@@ -23,7 +23,7 @@ const emit = defineEmits(['select']);
                     <div class="card__meta">
                         <span>
                             <span aria-hidden="true">{{ QUEUE_TYPES[item.kind].glyph }}</span>
-                            {{ QUEUE_TYPES[item.kind].label }} · {{ item.source }}
+                            {{ $t(QUEUE_TYPES[item.kind].label) }} · {{ item.source }}
                         </span>
                         <span>{{ item.id }}</span>
                     </div>
@@ -32,17 +32,15 @@ const emit = defineEmits(['select']);
 
                     <p class="card__text">
                         {{ item.city }}
-                        <template v-if="item.pendingReports.length">
-                            · {{ item.pendingReports.length }} laporan koreksi menunggu keputusan
-                        </template>
+                        <template v-if="item.pendingReports.length"><i18n-t keypath="· {a} laporan koreksi menunggu keputusan" tag="span" scope="global"><template #a>{{ item.pendingReports.length }}</template></i18n-t></template>
                     </p>
 
                     <div class="card__foot">
                         <span class="pill" :class="statusMeta(item.kind, item.status).pill">
                             <span class="pill__glyph" aria-hidden="true">{{ statusMeta(item.kind, item.status).glyph }}</span>
-                            {{ statusMeta(item.kind, item.status).label }}
+                            {{ $t(statusMeta(item.kind, item.status).label) }}
                         </span>
-                        <span class="meta">{{ item.submittedBy ?? 'Tanpa pengaju' }} · {{ formatDate(item.createdAt) }}</span>
+                        <span class="meta">{{ item.submittedBy ?? $t('Tanpa pengaju') }} · {{ formatDate(item.createdAt) }}</span>
                     </div>
                 </div>
             </button>
@@ -50,7 +48,7 @@ const emit = defineEmits(['select']);
     </ul>
 
     <div v-else class="empty-state" role="status">
-        <span class="label">Antrean kosong</span>
-        <p class="card__text">Tidak ada baris yang cocok dengan penyaring saat ini.</p>
+        <span class="label">{{ $t('Antrean kosong') }}</span>
+        <p class="card__text">{{ $t('Tidak ada baris yang cocok dengan penyaring saat ini.') }}</p>
     </div>
 </template>

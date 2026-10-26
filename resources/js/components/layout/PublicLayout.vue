@@ -4,7 +4,7 @@ import AppFooter from './AppFooter.vue';
 </script>
 
 <template>
-    <a class="skip-link" href="#konten">Lewati ke konten utama</a>
+    <a class="skip-link" href="#konten">{{ $t('Lewati ke konten utama') }}</a>
 
     <PublicHeader />
 

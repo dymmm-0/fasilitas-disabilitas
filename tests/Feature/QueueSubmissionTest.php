@@ -48,7 +48,10 @@ class QueueSubmissionTest extends TestCase
             'latitude' => 3.6,
             'longitude' => 98.68,
             'accessibility' => [
-                'ramp' => 'tersedia', 'toilet' => 'belum', 'lift' => 'belum', 'path' => 'tidak', 'entrance' => 'tersedia',
+                'accessible_ramp' => 'yes', 'accessible_toilet' => 'unknown', 'accessible_elevator' => 'unknown',
+                'accessible_pedestrian_pathway' => 'no', 'accessible_entrance' => 'yes',
+                'tactile_guidance_path' => 'unknown', 'accessible_information_signage' => 'unknown',
+                'accessible_parking' => 'unknown',
             ],
         ])
             ->assertCreated()

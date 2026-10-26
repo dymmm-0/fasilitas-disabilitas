@@ -16,6 +16,6 @@ const meta = computed(
 
 <template>
     <span class="pill" :class="meta.pill">
-        <span class="pill__glyph" aria-hidden="true">{{ meta.glyph }}</span>{{ meta.label }}
+        <span class="pill__glyph" aria-hidden="true">{{ meta.glyph }}</span>{{ $t(meta.label) }}
     </span>
 </template>

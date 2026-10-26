@@ -10,14 +10,12 @@ defineProps({
 <template>
     <div class="kv">
         <div v-for="attribute in ATTRIBUTES" :key="attribute.id" class="kv__row accessibility-row">
-            <span class="kv__label">{{ attribute.label }}</span>
+            <span class="kv__label">{{ $t(attribute.label) }}</span>
             <StatusPill kind="availability" :value="facility.accessibility[attribute.id]" />
-            <span v-if="facility.accessibility[attribute.id] === 'belum'" class="kv__note">{{ attribute.hint }}</span>
+            <span v-if="facility.accessibility[attribute.id] === 'unknown'" class="kv__note">{{ $t(attribute.hint) }}</span>
             <span v-else class="kv__note">
-                {{
-                    facility.accessibilityDetails?.[attribute.id]
-                        || AVAILABILITY[facility.accessibility[attribute.id]].label + ' menurut data sumber.'
-                }}
+                {{ facility.accessibilityDetails?.[attribute.id]
+                    || $t(AVAILABILITY[facility.accessibility[attribute.id]].label) + ' ' + $t('menurut data sumber.') }}
             </span>
         </div>
     </div>

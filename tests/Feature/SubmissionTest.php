@@ -39,11 +39,11 @@ class SubmissionTest extends TestCase
             'city' => 'Kota Medan',
             'latitude' => 3.59,
             'longitude' => 98.67,
-            'ramp_status' => 'yes',
-            'toilet_status' => 'unknown',
-            'lift_status' => 'unknown',
-            'path_status' => 'unknown',
-            'entrance_status' => 'unknown',
+            'accessible_ramp_status' => 'yes',
+            'accessible_toilet_status' => 'unknown',
+            'accessible_elevator_status' => 'unknown',
+            'accessible_pedestrian_pathway_status' => 'unknown',
+            'accessible_entrance_status' => 'unknown',
             'verification_status' => 'pending',
             'data_completeness_percent' => 20,
         ]);
@@ -74,11 +74,14 @@ class SubmissionTest extends TestCase
             'latitude' => 3.6,
             'longitude' => 98.68,
             'accessibility' => [
-                'ramp' => 'tersedia',
-                'toilet' => 'belum',
-                'lift' => 'belum',
-                'path' => 'tidak',
-                'entrance' => 'tersedia',
+                'accessible_ramp' => 'yes',
+                'accessible_toilet' => 'unknown',
+                'accessible_elevator' => 'unknown',
+                'accessible_pedestrian_pathway' => 'no',
+                'accessible_entrance' => 'yes',
+                'tactile_guidance_path' => 'unknown',
+                'accessible_information_signage' => 'unknown',
+                'accessible_parking' => 'unknown',
             ],
             'notes' => 'Ramp terpasang September 2026.',
         ];
@@ -91,7 +94,7 @@ class SubmissionTest extends TestCase
         $response->assertCreated()
             ->assertJsonPath('submission.id', 'SUB-0001')
             ->assertJsonPath('submission.status', 'queued')
-            ->assertJsonPath('submission.payload.accessibility.toilet', 'belum')
+            ->assertJsonPath('submission.payload.accessibility.accessible_toilet', 'unknown')
             ->assertJsonPath('submission.createdFacilityId', null);
 
         $this->drainQueue();
@@ -129,8 +132,8 @@ class SubmissionTest extends TestCase
         $this->postJson('/api/submissions', [
             'type' => 'koreksi',
             'facility_id' => 'AKS-9999',
-            'field' => 'ramp',
-            'to' => 'tersedia',
+            'field' => 'accessible_ramp',
+            'to' => 'yes',
             'facility_name' => 'Puskesmas Contoh',
             'category' => 'kesehatan',
             'city' => 'Kota Medan',
@@ -138,12 +141,12 @@ class SubmissionTest extends TestCase
             'contact' => 'budi@contoh.test',
         ])->assertStatus(422)->assertJsonValidationErrors('facility_id');
 
-        // `ramp_status` fasilitas ini sudah `yes` → tersedia.
+        // `accessible_ramp_status` fasilitas ini sudah `yes` → tersedia.
         $this->postJson('/api/submissions', [
             'type' => 'koreksi',
             'facility_id' => 'AKS-0009',
-            'field' => 'ramp',
-            'to' => 'tersedia',
+            'field' => 'accessible_ramp',
+            'to' => 'yes',
             'facility_name' => 'Puskesmas Contoh',
             'category' => 'kesehatan',
             'city' => 'Kota Medan',
@@ -192,14 +195,14 @@ class SubmissionTest extends TestCase
         $this->assertSame('Taman Kota Baru', $facility->name);
         $this->assertSame('rekreasi', $facility->category);
         $this->assertSame('Kota Medan', $facility->city);
-        $this->assertSame('yes', $facility->ramp_status);
-        $this->assertSame('no', $facility->path_status);
+        $this->assertSame('yes', $facility->accessible_ramp_status);
+        $this->assertSame('no', $facility->accessible_pedestrian_pathway_status);
         // `belum` tetap unknown, bukan "tidak tersedia".
-        $this->assertSame('unknown', $facility->toilet_status);
-        $this->assertSame('unknown', $facility->lift_status);
+        $this->assertSame('unknown', $facility->accessible_toilet_status);
+        $this->assertSame('unknown', $facility->accessible_elevator_status);
         // Klaim pengaju belum diperiksa di lapangan.
         $this->assertSame('pending', $facility->verification_status);
-        $this->assertSame(60, $facility->data_completeness_percent);
+        $this->assertSame(38, $facility->data_completeness_percent);
         $this->assertSame('SUB-0001', $facility->source_ref_id);
 
         $submission = Submission::first();
@@ -280,15 +283,15 @@ class SubmissionTest extends TestCase
         $this->postJson('/api/submissions', [
             'type' => 'koreksi',
             'facility_id' => 'AKS-0009',
-            'field' => 'toilet',
-            'to' => 'tersedia',
+            'field' => 'accessible_toilet',
+            'to' => 'yes',
             'facility_name' => 'Puskesmas Contoh',
             'category' => 'kesehatan',
             'city' => 'Kota Medan',
             'submitted_by' => 'Budi',
             'contact' => 'budi@contoh.test',
             'summary' => 'Toilet aksesibel sudah dipasang.',
-        ])->assertCreated()->assertJsonPath('submission.payload.from', 'belum');
+        ])->assertCreated()->assertJsonPath('submission.payload.from', 'unknown');
 
         $this->drainQueue();
 
@@ -296,7 +299,7 @@ class SubmissionTest extends TestCase
             ->postJson('/api/submissions/SUB-0001/decision', ['action' => 'disetujui'])
             ->assertOk();
 
-        $this->assertSame('yes', $facility->fresh()->toilet_status);
+        $this->assertSame('yes', $facility->fresh()->accessible_toilet_status);
         // Fasilitas tidak berubah menjadi "terverifikasi" hanya karena satu koreksi.
         $this->assertSame('pending', $facility->fresh()->verification_status);
     }
@@ -308,8 +311,8 @@ class SubmissionTest extends TestCase
         $this->postJson('/api/submissions', [
             'type' => 'koreksi',
             'facility_id' => 'AKS-0009',
-            'field' => 'toilet',
-            'to' => 'tersedia',
+            'field' => 'accessible_toilet',
+            'to' => 'yes',
             'facility_name' => 'Puskesmas Contoh',
             'category' => 'kesehatan',
             'city' => 'Kota Medan',
@@ -323,7 +326,7 @@ class SubmissionTest extends TestCase
             ->postJson('/api/submissions/SUB-0001/decision', ['action' => 'ditolak', 'note' => 'Bukti tidak jelas.'])
             ->assertOk();
 
-        $this->assertSame('unknown', $facility->fresh()->toilet_status);
+        $this->assertSame('unknown', $facility->fresh()->accessible_toilet_status);
         $this->assertSame(1, Facility::count());
     }
 
@@ -386,7 +389,7 @@ class SubmissionTest extends TestCase
             'contact' => 'bukan-surel',
         ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['facility_name', 'category', 'contact', 'address', 'accessibility.ramp']);
+            ->assertJsonValidationErrors(['facility_name', 'category', 'contact', 'address', 'accessibility.accessible_ramp']);
 
         $this->assertDatabaseCount('submissions', 0);
     }

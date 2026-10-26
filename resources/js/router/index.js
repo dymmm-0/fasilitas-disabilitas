@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { watch } from 'vue';
 import { useAuth } from '../composables/useAuth';
+import i18n, { t } from '../i18n';
 
 const routes = [
     // Area pengunjung: layout publik (default) untuk semua route di bawah ini.
@@ -85,8 +87,15 @@ router.beforeEach((to) => {
     return true;
 });
 
+const title = (to) => (to.meta.title ? `${t(to.meta.title)} — AksesKita` : 'AksesKita');
+
 router.afterEach((to) => {
-    document.title = to.meta.title ? `${to.meta.title} — AksesKita` : 'AksesKita';
+    document.title = title(to);
+});
+
+// Judul dokumen ikut bahasa aktif, bukan hanya saat berpindah halaman.
+watch(i18n.global.locale, () => {
+    document.title = title(router.currentRoute.value);
 });
 
 export default router;

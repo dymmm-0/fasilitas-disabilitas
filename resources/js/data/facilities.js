@@ -7,10 +7,10 @@ import { ATTRIBUTES } from './meta';
 
 /** Persentase atribut aksesibilitas yang sudah diketahui (0–100). */
 export const completeness = (facility) => {
-    const known = ATTRIBUTES.filter((a) => facility.accessibility[a.id] !== 'belum').length;
+    const known = knownAttributeCount(facility);
 
     return Math.round((known / ATTRIBUTES.length) * 100);
 };
 
 export const knownAttributeCount = (facility) =>
-    ATTRIBUTES.filter((a) => facility.accessibility[a.id] !== 'belum').length;
+    ATTRIBUTES.filter((a) => facility.accessibility[a.id] !== 'unknown').length;

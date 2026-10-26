@@ -24,21 +24,19 @@ class Submission extends Model
     /** Status yang boleh diputuskan petugas: `queued` belum masuk meja verifikasi. */
     public const DECIDABLE_STATUSES = ['menunggu', 'perbaikan'];
 
-    /** Lima indikator aksesibilitas yang boleh diklaim pengaju atau dikoreksi. */
-    public const ATTRIBUTES = ['ramp', 'toilet', 'lift', 'path', 'entrance'];
-
-    /** Kosakata klaim pengaju (sama dengan `resources/js/data/meta.js` → `AVAILABILITY`). */
-    public const AVAILABILITY = ['tersedia', 'tidak', 'belum'];
+    /** Delapan indikator aksesibilitas yang boleh diklaim pengaju atau dikoreksi. */
+    public const ATTRIBUTES = [
+        'accessible_ramp', 'accessible_toilet', 'accessible_elevator',
+        'accessible_pedestrian_pathway', 'accessible_entrance',
+        'tactile_guidance_path', 'accessible_information_signage', 'accessible_parking',
+    ];
 
     /**
-     * Klaim pengaju → kolom status fasilitas. `belum` tetap `unknown`: ketiadaan
-     * bukti tidak pernah menjadi "tidak tersedia" maupun "tersedia".
+     * Status klaim pengaju (sama dengan `resources/js/data/meta.js` → `AVAILABILITY`).
+     * Nilainya identik dengan kolom fasilitas; `unknown` (belum ada bukti) tidak
+     * pernah menjadi "tidak tersedia" maupun "tersedia".
      */
-    public const AVAILABILITY_TO_DB = [
-        'tersedia' => 'yes',
-        'tidak' => 'no',
-        'belum' => 'unknown',
-    ];
+    public const AVAILABILITY = ['yes', 'no', 'unknown'];
 
     protected function casts(): array
     {

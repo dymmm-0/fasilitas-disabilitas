@@ -114,7 +114,7 @@ class SubmissionStatusTest extends TestCase
         $this->submission([
             'type' => 'koreksi',
             'facility_id' => $facility->id,
-            'payload' => ['field' => 'toilet', 'from' => 'belum', 'to' => 'tersedia'],
+            'payload' => ['field' => 'accessible_toilet', 'from' => 'unknown', 'to' => 'yes'],
         ]);
 
         $item = $this->lookup(['email' => 'rani@contoh.test'])->json('submissions.0');

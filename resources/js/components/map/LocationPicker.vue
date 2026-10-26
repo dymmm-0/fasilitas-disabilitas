@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue';
+import { t } from '../../i18n';
 import FacilityMap from './FacilityMap.vue';
 
 const ACCURACY_WARNING_METERS = 100;
@@ -37,18 +38,18 @@ const updateManualCoordinate = (key, value) => {
 
 const locationErrorMessage = (error) => {
     if (error.code === 1) {
-        return 'Izin lokasi ditolak. Aktifkan izin lokasi untuk situs ini melalui pengaturan browser jika ingin mencoba lagi.';
+        return t('Izin lokasi ditolak. Aktifkan izin lokasi untuk situs ini melalui pengaturan browser jika ingin mencoba lagi.');
     }
 
     if (error.code === 2) {
-        return 'Lokasi tidak dapat ditemukan. Periksa GPS, sinyal, atau izin lokasi perangkat.';
+        return t('Lokasi tidak dapat ditemukan. Periksa GPS, sinyal, atau izin lokasi perangkat.');
     }
 
     if (error.code === 3) {
-        return 'Waktu pencarian lokasi habis. Coba lagi atau pilih titik secara manual di peta.';
+        return t('Waktu pencarian lokasi habis. Coba lagi atau pilih titik secara manual di peta.');
     }
 
-    return 'Lokasi tidak dapat diambil. Pilih titik secara manual di peta atau coba lagi.';
+    return t('Lokasi tidak dapat diambil. Pilih titik secara manual di peta atau coba lagi.');
 };
 
 const useMyLocation = () => {
@@ -56,12 +57,12 @@ const useMyLocation = () => {
     locationStatus.value = '';
 
     if (!window.isSecureContext) {
-        locationError.value = 'Pengambilan lokasi membutuhkan koneksi aman (HTTPS atau localhost). Pilih titik secara manual di peta.';
+        locationError.value = t('Pengambilan lokasi membutuhkan koneksi aman (HTTPS atau localhost). Pilih titik secara manual di peta.');
         return;
     }
 
     if (!('geolocation' in navigator)) {
-        locationError.value = 'Browser ini tidak mendukung pengambilan lokasi. Pilih titik secara manual di peta.';
+        locationError.value = t('Browser ini tidak mendukung pengambilan lokasi. Pilih titik secara manual di peta.');
         return;
     }
 
@@ -80,7 +81,7 @@ const useMyLocation = () => {
                 || longitude > 180
             ) {
                 locating.value = false;
-                locationError.value = 'Koordinat lokasi tidak valid. Pilih titik secara manual di peta.';
+                locationError.value = t('Koordinat lokasi tidak valid. Pilih titik secara manual di peta.');
                 return;
             }
 
@@ -88,8 +89,8 @@ const useMyLocation = () => {
             pick({ lat: latitude, lng: longitude }, true);
             locating.value = false;
             locationStatus.value = Number.isFinite(accuracyMeters) && accuracyMeters > ACCURACY_WARNING_METERS
-                ? `Lokasi ditemukan. Akurasi sekitar ${Math.round(accuracyMeters)} meter; pastikan titik fasilitas sudah benar.`
-                : 'Lokasi ditemukan. Pastikan titik ini benar-benar lokasi fasilitas yang dilaporkan.';
+                ? t('Lokasi ditemukan. Akurasi sekitar {0} meter; pastikan titik fasilitas sudah benar.', [Math.round(accuracyMeters)])
+                : t('Lokasi ditemukan. Pastikan titik ini benar-benar lokasi fasilitas yang dilaporkan.');
         },
         (error) => {
             if (!mounted) return;
@@ -159,12 +160,12 @@ onBeforeUnmount(() => {
                 :aria-busy="locating"
                 @click="useMyLocation"
             >
-                {{ locating ? 'Mencari lokasi…' : 'Gunakan Lokasi Saya' }}
+                {{ locating ? $t('Mencari lokasi…') : $t('Gunakan Lokasi Saya') }}
             </button>
-            <span class="help">Lokasi hanya diambil setelah tombol ditekan dan dikirim saat formulir dikirim.</span>
+            <span class="help">{{ $t('Lokasi hanya diambil setelah tombol ditekan dan dikirim saat formulir dikirim.') }}</span>
         </div>
         <p v-if="locationStatus" class="help" role="status" aria-live="polite">{{ locationStatus }}</p>
         <p v-if="locationError" class="error-text" role="alert">{{ locationError }}</p>
-        <p id="koordinat-help" class="help">Klik pada peta atau isi koordinat secara manual. Koordinat dikirim hanya sebagai lokasi fasilitas saat formulir dikirim.</p>
+        <p id="koordinat-help" class="help">{{ $t('Klik pada peta atau isi koordinat secara manual. Koordinat dikirim hanya sebagai lokasi fasilitas saat formulir dikirim.') }}</p>
     </div>
 </template>

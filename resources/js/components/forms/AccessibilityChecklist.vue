@@ -15,8 +15,8 @@ const setValue = (id, value) => {
 <template>
     <div class="stack">
         <fieldset v-for="attribute in ATTRIBUTES" :key="attribute.id">
-            <legend class="fieldset__legend">{{ attribute.label }}</legend>
-            <p class="help">{{ attribute.hint }}</p>
+            <legend class="fieldset__legend">{{ $t(attribute.label) }}</legend>
+            <p class="help">{{ $t(attribute.hint) }}</p>
             <div class="choice-grid">
                 <label v-for="(meta, key) in AVAILABILITY" :key="key" class="choice">
                     <input
@@ -27,7 +27,7 @@ const setValue = (id, value) => {
                         @change="setValue(attribute.id, key)"
                     >
                     <span aria-hidden="true">{{ meta.glyph }}</span>
-                    {{ meta.label }}
+                    {{ $t(meta.label) }}
                 </label>
             </div>
         </fieldset>

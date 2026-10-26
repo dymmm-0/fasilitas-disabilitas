@@ -58,8 +58,8 @@ class SubmissionController extends Controller
             'to' => ['required_if:type,koreksi', 'nullable', Rule::in(Submission::AVAILABILITY)],
         ];
 
-        // Checklist aksesibilitas harus lengkap lima atribut: klaim yang bolong tidak
-        // bisa dipakai verifikator untuk memutuskan.
+        // Checklist aksesibilitas harus lengkap delapan atribut: klaim yang bolong
+        // tidak bisa dipakai verifikator untuk memutuskan.
         foreach (Submission::ATTRIBUTES as $attribute) {
             $rules["accessibility.$attribute"] = ['required_if:type,usulan', 'nullable', Rule::in(Submission::AVAILABILITY)];
         }
@@ -92,7 +92,7 @@ class SubmissionController extends Controller
             }
 
             [$statusColumn] = Facility::ATTRIBUTE_COLUMNS[$data['field']];
-            $current = Facility::AVAILABILITY_MAP[$facility->{$statusColumn}];
+            $current = $facility->{$statusColumn};
 
             if ($current === $data['to']) {
                 throw ValidationException::withMessages([
@@ -253,7 +253,7 @@ class SubmissionController extends Controller
             if ($data['action'] === 'disetujui' && $submission->type === 'koreksi') {
                 [$statusColumn] = Facility::ATTRIBUTE_COLUMNS[$submission->payload['field']];
                 $submission->facility->update([
-                    $statusColumn => Submission::AVAILABILITY_TO_DB[$submission->payload['to']],
+                    $statusColumn => $submission->payload['to'],
                 ]);
             }
 
@@ -293,7 +293,7 @@ class SubmissionController extends Controller
 
         foreach (Submission::ATTRIBUTES as $attribute) {
             [$statusColumn] = Facility::ATTRIBUTE_COLUMNS[$attribute];
-            $statuses[$statusColumn] = Submission::AVAILABILITY_TO_DB[$claims[$attribute] ?? 'belum'];
+            $statuses[$statusColumn] = $claims[$attribute] ?? 'unknown';
         }
 
         $known = count(array_filter($statuses, fn (string $value) => $value !== 'unknown'));
@@ -325,7 +325,7 @@ class SubmissionController extends Controller
         if ($submission->type === 'koreksi') {
             return $submission->facility !== null
                 && isset(Facility::ATTRIBUTE_COLUMNS[$submission->payload['field'] ?? null])
-                && isset(Submission::AVAILABILITY_TO_DB[$submission->payload['to'] ?? null]);
+                && in_array($submission->payload['to'] ?? null, Submission::AVAILABILITY, true);
         }
 
         $latitude = $submission->payload['lat'] ?? null;

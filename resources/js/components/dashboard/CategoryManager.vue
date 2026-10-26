@@ -31,29 +31,26 @@ const addCategory = () => {
 
 <template>
     <div class="stack--sm">
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Tabel kategori fasilitas">
+        <div class="table-wrap" tabindex="0" role="region" :aria-label="$t('Tabel kategori fasilitas')">
             <table class="table">
-                <caption class="help" style="text-align: left; padding-bottom: 12px">
-                    Jumlah fasilitas dihitung dari data yang sedang tampil. Menonaktifkan kategori menyembunyikannya
-                    dari filter peta pada implementasi nyata.
-                </caption>
+                <caption class="help" style="text-align: left; padding-bottom: 12px">{{ $t('Jumlah fasilitas dihitung dari data yang sedang tampil. Menonaktifkan kategori menyembunyikannya dari filter peta pada implementasi nyata.') }}</caption>
                 <thead>
                     <tr>
-                        <th scope="col">Kode</th>
-                        <th scope="col">Kategori</th>
-                        <th scope="col">Fasilitas</th>
-                        <th scope="col">Tampil di filter</th>
+                        <th scope="col">{{ $t('Kode') }}</th>
+                        <th scope="col">{{ $t('Kategori') }}</th>
+                        <th scope="col">{{ $t('Fasilitas') }}</th>
+                        <th scope="col">{{ $t('Tampil di filter') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="category in categories" :key="category.id">
                         <td class="mono">{{ category.glyph }}</td>
-                        <td><b>{{ category.label }}</b></td>
+                        <td><b>{{ $t(category.label) }}</b></td>
                         <td>{{ counts.get(category.id) ?? 0 }}</td>
                         <td>
                             <label class="toggle">
                                 <input v-model="category.active" type="checkbox">
-                                <span>{{ category.active ? 'Aktif' : 'Nonaktif' }}</span>
+                                <span>{{ category.active ? $t('Aktif') : $t('Nonaktif') }}</span>
                             </label>
                         </td>
                     </tr>
@@ -63,10 +60,10 @@ const addCategory = () => {
 
         <form class="inline-actions" @submit.prevent="addCategory">
             <div class="field" style="min-width: 240px">
-                <label for="kategori-baru">Tambah kategori</label>
-                <input id="kategori-baru" v-model="newName" class="input" placeholder="Mis. Ruang terbuka hijau">
+                <label for="kategori-baru">{{ $t('Tambah kategori') }}</label>
+                <input id="kategori-baru" v-model="newName" class="input" :placeholder="$t('Mis. Ruang terbuka hijau')">
             </div>
-            <button type="submit" class="btn">Tambah</button>
+            <button type="submit" class="btn">{{ $t('Tambah') }}</button>
         </form>
     </div>
 </template>

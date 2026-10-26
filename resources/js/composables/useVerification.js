@@ -1,6 +1,7 @@
 import { computed, reactive, ref } from 'vue';
 import { request } from './useAuth';
 import { useFacilities } from './useFacilities';
+import { t } from '../i18n';
 
 /**
  * Antrean verifikasi gabungan dari `GET /api/verification-queue`: fasilitas dari
@@ -49,7 +50,7 @@ const load = async (number = 1) => {
         status.value = 'siap';
     } catch (error) {
         loadError.value = error.status === 401
-            ? 'Sesi petugas sudah berakhir. Masuk kembali untuk membuka antrean.'
+            ? t('Sesi petugas sudah berakhir. Masuk kembali untuk membuka antrean.')
             : error.message;
         status.value = 'gagal';
     }

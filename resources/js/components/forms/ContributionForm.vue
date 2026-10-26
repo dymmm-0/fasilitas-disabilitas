@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, ref } from 'vue';
+import { t } from '../../i18n';
 import AccessibilityChecklist from './AccessibilityChecklist.vue';
 import LocationPicker from '../map/LocationPicker.vue';
 import { ATTRIBUTES, CATEGORIES } from '../../data/meta';
@@ -19,7 +20,7 @@ const form = reactive({
     lat: 3.595,
     lng: 98.672,
     notes: '',
-    accessibility: Object.fromEntries(ATTRIBUTES.map((a) => [a.id, 'belum'])),
+    accessibility: Object.fromEntries(ATTRIBUTES.map((a) => [a.id, 'unknown'])),
     submitter: '',
     email: '',
 });
@@ -38,11 +39,11 @@ const onPhoto = (event) => {
 const validate = () => {
     Object.keys(errors).forEach((key) => delete errors[key]);
 
-    if (!form.name.trim()) errors.name = 'Nama fasilitas wajib diisi.';
-    if (!form.address.trim()) errors.address = 'Alamat wajib diisi.';
-    if (!form.city.trim()) errors.city = 'Kota wajib diisi.';
-    if (!form.submitter.trim()) errors.submitter = 'Nama pengusul wajib diisi.';
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Alamat surel tidak valid.';
+    if (!form.name.trim()) errors.name = t('Nama fasilitas wajib diisi.');
+    if (!form.address.trim()) errors.address = t('Alamat wajib diisi.');
+    if (!form.city.trim()) errors.city = t('Kota wajib diisi.');
+    if (!form.submitter.trim()) errors.submitter = t('Nama pengusul wajib diisi.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = t('Alamat surel tidak valid.');
     if (
         !Number.isFinite(form.lat)
         || !Number.isFinite(form.lng)
@@ -51,7 +52,7 @@ const validate = () => {
         || form.lng < -180
         || form.lng > 180
     ) {
-        errors.lat = 'Latitude harus -90 sampai 90 dan longitude -180 sampai 180.';
+        errors.lat = t('Latitude harus -90 sampai 90 dan longitude -180 sampai 180.');
     }
 
     return Object.keys(errors).length === 0;
@@ -65,7 +66,7 @@ const submit = () => {
         facilityName: form.name.trim(),
         category: form.category,
         city: form.city.trim(),
-        summary: `Usulan fasilitas ${form.name.trim()} di ${form.city.trim()}.`,
+        summary: t('Usulan fasilitas {0} di {1}.', [form.name.trim(), form.city.trim()]),
         submittedBy: form.submitter.trim(),
         payload: {
             address: form.address.trim(),
@@ -84,7 +85,7 @@ const submit = () => {
     <form class="stack" novalidate @submit.prevent="submit">
         <div class="grid grid--form">
             <div class="field">
-                <label for="usulan-nama">Nama fasilitas</label>
+                <label for="usulan-nama">{{ $t('Nama fasilitas') }}</label>
                 <input
                     id="usulan-nama"
                     v-model="form.name"
@@ -96,14 +97,14 @@ const submit = () => {
             </div>
 
             <div class="field">
-                <label for="usulan-kategori">Kategori</label>
+                <label for="usulan-kategori">{{ $t('Kategori') }}</label>
                 <select id="usulan-kategori" v-model="form.category" class="select">
-                    <option v-for="category in CATEGORIES" :key="category.id" :value="category.id">{{ category.label }}</option>
+                    <option v-for="category in CATEGORIES" :key="category.id" :value="category.id">{{ $t(category.label) }}</option>
                 </select>
             </div>
 
             <div class="field">
-                <label for="usulan-kota">Kota / kabupaten</label>
+                <label for="usulan-kota">{{ $t('Kota / kabupaten') }}</label>
                 <input
                     id="usulan-kota"
                     v-model="form.city"
@@ -116,7 +117,7 @@ const submit = () => {
         </div>
 
         <div class="field">
-            <label for="usulan-alamat">Alamat lengkap</label>
+            <label for="usulan-alamat">{{ $t('Alamat lengkap') }}</label>
             <textarea
                 id="usulan-alamat"
                 v-model="form.address"
@@ -128,7 +129,7 @@ const submit = () => {
         </div>
 
         <fieldset>
-            <legend class="fieldset__legend">Koordinat lokasi</legend>
+            <legend class="fieldset__legend">{{ $t('Koordinat lokasi') }}</legend>
             <LocationPicker
                 v-model:lat="form.lat"
                 v-model:lng="form.lng"
@@ -138,19 +139,19 @@ const submit = () => {
         </fieldset>
 
         <fieldset>
-            <legend class="fieldset__legend">Checklist aksesibilitas</legend>
+            <legend class="fieldset__legend">{{ $t('Checklist aksesibilitas') }}</legend>
             <AccessibilityChecklist v-model="form.accessibility" />
         </fieldset>
 
         <div class="grid grid--form">
             <div class="field">
-                <label for="usulan-catatan">Catatan tambahan</label>
+                <label for="usulan-catatan">{{ $t('Catatan tambahan') }}</label>
                 <textarea id="usulan-catatan" v-model="form.notes" class="textarea"></textarea>
             </div>
 
             <div class="stack--sm">
                 <div class="field">
-                    <label for="usulan-foto">Foto bukti (opsional)</label>
+                    <label for="usulan-foto">{{ $t('Foto bukti (opsional)') }}</label>
                     <input
                         id="usulan-foto"
                         class="input"
@@ -159,7 +160,7 @@ const submit = () => {
                         :disabled="busy"
                         @change="onPhoto"
                     >
-                    <p class="help">JPG, PNG, atau WebP, maksimal 4 MB. Berkas disimpan di server dan hanya dibuka petugas verifikasi.</p>
+                    <p class="help">{{ $t('JPG, PNG, atau WebP, maksimal 4 MB. Berkas disimpan di server dan hanya dibuka petugas verifikasi.') }}</p>
                 </div>
 
                 <div
@@ -167,14 +168,14 @@ const submit = () => {
                     class="detail-media"
                     :style="{ backgroundImage: `url(${preview})`, backgroundSize: 'cover', color: 'transparent' }"
                     role="img"
-                    aria-label="Pratinjau foto yang dipilih"
+                    :aria-label="$t('Pratinjau foto yang dipilih')"
                 ></div>
             </div>
         </div>
 
         <div class="grid grid--form">
             <div class="field">
-                <label for="usulan-pengusul">Nama pengusul</label>
+                <label for="usulan-pengusul">{{ $t('Nama pengusul') }}</label>
                 <input
                     id="usulan-pengusul"
                     v-model="form.submitter"
@@ -186,7 +187,7 @@ const submit = () => {
             </div>
 
             <div class="field">
-                <label for="usulan-email">Surel pengusul</label>
+                <label for="usulan-email">{{ $t('Surel pengusul') }}</label>
                 <input
                     id="usulan-email"
                     v-model="form.email"
@@ -203,9 +204,9 @@ const submit = () => {
 
         <div class="inline-actions">
             <button type="submit" class="btn btn--primary" :disabled="busy">
-                {{ busy ? 'Mengirim…' : 'Kirim usulan' }}
+                {{ busy ? $t('Mengirim…') : $t('Kirim usulan') }}
             </button>
-            <span class="meta">Pengajuan tersimpan di basis data dan masuk antrean verifikasi.</span>
+            <span class="meta">{{ $t('Pengajuan tersimpan di basis data dan masuk antrean verifikasi.') }}</span>
         </div>
     </form>
 </template>

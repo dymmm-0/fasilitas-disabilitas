@@ -14,15 +14,15 @@ const low = computed(() => percent.value < 60);
 
 <template>
     <div class="meter">
-        <div class="meter__track" role="img" :aria-label="`Kelengkapan data ${percent} persen`">
+        <div class="meter__track" role="img" :aria-label="$t('Kelengkapan data {0} persen', [percent])">
             <div class="meter__fill" :class="{ 'meter__fill--low': low }" :style="{ width: `${percent}%` }"></div>
         </div>
         <div class="meter__legend">
             <span>
                 <span aria-hidden="true">{{ low ? '△' : '✓' }}</span>
-                {{ low ? 'Data belum lengkap' : 'Data cukup lengkap' }}
+                {{ low ? $t('Data belum lengkap') : $t('Data cukup lengkap') }}
             </span>
-            <span>{{ known }}/{{ ATTRIBUTES.length }} atribut · {{ percent }}%</span>
+            <span>{{ known }}/{{ ATTRIBUTES.length }} {{ $t('atribut') }} · {{ percent }}%</span>
         </div>
     </div>
 </template>

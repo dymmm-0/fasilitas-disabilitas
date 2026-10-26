@@ -1,5 +1,6 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { t } from '../../i18n';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { categoryGlyph, categoryLabel, VERIFICATION } from '../../data/meta';
@@ -11,7 +12,7 @@ const props = defineProps({
     center: { type: Array, default: () => [-6.2, 106.82] },
     zoom: { type: Number, default: 11 },
     accuracy: { type: Number, default: null },
-    label: { type: String, default: 'Peta fasilitas publik ramah disabilitas' },
+    label: { type: String, default: t('Peta fasilitas publik ramah disabilitas') },
 });
 
 const emit = defineEmits(['select', 'pick']);
@@ -129,7 +130,11 @@ const pinIcon = (facility, selected) => {
 };
 
 const facilityLabel = (facility) =>
-    `${facility.name}. Kategori ${categoryLabel(facility.category)}. Status ${VERIFICATION[facility.verification].label}`;
+    t('{0}. Kategori {1}. Status {2}', [
+        facility.name,
+        t(categoryLabel(facility.category)),
+        t(VERIFICATION[facility.verification].label),
+    ]);
 
 
 /** Penanda awal pada mode pemilihan koordinat. */

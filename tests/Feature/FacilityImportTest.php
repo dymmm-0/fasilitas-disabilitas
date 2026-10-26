@@ -46,10 +46,10 @@ class FacilityImportTest extends TestCase
 
         // Sinyal aksesibilitas OSM tetap tersimpan beserta keterangannya.
         $osm = Facility::firstWhere('external_id', 'AKS-9004');
-        $this->assertSame('yes', $osm->path_status);
-        $this->assertSame('yes', $osm->entrance_status);
+        $this->assertSame('yes', $osm->accessible_pedestrian_pathway_status);
+        $this->assertSame('yes', $osm->accessible_entrance_status);
         $this->assertSame(40, $osm->data_completeness_percent);
-        $this->assertStringContainsString('bukan pemeriksaan 5 atribut', $osm->path_details);
+        $this->assertStringContainsString('bukan pemeriksaan 5 atribut', $osm->accessible_pedestrian_pathway_details);
         $this->assertSame('pending', $osm->verification_status);
 
         // Kategori penginapan + bukti verifikasi yang sudah ada tidak dihapus.
@@ -121,8 +121,8 @@ class FacilityImportTest extends TestCase
         $this->assertSame(1, Facility::where('category', 'perbankan')->count());
         $this->assertSame(11, Facility::where('category', 'pengiriman')->count());
         $this->assertSame(0, Facility::where('verification_status', '!=', 'pending')->count());
-        $this->assertSame(8, Facility::where('path_status', 'yes')->count());
-        $this->assertSame(4, Facility::where('path_status', 'no')->count());
+        $this->assertSame(8, Facility::where('accessible_pedestrian_pathway_status', 'yes')->count());
+        $this->assertSame(4, Facility::where('accessible_pedestrian_pathway_status', 'no')->count());
         $this->assertSame('perbankan', Facility::firstWhere('external_id', 'AKS-1097')->category);
     }
 
@@ -213,7 +213,7 @@ class FacilityImportTest extends TestCase
         $this->assertSame('government_public_service', $facility->source_category);
         $this->assertSame(3.59, $facility->latitude);
         $this->assertSame(98.67, $facility->longitude);
-        $this->assertSame('unknown', $facility->ramp_status);
+        $this->assertSame('unknown', $facility->accessible_ramp_status);
         $this->assertSame('pending', $facility->verification_status);
         $this->assertSame('RSU Contoh', $facility->name);
     }
@@ -281,7 +281,7 @@ class FacilityImportTest extends TestCase
         $response->assertJsonPath('facilities.0.id', 'AKS-9001');
         $response->assertJsonPath('facilities.0.category', 'kesehatan');
         // Belum ada bukti bukan berarti tidak tersedia.
-        $response->assertJsonPath('facilities.0.accessibility.ramp', 'belum');
+        $response->assertJsonPath('facilities.0.accessibility.accessible_ramp', 'unknown');
         $response->assertJsonPath('facilities.0.verification', 'menunggu');
         $response->assertJsonPath('facilities.0.city', 'Kota Medan');
         $response->assertJsonPath('facilities.0.source.name', 'OpenStreetMap');

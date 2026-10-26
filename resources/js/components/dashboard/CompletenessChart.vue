@@ -32,13 +32,13 @@ const rows = computed(() => {
     <div class="chart">
         <div v-for="row in rows" :key="row.id" class="bar-row">
             <span>
-                {{ row.label }}
-                <span class="meta">· {{ row.count }} fasilitas</span>
+                {{ $t(row.label) }}
+                <span class="meta"><i18n-t keypath="· {a} fasilitas" tag="span" scope="global"><template #a>{{ row.count }}</template></i18n-t></span>
             </span>
             <span
                 class="meter__track"
                 role="img"
-                :aria-label="`Rata-rata kelengkapan data kategori ${row.label}: ${row.average} persen`"
+                :aria-label="$t('Rata-rata kelengkapan data kategori {0}: {1} persen', [row.label, row.average])"
             >
                 <span
                     class="meter__fill"

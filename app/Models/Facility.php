@@ -9,8 +9,14 @@ use Illuminate\Database\Eloquent\Model;
     'external_id', 'name', 'category', 'source_category', 'source_category_detail',
     'address', 'village', 'subdistrict', 'city', 'province', 'postal_code',
     'latitude', 'longitude',
-    'ramp_status', 'ramp_details', 'toilet_status', 'toilet_details', 'lift_status', 'lift_details',
-    'path_status', 'path_details', 'entrance_status', 'entrance_details',
+    'accessible_ramp_status', 'accessible_ramp_details',
+    'accessible_toilet_status', 'accessible_toilet_details',
+    'accessible_elevator_status', 'accessible_elevator_details',
+    'accessible_pedestrian_pathway_status', 'accessible_pedestrian_pathway_details',
+    'accessible_entrance_status', 'accessible_entrance_details',
+    'tactile_guidance_path_status', 'tactile_guidance_path_details',
+    'accessible_information_signage_status', 'accessible_information_signage_details',
+    'accessible_parking_status', 'accessible_parking_details',
     'entrance_width_cm', 'entrance_width_measured',
     'verification_status', 'verified_at', 'verified_by', 'verification_method', 'verification_note', 'evidence_url',
     'source_name', 'source_url', 'source_ref_type', 'source_ref_id', 'collected_at',
@@ -63,20 +69,20 @@ class Facility extends Model
         'penginapan', 'rekreasi', 'ibadah', 'olahraga', 'perbankan', 'pengiriman',
     ];
 
-    /** Indikator aksesibilitas → kolom status dan kolom keterangan. */
+    /**
+     * Indikator aksesibilitas → kolom status dan kolom keterangan. Kunci ini juga
+     * dipakai API dan frontend (`resources/js/data/meta.js`) dan netral bahasa.
+     * Status tiga nilai: `unknown` berarti belum ada bukti, bukan "tidak tersedia".
+     */
     public const ATTRIBUTE_COLUMNS = [
-        'ramp' => ['ramp_status', 'ramp_details'],
-        'toilet' => ['toilet_status', 'toilet_details'],
-        'lift' => ['lift_status', 'lift_details'],
-        'path' => ['path_status', 'path_details'],
-        'entrance' => ['entrance_status', 'entrance_details'],
-    ];
-
-    /** Status tiga nilai: ketiadaan bukti bukan "tidak tersedia". */
-    public const AVAILABILITY_MAP = [
-        'yes' => 'tersedia',
-        'no' => 'tidak',
-        'unknown' => 'belum',
+        'accessible_ramp' => ['accessible_ramp_status', 'accessible_ramp_details'],
+        'accessible_toilet' => ['accessible_toilet_status', 'accessible_toilet_details'],
+        'accessible_elevator' => ['accessible_elevator_status', 'accessible_elevator_details'],
+        'accessible_pedestrian_pathway' => ['accessible_pedestrian_pathway_status', 'accessible_pedestrian_pathway_details'],
+        'accessible_entrance' => ['accessible_entrance_status', 'accessible_entrance_details'],
+        'tactile_guidance_path' => ['tactile_guidance_path_status', 'tactile_guidance_path_details'],
+        'accessible_information_signage' => ['accessible_information_signage_status', 'accessible_information_signage_details'],
+        'accessible_parking' => ['accessible_parking_status', 'accessible_parking_details'],
     ];
 
     /** Status verifikasi tingkat fasilitas → label klien (`resources/js/data/meta.js`). */
@@ -132,6 +138,14 @@ class Facility extends Model
     {
         $date = ($this->collected_at ?? $this->updated_at)?->toDateString();
 
+        $accessibility = [];
+        $accessibilityDetails = [];
+
+        foreach (self::ATTRIBUTE_COLUMNS as $attribute => [$statusColumn, $detailsColumn]) {
+            $accessibility[$attribute] = $this->{$statusColumn};
+            $accessibilityDetails[$attribute] = $this->{$detailsColumn};
+        }
+
         return [
             'id' => $this->external_id,
             'name' => $this->name,
@@ -142,20 +156,8 @@ class Facility extends Model
             'city' => $this->city,
             'lat' => $this->latitude,
             'lng' => $this->longitude,
-            'accessibility' => [
-                'ramp' => self::AVAILABILITY_MAP[$this->ramp_status],
-                'toilet' => self::AVAILABILITY_MAP[$this->toilet_status],
-                'lift' => self::AVAILABILITY_MAP[$this->lift_status],
-                'path' => self::AVAILABILITY_MAP[$this->path_status],
-                'entrance' => self::AVAILABILITY_MAP[$this->entrance_status],
-            ],
-            'accessibilityDetails' => [
-                'ramp' => $this->ramp_details,
-                'toilet' => $this->toilet_details,
-                'lift' => $this->lift_details,
-                'path' => $this->path_details,
-                'entrance' => $this->entrance_details,
-            ],
+            'accessibility' => $accessibility,
+            'accessibilityDetails' => $accessibilityDetails,
             'notes' => $this->notes ?? '',
             'proofs' => [],
             'verification' => self::VERIFICATION_MAP[$this->verification_status],

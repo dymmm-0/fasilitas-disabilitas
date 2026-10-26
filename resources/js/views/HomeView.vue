@@ -39,40 +39,34 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
 <template>
     <section class="container hero">
         <Reveal class="stack">
-            <p class="label">Platform pemetaan fasilitas publik</p>
-            <h1 class="display-xl">Temukan fasilitas yang bisa <em>diakses semua orang.</em></h1>
-            <p class="body-copy">
-                AksesKita memetakan ramp, toilet aksesibel, lift, dan jalur kursi roda di fasilitas publik — lalu
-                memverifikasinya bersama masyarakat agar keputusan berkegiatan tidak lagi menebak-nebak.
-            </p>
+            <p class="label">{{ $t('Platform pemetaan fasilitas publik') }}</p>
+            <h1 class="display-xl"><i18n-t keypath="Temukan fasilitas yang bisa {a}" tag="span" scope="global"><template #a><em>{{ $t('diakses semua orang.') }}</em></template></i18n-t></h1>
+            <p class="body-copy">{{ $t('AksesKita memetakan ramp, toilet aksesibel, lift, jalur pejalan kaki aksesibel, dan fasilitas pendukung lain di fasilitas publik — lalu memverifikasinya bersama masyarakat agar keputusan berkegiatan tidak lagi menebak-nebak.') }}</p>
 
             <form class="searchbar" role="search" @submit.prevent>
                 <div class="field">
-                    <label for="hero-cari">Cari fasilitas atau kota</label>
+                    <label for="hero-cari">{{ $t('Cari fasilitas atau kota') }}</label>
                     <input
                         id="hero-cari"
                         v-model="filters.query"
                         class="input"
                         type="search"
-                        placeholder="Contoh: rumah sakit, puskesmas, Medan"
+                        :placeholder="$t('Contoh: rumah sakit, puskesmas, Medan')"
                         autocomplete="off"
                     >
                 </div>
-                <a class="btn btn--primary" href="#peta">
-                    Lihat peta
-                    <span aria-hidden="true">↓</span>
+                <a class="btn btn--primary" href="#peta">{{ $t('Lihat peta') }}<span aria-hidden="true">↓</span>
                 </a>
             </form>
 
             <p class="meta" role="status" aria-live="polite">
-                {{ results.length }} fasilitas sesuai pencarian · {{ verified }} terverifikasi · {{ cities }} kota
-            </p>
+                <i18n-t keypath="{a} fasilitas sesuai pencarian · {b} terverifikasi · {c} kota" tag="span" scope="global"><template #a>{{ results.length }}</template><template #b>{{ verified }}</template><template #c>{{ cities }}</template></i18n-t></p>
         </Reveal>
 
         <Reveal class="hero__media hero-shadow">
             <div class="hero__frame"></div>
             <p class="stamp">
-                {{ facilities.length }} fasilitas<b>dipetakan warga</b>
+                {{ $t('{0} fasilitas', [facilities.length]) }}<b>{{ $t('dipetakan warga') }}</b>
             </p>
         </Reveal>
     </section>
@@ -80,12 +74,9 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
     <section id="peta" class="section">
         <div class="container stack">
             <div class="section__head" style="max-width: none">
-                <p class="label">Peta dan daftar</p>
-                <h2 class="display-lg">Cari, saring, lalu buka <em>detail aksesibilitasnya.</em></h2>
-                <p class="body-copy">
-                    Pilih kategori atau atribut aksesibilitas yang Anda butuhkan. Klik penanda di peta atau kartu di
-                    samping — keduanya menampilkan fasilitas yang sama.
-                </p>
+                <p class="label">{{ $t('Peta dan daftar') }}</p>
+                <h2 class="display-lg"><i18n-t keypath="Cari, saring, lalu buka {a}" tag="span" scope="global"><template #a><em>{{ $t('detail aksesibilitasnya.') }}</em></template></i18n-t></h2>
+                <p class="body-copy">{{ $t('Pilih kategori atau atribut aksesibilitas yang Anda butuhkan. Klik penanda di peta atau kartu di samping — keduanya menampilkan fasilitas yang sama.') }}</p>
             </div>
 
             <FacilityFilters />
@@ -98,28 +89,25 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                         @select="selectFacility"
                     />
                     <MapLegend />
-                    <p class="help">
-                        Peta bersifat visual. Informasi yang sama tersedia sebagai daftar kartu di samping, dan setiap
-                        penanda dapat difokuskan dengan tombol Tab.
-                    </p>
+                    <p class="help">{{ $t('Peta bersifat visual. Informasi yang sama tersedia sebagai daftar kartu di samping, dan setiap penanda dapat difokuskan dengan tombol Tab.') }}</p>
                 </div>
 
                 <div>
                     <div class="results-head">
                         <h3 class="display-sm">
-                            {{ status === 'memuat' ? 'Memuat data fasilitas…' : `${results.length} fasilitas` }}
+                            {{ status === 'memuat' ? $t('Memuat data fasilitas…') : $t('{0} fasilitas', [results.length]) }}`
                         </h3>
-                        <RouterLink class="btn btn--sm" to="/kontribusi">Usulkan fasilitas baru</RouterLink>
+                        <RouterLink class="btn btn--sm" to="/kontribusi">{{ $t('Usulkan fasilitas baru') }}</RouterLink>
                     </div>
                     <div v-if="status === 'gagal'" class="notice" role="alert">
-                        <b>Gagal memuat data</b>
-                        <span>Server tidak mengirim daftar fasilitas ({{ loadError }}). Muat ulang halaman untuk mencoba lagi.</span>
+                        <b>{{ $t('Gagal memuat data') }}</b>
+                        <span><i18n-t keypath="Server tidak mengirim daftar fasilitas ({a}). Muat ulang halaman untuk mencoba lagi." tag="span" scope="global"><template #a>{{ loadError }}</template></i18n-t></span>
                     </div>
                     <FacilityList :facilities="pageFacilities" :selected-id="selectedId" @select="selectFacility" />
-                    <nav v-if="results.length" class="pagination" aria-label="Pagination fasilitas">
-                        <span class="meta">{{ rangeStart }}–{{ rangeEnd }} dari {{ results.length }} fasilitas</span>
+                    <nav v-if="results.length" class="pagination" :aria-label="$t('Pagination fasilitas')">
+                        <span class="meta"><i18n-t keypath="{a}–{b} dari {c} fasilitas" tag="span" scope="global"><template #a>{{ rangeStart }}</template><template #b>{{ rangeEnd }}</template><template #c>{{ results.length }}</template></i18n-t></span>
                         <div class="pagination__controls">
-                            <button class="btn btn--sm" type="button" :disabled="page === 1" @click="showPage(page - 1)">Sebelumnya</button>
+                            <button class="btn btn--sm" type="button" :disabled="page === 1" @click="showPage(page - 1)">{{ $t('Sebelumnya') }}</button>
                             <button
                                 v-for="number in paginationPages"
                                 :key="number"
@@ -129,7 +117,7 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
                                 :aria-current="number === page ? 'page' : undefined"
                                 @click="showPage(number)"
                             >{{ number }}</button>
-                            <button class="btn btn--sm" type="button" :disabled="page === pageCount" @click="showPage(page + 1)">Berikutnya</button>
+                            <button class="btn btn--sm" type="button" :disabled="page === pageCount" @click="showPage(page + 1)">{{ $t('Berikutnya') }}</button>
                         </div>
                     </nav>
                 </div>
@@ -140,31 +128,31 @@ const cities = computed(() => new Set(facilities.value.map((f) => f.city)).size)
     <section class="section">
         <div class="container stack">
             <div class="section__head">
-                <p class="label">Cara kerja</p>
-                <h2 class="display-lg">Dari temuan warga sampai <em>data terverifikasi.</em></h2>
+                <p class="label">{{ $t('Cara kerja') }}</p>
+                <h2 class="display-lg"><i18n-t keypath="Dari temuan warga sampai {a}" tag="span" scope="global"><template #a><em>{{ $t('data terverifikasi.') }}</em></template></i18n-t></h2>
             </div>
 
             <ol class="steps">
                 <li class="step">
                     <span class="step__num">i.</span>
-                    <span><b>Warga mengusulkan.</b> Nama, alamat, koordinat, foto, dan checklist aksesibilitas dikirim lewat formulir kontribusi.</span>
-                    <span class="step__time">Tahap 1</span>
+                    <span><i18n-t keypath="{a} Nama, alamat, koordinat, foto, dan checklist aksesibilitas dikirim lewat formulir kontribusi." tag="span" scope="global"><template #a><b>{{ $t('Warga mengusulkan.') }}</b></template></i18n-t></span>
+                    <span class="step__time">{{ $t('Tahap 1') }}</span>
                 </li>
                 <li class="step">
                     <span class="step__num">ii.</span>
-                    <span><b>Verifikator memeriksa.</b> Bukti foto dan koordinat ditinjau; pengajuan dapat disetujui, ditolak, atau diminta diperbaiki.</span>
-                    <span class="step__time">Tahap 2</span>
+                    <span><i18n-t keypath="{a} Bukti foto dan koordinat ditinjau; pengajuan dapat disetujui, ditolak, atau diminta diperbaiki." tag="span" scope="global"><template #a><b>{{ $t('Verifikator memeriksa.') }}</b></template></i18n-t></span>
+                    <span class="step__time">{{ $t('Tahap 2') }}</span>
                 </li>
                 <li class="step">
                     <span class="step__num">iii.</span>
-                    <span><b>Data tampil di peta.</b> Status kelengkapan dan tanggal pemeriksaan terakhir selalu ikut ditampilkan agar pengguna tahu seberapa baru datanya.</span>
-                    <span class="step__time">Tahap 3</span>
+                    <span><i18n-t keypath="{a} Status kelengkapan dan tanggal pemeriksaan terakhir selalu ikut ditampilkan agar pengguna tahu seberapa baru datanya." tag="span" scope="global"><template #a><b>{{ $t('Data tampil di peta.') }}</b></template></i18n-t></span>
+                    <span class="step__time">{{ $t('Tahap 3') }}</span>
                 </li>
             </ol>
 
             <div class="inline-actions">
-                <RouterLink class="btn btn--primary" to="/kontribusi">Mulai berkontribusi</RouterLink>
-                <RouterLink class="btn" to="/tentang">Baca panduan lengkap</RouterLink>
+                <RouterLink class="btn btn--primary" to="/kontribusi">{{ $t('Mulai berkontribusi') }}</RouterLink>
+                <RouterLink class="btn" to="/tentang">{{ $t('Baca panduan lengkap') }}</RouterLink>
             </div>
         </div>
     </section>

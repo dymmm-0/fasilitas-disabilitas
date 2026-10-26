@@ -40,11 +40,11 @@ class VerificationQueueTest extends TestCase
             'city' => 'Kota Medan',
             'latitude' => 3.59,
             'longitude' => 98.67,
-            'ramp_status' => 'yes',
-            'toilet_status' => 'unknown',
-            'lift_status' => 'unknown',
-            'path_status' => 'unknown',
-            'entrance_status' => 'unknown',
+            'accessible_ramp_status' => 'yes',
+            'accessible_toilet_status' => 'unknown',
+            'accessible_elevator_status' => 'unknown',
+            'accessible_pedestrian_pathway_status' => 'unknown',
+            'accessible_entrance_status' => 'unknown',
             'verification_status' => 'pending',
             'source_name' => 'OpenStreetMap',
             'source_ref_type' => 'node',
@@ -102,8 +102,8 @@ class VerificationQueueTest extends TestCase
         $this->assertSame('AKS-0001', $queue['items'][0]['id']);
         $this->assertSame('menunggu', $queue['items'][0]['status']);
         $this->assertSame('Dataset OpenStreetMap', $queue['items'][0]['source']);
-        $this->assertSame('tersedia', $queue['items'][0]['facility']['accessibility']['ramp']);
-        $this->assertSame('belum', $queue['items'][0]['facility']['accessibility']['toilet']);
+        $this->assertSame('yes', $queue['items'][0]['facility']['accessibility']['accessible_ramp']);
+        $this->assertSame('unknown', $queue['items'][0]['facility']['accessibility']['accessible_toilet']);
 
         // Fasilitas yang sudah terverifikasi tidak dihitung lagi sebagai antrean.
         $this->assertSame(1, $queue['stats']['facilitiesPending']);
@@ -137,7 +137,7 @@ class VerificationQueueTest extends TestCase
     public function test_penyaring_jenis_status_dan_pencarian(): void
     {
         $facility = $this->facility(['name' => 'Puskesmas Contoh 1']);
-        $this->koreksi($facility, 'toilet', 'tersedia');
+        $this->koreksi($facility, 'accessible_toilet', 'yes');
 
         $this->postJson('/api/submissions', [
             'type' => 'usulan',
@@ -150,7 +150,10 @@ class VerificationQueueTest extends TestCase
             'latitude' => 3.6,
             'longitude' => 98.68,
             'accessibility' => [
-                'ramp' => 'tersedia', 'toilet' => 'belum', 'lift' => 'belum', 'path' => 'tidak', 'entrance' => 'tersedia',
+                'accessible_ramp' => 'yes', 'accessible_toilet' => 'unknown', 'accessible_elevator' => 'unknown',
+                'accessible_pedestrian_pathway' => 'no', 'accessible_entrance' => 'yes',
+                'tactile_guidance_path' => 'unknown', 'accessible_information_signage' => 'unknown',
+                'accessible_parking' => 'unknown',
             ],
         ])->assertCreated();
 
@@ -202,8 +205,8 @@ class VerificationQueueTest extends TestCase
         $this->assertSame('Diperiksa langsung, ramp terpasang.', $facility->verification_note);
 
         // Keputusan tingkat fasilitas tidak mengubah indikator aksesibilitas.
-        $this->assertSame('yes', $facility->ramp_status);
-        $this->assertSame('unknown', $facility->toilet_status);
+        $this->assertSame('yes', $facility->accessible_ramp_status);
+        $this->assertSame('unknown', $facility->accessible_toilet_status);
         $this->assertSame(20, $facility->data_completeness_percent);
 
         $this->assertDatabaseHas('verification_events', [
@@ -306,7 +309,7 @@ class VerificationQueueTest extends TestCase
     {
         $facility = $this->facility();
         $this->facility();
-        $this->koreksi($facility, 'toilet', 'tersedia');
+        $this->koreksi($facility, 'accessible_toilet', 'yes');
 
         $queue = $this->queue();
 
@@ -327,9 +330,9 @@ class VerificationQueueTest extends TestCase
         $facility = $this->facility();
 
         // Tiga laporan koreksi untuk satu fasilitas: fasilitasnya tetap terhitung satu.
-        $this->koreksi($facility, 'toilet', 'tersedia', 'Budi');
-        $this->koreksi($facility, 'lift', 'tidak', 'Ani');
-        $this->koreksi($facility, 'ramp', 'tidak', 'Cita');
+        $this->koreksi($facility, 'accessible_toilet', 'yes', 'Budi');
+        $this->koreksi($facility, 'accessible_elevator', 'no', 'Ani');
+        $this->koreksi($facility, 'accessible_ramp', 'no', 'Cita');
 
         $stats = $this->queue()['stats'];
 
@@ -345,7 +348,7 @@ class VerificationQueueTest extends TestCase
     public function test_keputusan_atas_fasilitas_dan_pengajuan_muncul_di_riwayat_yang_sama(): void
     {
         $facility = $this->facility();
-        $this->koreksi($facility, 'toilet', 'tersedia');
+        $this->koreksi($facility, 'accessible_toilet', 'yes');
 
         $this->actingAs($this->admin())
             ->postJson('/api/submissions/SUB-0001/decision', ['action' => 'disetujui'])
