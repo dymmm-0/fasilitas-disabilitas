@@ -140,7 +140,9 @@ petugas.
 - 🔎 Filter bekerja pada peta dan daftar sekaligus; memilih atribut berarti "harus
   memiliki semua atribut ini", bukan "salah satu".
 - 📊 Persentase kelengkapan data per fasilitas, dihitung dari jumlah indikator yang
-  bukan `belum`.
+  bukan `unknown`.
+- 🖼️ Slider foto lokal di hero beranda (crossfade 6 detik, `object-fit: cover`, diam saat
+  `prefers-reduced-motion`) — berkas di `public/images/hero/`, daftar di `heroSlides`.
 - 🧭 Navigasi SPA dengan riwayat browser, judul halaman per rute, dan tautan aktif.
 - ♿ Status selalu ditampilkan sebagai label + glyph, tidak mengandalkan warna saja.
 
@@ -164,28 +166,37 @@ petugas.
 
 ## Indikator Aksesibilitas
 
-Lima indikator yang dipakai di seluruh aplikasi (didefinisikan di
-`resources/js/data/meta.js`, dipetakan dari kolom database di `app/Models/Facility.php`):
+Delapan indikator dipakai di seluruh aplikasi (didefinisikan di
+`resources/js/data/meta.js` → `ATTRIBUTES`, dipetakan dari kolom database di
+`app/Models/Facility.php` → `ATTRIBUTE_COLUMNS`):
 
-| ID | Indikator | Yang dicatat |
+| Kunci | Indikator | Yang dicatat |
 | --- | --- | --- |
-| `ramp` | Ramp / jalur landai | Jalur landai di pintu masuk dengan kemiringan ramah kursi roda |
-| `toilet` | Toilet aksesibel | Toilet dengan ruang manuver, pegangan, dan pintu lebar |
-| `lift` | Lift | Lift dengan tombol braille dan penanda suara |
-| `path` | Jalur kursi roda | Jalur di dalam area yang bebas tangga dan hambatan |
-| `entrance` | Akses masuk | Pintu masuk bebas hambatan, lebar minimal 80 cm |
+| `accessible_ramp` | Ramp / Jalur Landai | Jalur landai di pintu masuk, kemiringan ramah kursi roda |
+| `accessible_toilet` | Toilet Aksesibel | Toilet dengan ruang manuver, pegangan, dan pintu lebar |
+| `accessible_elevator` | Lift Aksesibel | Lift dengan tombol braille dan penanda suara |
+| `accessible_pedestrian_pathway` | Jalur Pejalan Kaki Aksesibel | Jalur di dalam area yang bebas tangga dan hambatan |
+| `accessible_entrance` | Pintu Masuk Aksesibel | Pintu masuk bebas hambatan, lebar minimal 80 cm |
+| `tactile_guidance_path` | Guiding Block / Jalur Pemandu Tunanetra | Ubin pemandu taktil yang mengarahkan tunanetra di area publik |
+| `accessible_information_signage` | Informasi dan Petunjuk Aksesibel | Papan informasi dengan huruf jelas, kontras, dan braille |
+| `accessible_parking` | Parkir Khusus Disabilitas | Ruang parkir khusus dengan akses datar ke pintu masuk |
 
-Setiap indikator bernilai salah satu dari tiga status. **Nilai yang dipakai di kode
-berbahasa Indonesia**, padanan `yes`/`no`/`unknown` hanya untuk memudahkan pembacaan:
+Kunci di atas dipakai apa adanya di tiga tempat: nama kolom database
+(`<kunci>_status` dan `<kunci>_details`), isi `payload` pengajuan, dan kunci atribut di
+frontend. Tidak ada terjemahan nilai di sisi data — pergantian bahasa hanya mengubah
+label yang ditampilkan.
 
-| Nilai di data | Arti | Padanan |
+Setiap indikator bernilai salah satu dari tiga status, dan **nilai inilah yang disimpan
+di database** (`enum('yes','no','unknown')`):
+
+| Nilai di data | Arti | Label tampilan |
 | --- | --- | --- |
-| `tersedia` | Tercatat tersedia berdasarkan informasi yang dikumpulkan | `yes` |
-| `tidak` | Dinyatakan tidak tersedia berdasarkan informasi yang dikumpulkan | `no` |
-| `belum` | Belum diketahui atau informasinya belum memadai | `unknown` |
+| `yes` | Tercatat tersedia berdasarkan informasi yang dikumpulkan | Tersedia |
+| `no` | Dinyatakan tidak tersedia berdasarkan informasi yang dikumpulkan | Tidak tersedia |
+| `unknown` | Belum diketahui atau informasinya belum memadai | Belum diketahui |
 
-> `belum` **bukan** `tidak`. Fasilitas yang toiletnya belum pernah diperiksa tidak
-> boleh dianggap tidak punya toilet aksesibel. Karena itu `belum` tidak pernah
+> `unknown` **bukan** `no`. Fasilitas yang toiletnya belum pernah diperiksa tidak
+> boleh dianggap tidak punya toilet aksesibel. Karena itu `unknown` tidak pernah
 > dihitung sebagai "tersedia" pada filter, dan justru menurunkan persentase
 > kelengkapan data.
 
@@ -270,7 +281,7 @@ bersama memakai composable singleton (`useFacilities`, `useVerification`,
 
 | Halaman | Isi utama |
 | --- | --- |
-| Beranda | Hero ringkas, peta fasilitas, panel filter, daftar kartu bertahap, legenda peta |
+| Beranda | Hero ringkas dengan slider foto, peta fasilitas, panel filter, daftar kartu bertahap, legenda peta |
 | Detail fasilitas | Nama, kategori, alamat, delapan indikator, catatan sumber, koordinat, status verifikasi |
 | Kontribusi | Dua jenis formulir, pemilih lokasi di peta, pratinjau foto, daftar kesalahan |
 | Masuk | Formulir surel + kata sandi dengan pesan kesalahan yang terbaca pembaca layar |
@@ -285,6 +296,32 @@ tidak dapat diverifikasi, dokumentasi visual sengaja dikosongkan. Untuk menambah
 2. Simpan di `docs/screenshots/` dengan nama deskriptif, misalnya `beranda.png`.
 3. Sisipkan dengan path relatif, contoh:
    `![Beranda AksesKita: peta dan daftar fasilitas](docs/screenshots/beranda.png)`.
+
+### Slider foto di hero beranda
+
+Kotak visual di sisi kanan hero beranda menampilkan beberapa foto secara bergantian
+(crossfade, jeda 6 detik). Foto adalah berkas lokal di `public/images/hero/`; tidak ada
+gambar yang dihotlink dari situs lain.
+
+- Daftar foto: `heroSlides` di `resources/js/views/HomeView.vue`.
+- Gaya dan animasi: `.hero__frame` dan `.hero__frame img` di `resources/css/app.css`.
+- Setiap `<img>` memakai `object-fit: cover`, jadi foto memenuhi kotak tanpa distorsi
+  (`aspect-ratio` kotak 3/4 di desktop, 4/5 di layar kecil).
+- Foto bersifat dekoratif (`alt=""`), sedangkan angka fasilitas pada label hitam
+  (`.stamp`) tetap berasal dari data `/api/facilities`.
+- Saat pengguna memilih `prefers-reduced-motion: reduce`, rotasi otomatis tidak
+  dijalankan dan transisi menjadi hampir instan.
+
+Menambah foto:
+
+1. Simpan berkas ke `public/images/hero/` (mis. `3-sekolah.jpg`), idealnya maksimal
+   1600 px pada sisi terpanjang dan kualitas JPEG ~78.
+2. Tambahkan satu entri ke `heroSlides` di `HomeView.vue`.
+
+> **Lisensi foto.** Dua foto yang saat ini dipakai berasal dari situs pihak ketiga dan
+> disalin ke repositori ini sebagai berkas lokal. Pemilik repositori perlu memastikan
+> lisensi serta atribusinya, atau menggantinya dengan foto milik sendiri, sebelum
+> aplikasi dipublikasikan.
 
 ## Struktur Direktori
 
@@ -307,6 +344,7 @@ fasilitas-disabilitas/
 ├── Dataset/
 │   └── akseskita_facilities_medan.csv   # Sumber 1.117 fasilitas (read-only)
 ├── public/                     # Document root; build aset Vite diabaikan Git
+│   └── images/hero/            # Foto slider hero beranda (berkas lokal, bukan hotlink)
 ├── resources/
 │   ├── css/app.css             # Token desain + seluruh kelas komponen
 │   ├── js/
@@ -347,7 +385,7 @@ mengikuti skema berkas dataset:
 | --- | --- |
 | Identitas | `id`, `external_id` (unik, mis. `AKS-0001`), `name`, `category`, `source_category`, `source_category_detail` |
 | Lokasi | `address`, `village`, `subdistrict`, `city`, `province`, `postal_code`, `latitude`, `longitude` |
-| Aksesibilitas | `ramp_status`/`ramp_details`, `toilet_status`/`toilet_details`, `lift_status`/`lift_details`, `path_status`/`path_details`, `entrance_status`, `entrance_details`, `entrance_width_cm`, `entrance_width_measured` |
+| Aksesibilitas | delapan pasang `<kunci>_status`/`<kunci>_details` (lihat [Indikator Aksesibilitas](#indikator-aksesibilitas)) plus `entrance_width_cm`, `entrance_width_measured` |
 | Verifikasi | `verification_status`, `verified_at`, `verified_by`, `verification_method`, `verification_note`, `evidence_url` |
 | Sumber | `source_name`, `source_url`, `source_ref_type`, `source_ref_id`, `collected_at` |
 | Ringkasan | `data_completeness_percent`, `notes`, `timestamps` |
@@ -380,9 +418,12 @@ Catatan penting:
 
 - `public_id` diisi dari primary key di dalam transaksi yang sama, jadi nomor pengajuan
   tidak pernah bentrok.
-- `payload` menyimpan isian pengaju apa adanya: klaim aksesibilitas tetap memakai
-  kosakata klien (`tersedia`/`tidak`/`belum`) dan baru dipetakan ke kolom fasilitas
-  (`yes`/`no`/`unknown`) saat usulan disetujui. `belum` **selalu** menjadi `unknown`.
+- `payload` menyimpan isian pengaju apa adanya: kunci atribut memakai delapan kunci
+  netral bahasa, dan status memakai nilai `yes`/`no`/`unknown` — sama dengan kolom
+  fasilitas, jadi tidak ada pemetaan kosakata saat usulan disetujui. Migrasi
+  `2026_10_26_000000_refactor_accessibility_attributes.php` memetakan isian lama
+  (`ramp`…`entrance`, `tersedia`/`tidak`/`belum`) ke bentuk baru tanpa mengubah baris
+  fasilitas.
 - `verification_events` mencatat satu baris per keputusan, baik untuk pengajuan
   (`submission_id`) maupun fasilitas (`facility_id`). Riwayat inilah yang ditampilkan di
   halaman `/verifikasi` dan dihitung ulang pada setiap pemuatan halaman.
@@ -614,7 +655,7 @@ Aturan keputusan yang dijalankan server (bukan hanya tampilan):
 - Keputusan menyimpan nama petugas dari sesi yang sedang masuk dan waktunya; tidak ada
   identitas yang dikarang.
 - Usulan yang disetujui membuat fasilitas baru dengan `external_id` berikutnya
-  (`AKS-####`) dan `verification_status` tetap `pending`; klaim `belum` tetap `unknown`.
+  (`AKS-####`) dan `verification_status` tetap `pending`; klaim `unknown` tetap `unknown`.
 - Koreksi yang disetujui mengubah atribut fasilitas yang dilaporkan; koreksi yang ditolak
   tidak mengubah apa pun.
 - Pengajuan ditolak tidak pernah membuat fasilitas baru.
@@ -687,8 +728,8 @@ Jangan menganggap perubahan frontend "sudah teruji" hanya karena tes PHP lulus.
 - [ ] Peran `admin` dan `verifikator` dengan kolom `role` dan `Gate`
 - [ ] Pengajuan ulang yang terhubung ke pengajuan "minta perbaikan", bila pengaju diberi akun
 - [ ] Riwayat perubahan atribut fasilitas (bukan hanya riwayat keputusan)
-- [ ] Pemeriksaan lapangan atas 1.117 fasilitas sehingga indikator `belum diketahui`
-      berubah menjadi `tersedia` atau `tidak`
+- [ ] Pemeriksaan lapangan atas 1.117 fasilitas sehingga indikator `unknown`
+      berubah menjadi `yes` atau `no`
 - [ ] Agregat dashboard dihitung di server supaya `/admin` tidak lagi mengunduh seluruh baris
 - [ ] Pagination dan pencarian antrean verifikasi bila volume pengajuan bertambah
 - [ ] Tes Vue, tes end-to-end, dan CI
