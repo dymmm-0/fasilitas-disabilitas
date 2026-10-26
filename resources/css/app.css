@@ -494,7 +494,7 @@ em {
     min-height: 36px;
     padding: 8px 28px 8px 14px;
     appearance: none;
-    border: 1px solid var(--ink-a20);
+    border: 1px;
     background: transparent;
     color: var(--ink);
     font-family: var(--font-mono);
@@ -503,8 +503,11 @@ em {
     text-transform: uppercase;
 }
 
-.site-header .lang-select__control:hover {
-    border-color: var(--ink);
+.site-header .lang-select__control:hover,
+.site-header .lang-select__control:focus,
+.site-header .lang-select__control:focus-visible {
+    border-color: transparent;
+    outline: none;
 }
 
 .lang-select__arrow {
@@ -512,7 +515,7 @@ em {
     right: 10px;
     pointer-events: none;
     font-size: 10px;
-    color: var(--ink-muted);
+
 }
 
 .tab {
