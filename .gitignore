@@ -25,6 +25,9 @@
 /storage/pail
 /vendor
 /TemplateDesignWeb
+/Dataset
+/deploy
+/deploy-infinityfree
 _ide_helper.php
 Homestead.json
 Homestead.yaml

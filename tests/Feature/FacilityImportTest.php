@@ -112,6 +112,11 @@ class FacilityImportTest extends TestCase
 
     public function test_dataset_berkas_penuh_memakai_kategori_baru_tanpa_baris_gagal(): void
     {
+        // Dataset tidak ikut repo (lihat .gitignore), jadi di clone baru test ini di-skip.
+        if (! is_file(base_path('Dataset/akseskita_facilities_medan.csv'))) {
+            $this->markTestSkipped('Dataset/akseskita_facilities_medan.csv tidak tersedia.');
+        }
+
         $this->artisan('facilities:import', ['file' => 'Dataset/akseskita_facilities_medan.csv'])
             ->assertExitCode(0);
 
