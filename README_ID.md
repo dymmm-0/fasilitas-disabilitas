@@ -17,7 +17,7 @@ Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu m
 
 [**Jelajahi aplikasi**](#menjalankan-aplikasi) · [**Lihat fitur**](#fitur) · [**Mulai instalasi**](#instalasi)
 
-[English version](README.en.md)
+[English version](README.md)
 
 </div>
 
