@@ -1,3 +1,7 @@
+<script setup>
+import { ATTRIBUTES } from '../data/meta';
+</script>
+
 <template>
     <section class="container section">
         <div class="stack">
@@ -62,10 +66,21 @@
                 </ol>
             </div>
 
+            <div class="panel stack--sm">
+                <h2 class="display-sm">{{ $t('Delapan indikator aksesibilitas') }}</h2>
+                <p class="body-copy">{{ $t('Setiap fasilitas dinilai pada delapan indikator yang sama. Statusnya bisa tersedia, tidak tersedia, atau belum diketahui.') }}</p>
+                <ul class="steps">
+                    <li v-for="(attribute, index) in ATTRIBUTES" :key="attribute.id" class="step">
+                        <span class="step__num" aria-hidden="true">{{ index + 1 }}.</span>
+                        <span><b>{{ $t(attribute.label) }}</b> — {{ $t(attribute.hint) }}</span>
+                    </li>
+                </ul>
+            </div>
+
             <div class="grid grid--2">
                 <div class="panel stack--sm">
                     <h2 class="display-sm">{{ $t('Mekanisme kontribusi') }}</h2>
-                    <p class="body-copy">{{ $t('Kontribusi tidak memerlukan perangkat khusus: cukup satu foto dan catatan singkat. Status aksesibilitas yang belum pasti ditandai "belum diketahui" alih-alih diasumsikan tersedia, agar pengguna tahu batas pengetahuan datanya.') }}</p>
+                    <p class="body-copy">{{ $t('Kontribusi tidak memerlukan perangkat khusus: isi nama fasilitas, alamat, kota, dan koordinat, lalu lengkapi checklist aksesibilitas. Foto bukti bersifat opsional. Status aksesibilitas yang belum pasti ditandai "belum diketahui" alih-alih diasumsikan tersedia, agar pengguna tahu batas pengetahuan datanya.') }}</p>
                 </div>
 
                 <div class="panel stack--sm">
@@ -91,7 +106,7 @@
 
             <div class="notice">
                 <b>{{ $t('Catatan sumber data') }}</b>
-                <span>{{ $t('Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan ke basis data AksesKita — 1.117 fasilitas, semuanya masih berstatus menunggu verifikasi. Karena itu status aksesibilitasnya belum diperiksa lapangan: sebagian besar masih "belum diketahui", hanya sedikit yang punya catatan pendukung. Akun admin sudah asli dan dilindungi login; antrean pengajuan, keputusan verifikasi, riwayat, dan bukti pendukung tersimpan di basis data AksesKita. Pengelolaan kategori masih berupa data di sisi klien karena kategori mengikuti kolom fasilitas hasil impor.') }}</span>
+                <span>{{ $t('Daftar fasilitas berasal dari impor dataset OpenStreetMap Kota Medan (1.117 fasilitas) ke basis data AksesKita, ditambah usulan warga yang sudah disetujui. Status verifikasinya tidak seragam: sebagian sudah diverifikasi lewat pemeriksaan bukti, sebagian masih menunggu, dan sebagian ditandai perlu perbaikan atau ditolak — periksa status tiap fasilitas sebelum berangkat. Sebagian besar baris dataset belum punya data lapangan, sehingga kedelapan indikatornya masih "belum diketahui"; catatan yang ada umumnya berasal dari proses impor, bukan hasil survei. Akun admin dilindungi login; antrean pengajuan, keputusan verifikasi, riwayat, dan bukti pendukung tersimpan di basis data AksesKita. Pengelolaan kategori masih berupa data di sisi klien karena kategori mengikuti kolom fasilitas hasil impor.') }}</span>
             </div>
 
             <div class="inline-actions">
