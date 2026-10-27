@@ -23,6 +23,20 @@ A map and verification platform for disability-friendly public facilities, helpi
 
 > **Core focus:** provide useful accessibility information before people leave — not make them guess after they arrive.
 
+## Project purpose
+
+AksesKita helps people with disabilities, families, companions, and the wider community understand whether public facilities are accessible before visiting. The platform brings facility maps, accessibility indicators, community contributions, and admin verification together in one place.
+
+AksesKita does more than show facility locations. It helps answer a more important question: does a place provide an accessible entrance, ramp, toilet, elevator, guidance path, parking space, and other facilities that users may need?
+
+## How it works
+
+1. Facilities appear on a searchable map and list.
+2. Users search by location, category, or accessibility need.
+3. Community members can propose new facilities or report incorrect information.
+4. Admins review submissions and supporting evidence through the verification queue.
+5. Reviewed information is shown with clear, understandable status labels.
+
 ## Features
 
 | Area | Available |

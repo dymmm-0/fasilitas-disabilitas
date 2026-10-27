@@ -23,6 +23,20 @@ Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu m
 
 > **Fokus utama:** memberi informasi aksesibilitas yang berguna sebelum berangkat — bukan membuat pengguna menebak setelah tiba.
 
+## Inti proyek
+
+AksesKita membantu penyandang disabilitas, keluarga, pendamping, dan masyarakat umum mengetahui apakah fasilitas publik dapat diakses sebelum mereka berkunjung. Platform ini menggabungkan peta fasilitas, indikator aksesibilitas, kontribusi masyarakat, dan proses verifikasi admin dalam satu tempat.
+
+AksesKita tidak hanya menunjukkan lokasi fasilitas. Platform ini membantu menjawab pertanyaan yang lebih penting: apakah tempat tersebut memiliki akses masuk, ramp, toilet, lift, jalur pemandu, parkir, dan fasilitas pendukung lain yang dibutuhkan pengguna?
+
+## Cara kerja
+
+1. Fasilitas ditampilkan pada peta dan daftar yang dapat dicari.
+2. Pengguna mencari berdasarkan lokasi, kategori, atau kebutuhan aksesibilitas.
+3. Masyarakat dapat mengusulkan fasilitas baru atau melaporkan data yang keliru.
+4. Admin memeriksa pengajuan dan bukti pendukung melalui antrean verifikasi.
+5. Hasil pemeriksaan ditampilkan dengan status yang jelas dan dapat dipahami.
+
 ## Fitur
 
 | Area | Yang tersedia |
