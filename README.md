@@ -17,6 +17,8 @@ Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu m
 
 [**Jelajahi aplikasi**](#menjalankan-aplikasi) · [**Lihat fitur**](#fitur) · [**Mulai instalasi**](#instalasi)
 
+[English version](README.en.md)
+
 </div>
 
 > **Fokus utama:** memberi informasi aksesibilitas yang berguna sebelum berangkat — bukan membuat pengguna menebak setelah tiba.
