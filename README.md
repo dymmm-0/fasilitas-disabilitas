@@ -17,7 +17,7 @@ A map and verification platform for disability-friendly public facilities, helpi
 
 [**Explore the app**](#running-the-application) · [**View features**](#features) · [**Start installation**](#installation)
 
-[Versi Bahasa Indonesia](README.md)
+[Versi Bahasa Indonesia](README_ID.md)
 
 </div>
 
