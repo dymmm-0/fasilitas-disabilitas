@@ -56,7 +56,7 @@ onUnmounted(() => clearInterval(heroTimer));
 
             <form class="searchbar" role="search" @submit.prevent>
                 <div class="field">
-                    <label for="hero-cari">{{ $t('Cari fasilitas atau kota') }}</label>
+                    <label for="hero-cari">{{ $t('Cari lokasi') }}</label>
                     <input
                         id="hero-cari"
                         v-model="filters.query"

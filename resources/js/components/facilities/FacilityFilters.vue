@@ -9,7 +9,7 @@ const { filters, attributes, results, hasFilters, toggleAttribute, resetFilters 
     <form class="filter-bar" role="search" @submit.prevent>
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr))">
             <div class="field">
-                <label for="filter-cari">{{ $t('Cari fasilitas') }}</label>
+                <label for="filter-cari">{{ $t('Cari lokasi') }}</label>
                 <input
                     id="filter-cari"
                     v-model="filters.query"
