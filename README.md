@@ -2,9 +2,9 @@
 
 # AksesKita
 
-**Pemetaan dan verifikasi fasilitas publik ramah disabilitas**
+### Temukan tempat yang lebih mudah diakses semua orang
 
-AksesKita membantu masyarakat menemukan fasilitas publik dan melihat informasi aksesibilitasnya sebelum berkunjung.
+Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu masyarakat merencanakan perjalanan dengan informasi yang lebih jelas.
 
 [![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
@@ -13,19 +13,26 @@ AksesKita membantu masyarakat menemukan fasilitas publik dan melihat informasi a
 [![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
+<br>
+
+[**Jelajahi aplikasi**](#menjalankan-aplikasi) · [**Lihat fitur**](#fitur) · [**Mulai instalasi**](#instalasi)
+
 </div>
+
+> **Fokus utama:** memberi informasi aksesibilitas yang berguna sebelum berangkat — bukan membuat pengguna menebak setelah tiba.
 
 ## Fitur
 
-- Peta dan daftar fasilitas publik Kota Medan.
-- Pencarian berdasarkan nama, alamat, atau kota.
-- Filter kategori, status verifikasi, dan atribut aksesibilitas.
-- Detail fasilitas dengan delapan indikator aksesibilitas.
-- Usulan fasilitas baru dan laporan koreksi dari masyarakat.
-- Halaman publik untuk memeriksa status pengajuan.
-- Dashboard admin dan antrean verifikasi.
-- Bukti foto pengajuan disimpan di storage privat.
-- Status aksesibilitas memakai tiga nilai: `yes`, `no`, dan `unknown`.
+| Area | Yang tersedia |
+| --- | --- |
+| **Temukan** | Peta, pencarian, daftar fasilitas, dan filter kategori/lokasi |
+| **Pahami** | Detail fasilitas dengan delapan indikator aksesibilitas |
+| **Berkontribusi** | Usulan fasilitas baru dan laporan koreksi masyarakat |
+| **Verifikasi** | Antrean admin, keputusan, riwayat, dan bukti pendukung privat |
+| **Akses aman** | Login sesi Laravel, CSRF, middleware `auth`, dan endpoint publik terbatas |
+| **Multi bahasa** | Antarmuka tersedia dalam Bahasa Indonesia dan English; pilihan bahasa disimpan di browser |
+
+Status aksesibilitas memakai tiga nilai: `yes`, `no`, dan `unknown`. `unknown` berarti belum diketahui — bukan berarti fasilitas tidak tersedia.
 
 ## Rute utama
 
@@ -43,12 +50,13 @@ AksesKita membantu masyarakat menemukan fasilitas publik dan melihat informasi a
 ## Teknologi
 
 - PHP 8.3+, Laravel 13, PHPUnit 12, Laravel Pint
-- Vue 3, Vue Router, Vue I18n
+- Vue 3, Vue Router, Vue I18n untuk antarmuka multi bahasa
+- Bahasa tersedia: Bahasa Indonesia (`id`) dan English (`en`)
 - Vite 8 dan Tailwind CSS 4
 - Leaflet dan OpenStreetMap
 - MySQL 8.x
 
-State frontend bersama memakai composable singleton. UI menggunakan class CSS dan token desain di `resources/css/app.css`.
+State frontend bersama memakai composable singleton. UI menggunakan class CSS dan token desain di `resources/css/app.css`. Terjemahan Bahasa Indonesia menjadi sumber default, sedangkan terjemahan English dikelola di `resources/js/i18n/en.json`. Pilihan bahasa disimpan di browser dan diterapkan pada atribut `lang` dokumen.
 
 ## Persyaratan
 
@@ -63,6 +71,8 @@ Koneksi internet diperlukan untuk font saat build, tile OpenStreetMap, dan tauta
 
 ## Instalasi
 
+### 1. Pasang dependensi
+
 ```powershell
 git clone https://github.com/dymmm-0/fasilitas-disabilitas.git
 cd fasilitas-disabilitas
@@ -71,6 +81,8 @@ npm install
 Copy-Item .env.example .env
 php artisan key:generate
 ```
+
+### 2. Siapkan database
 
 Buat database kosong, lalu sesuaikan `.env`:
 
@@ -83,7 +95,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Jalankan migrasi, seeder, dan build frontend:
+### 3. Migrasi dan build
 
 ```powershell
 php artisan migrate
