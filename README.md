@@ -2,9 +2,9 @@
 
 # AksesKita
 
-### Temukan tempat yang lebih mudah diakses semua orang
+### Find places that are easier for everyone to access
 
-Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu masyarakat merencanakan perjalanan dengan informasi yang lebih jelas.
+A map and verification platform for disability-friendly public facilities, helping people plan trips with clearer accessibility information.
 
 [![PHP](https://img.shields.io/badge/PHP-8.3%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel](https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
@@ -15,65 +15,65 @@ Peta dan platform verifikasi fasilitas publik ramah disabilitas untuk membantu m
 
 <br>
 
-[**Jelajahi aplikasi**](#menjalankan-aplikasi) · [**Lihat fitur**](#fitur) · [**Mulai instalasi**](#instalasi)
+[**Explore the app**](#running-the-application) · [**View features**](#features) · [**Start installation**](#installation)
 
-[English version](README.en.md)
+[Versi Bahasa Indonesia](README.md)
 
 </div>
 
-> **Fokus utama:** memberi informasi aksesibilitas yang berguna sebelum berangkat — bukan membuat pengguna menebak setelah tiba.
+> **Core focus:** provide useful accessibility information before people leave — not make them guess after they arrive.
 
-## Fitur
+## Features
 
-| Area | Yang tersedia |
+| Area | Available |
 | --- | --- |
-| **Temukan** | Peta, pencarian, daftar fasilitas, dan filter kategori/lokasi |
-| **Pahami** | Detail fasilitas dengan delapan indikator aksesibilitas |
-| **Berkontribusi** | Usulan fasilitas baru dan laporan koreksi masyarakat |
-| **Verifikasi** | Antrean admin, keputusan, riwayat, dan bukti pendukung privat |
-| **Akses aman** | Login sesi Laravel, CSRF, middleware `auth`, dan endpoint publik terbatas |
-| **Multi bahasa** | Antarmuka tersedia dalam Bahasa Indonesia dan English; pilihan bahasa disimpan di browser |
+| **Discover** | Map, search, facility list, and category/location filters |
+| **Understand** | Facility details with eight accessibility indicators |
+| **Contribute** | New facility proposals and community corrections |
+| **Verify** | Admin queue, decisions, history, and private supporting evidence |
+| **Secure access** | Laravel session login, CSRF, `auth` middleware, and limited public endpoints |
+| **Multilingual** | Indonesian and English interface; language choice is saved in the browser |
 
-Status aksesibilitas memakai tiga nilai: `yes`, `no`, dan `unknown`. `unknown` berarti belum diketahui — bukan berarti fasilitas tidak tersedia.
+Accessibility status uses three values: `yes`, `no`, and `unknown`. `unknown` means not yet known — it does not mean that the facility is unavailable.
 
-## Rute utama
+## Main routes
 
-| Rute | Kegunaan |
+| Route | Purpose |
 | --- | --- |
-| `/` | Peta, pencarian, filter, dan daftar fasilitas |
-| `/fasilitas/:id` | Detail fasilitas |
-| `/kontribusi` | Usulan fasilitas atau koreksi data |
-| `/status` | Cek status pengajuan tanpa login |
-| `/masuk` | Login admin |
-| `/admin` | Dashboard administrasi |
-| `/verifikasi` | Antrean dan keputusan verifikasi |
-| `/tentang` | Informasi aplikasi |
+| `/` | Map, search, filters, and facility list |
+| `/fasilitas/:id` | Facility details |
+| `/kontribusi` | New facility proposal or data correction |
+| `/status` | Check a submission without signing in |
+| `/masuk` | Admin login |
+| `/admin` | Administration dashboard |
+| `/verifikasi` | Verification queue and decisions |
+| `/tentang` | About the application |
 
-## Teknologi
+## Technology
 
 - PHP 8.3+, Laravel 13, PHPUnit 12, Laravel Pint
-- Vue 3, Vue Router, Vue I18n untuk antarmuka multi bahasa
-- Bahasa tersedia: Bahasa Indonesia (`id`) dan English (`en`)
-- Vite 8 dan Tailwind CSS 4
-- Leaflet dan OpenStreetMap
+- Vue 3, Vue Router, Vue I18n for the multilingual interface
+- Indonesian (`id`) and English (`en`)
+- Vite 8 and Tailwind CSS 4
+- Leaflet and OpenStreetMap
 - MySQL 8.x
 
-State frontend bersama memakai composable singleton. UI menggunakan class CSS dan token desain di `resources/css/app.css`. Terjemahan Bahasa Indonesia menjadi sumber default, sedangkan terjemahan English dikelola di `resources/js/i18n/en.json`. Pilihan bahasa disimpan di browser dan diterapkan pada atribut `lang` dokumen.
+Shared frontend state uses singleton composables. The UI uses CSS classes and design tokens in `resources/css/app.css`. Indonesian is the default language; English translations are maintained in `resources/js/i18n/en.json`. The selected language is stored in the browser and applied to the document `lang` attribute.
 
-## Persyaratan
+## Requirements
 
 - PHP 8.3+
 - Composer 2.x
-- Node.js 20.19 atau 22.12+
+- Node.js 20.19 or 22.12+
 - npm 10+
 - MySQL 8.x
 - Git 2.x
 
-Koneksi internet diperlukan untuk font saat build, tile OpenStreetMap, dan tautan sumber data.
+An internet connection is required for fonts during the build, OpenStreetMap tiles, and source-data links.
 
-## Instalasi
+## Installation
 
-### 1. Pasang dependensi
+### 1. Install dependencies
 
 ```powershell
 git clone https://github.com/dymmm-0/fasilitas-disabilitas.git
@@ -84,9 +84,9 @@ Copy-Item .env.example .env
 php artisan key:generate
 ```
 
-### 2. Siapkan database
+### 2. Prepare the database
 
-Buat database kosong, lalu sesuaikan `.env`:
+Create an empty database and update `.env`:
 
 ```dotenv
 DB_CONNECTION=mysql
@@ -97,7 +97,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-### 3. Migrasi dan build
+### 3. Run migrations and build the frontend
 
 ```powershell
 php artisan migrate
@@ -105,56 +105,56 @@ php artisan db:seed
 npm run build
 ```
 
-Seeder membuat akun admin menggunakan `SEED_PASSWORD`. Nilai bawaan adalah `password`; ganti sebelum dipakai di luar mesin lokal.
+The seeder creates an admin account using `SEED_PASSWORD`. The default value is `password`; change it before using the application outside a local machine.
 
-## Menjalankan aplikasi
+## Running the application
 
-Perintah yang disarankan:
+Recommended command:
 
 ```powershell
 composer run dev
 ```
 
-Perintah ini menjalankan server Laravel, queue worker, dan Vite. Aplikasi tersedia di `http://127.0.0.1:8000`.
+This starts the Laravel server, queue worker, and Vite. The application is available at `http://127.0.0.1:8000`.
 
-Alternatif, jalankan di terminal terpisah:
+Alternatively, run these commands in separate terminals:
 
 ```powershell
 php artisan serve
 npm run dev
 ```
 
-Gunakan `npm run build` sebelum demo atau deployment. Jangan memakai `npm run dev` di produksi.
+Run `npm run build` before a demo or deployment. Do not use `npm run dev` in production.
 
-## Testing dan format kode
+## Testing and code style
 
 ```powershell
-# Semua tes backend
+# All backend tests
 php artisan test
 
-# Satu file atau tes tertentu
+# A specific test
 php artisan test --filter=AksesKitaTest
 
-# Cek format PHP
+# Check PHP formatting
 vendor/bin/pint --test
 
 # Format PHP
 vendor/bin/pint
 
-# Build frontend
+# Build frontend assets
 npm run build
 ```
 
-Belum tersedia: test komponen Vue, test end-to-end, linter JavaScript, dan CI.
+Vue component tests, end-to-end tests, a JavaScript linter, and CI are not currently included.
 
-## Struktur direktori
+## Directory structure
 
 ```text
 app/
-├── Console/Commands/       # Perintah aplikasi
-├── Http/Controllers/       # API, autentikasi, pengajuan, verifikasi
+├── Console/Commands/       # Application commands
+├── Http/Controllers/       # API, authentication, submissions, verification
 ├── Jobs/                   # QueueSubmission
-└── Models/                 # Facility, Submission, User, dan model terkait
+└── Models/                 # Facility, Submission, User, and related models
 
 database/
 ├── factories/
@@ -162,36 +162,37 @@ database/
 └── seeders/
 
 resources/
-├── css/app.css             # Token desain dan class UI
-├── js/components/          # Komponen Vue
-├── js/composables/         # State bersama
-├── js/data/                # Label dan helper data
-├── js/router/              # Rute SPA
-└── js/views/               # Halaman aplikasi
+├── css/app.css             # Design tokens and UI classes
+├── js/components/          # Vue components
+├── js/composables/         # Shared state
+├── js/data/                # Labels and data helpers
+├── js/i18n/                # Indonesian and English translations
+├── js/router/              # SPA routes
+└── js/views/               # Application pages
 
-routes/                     # Route API dan web
-public/images/hero/         # Foto lokal slider hero
-storage/app/private/        # Bukti pengajuan privat
-TemplateDesignWeb/          # Referensi desain, read-only
-tests/                      # Test backend
+routes/                     # API and web routes
+public/images/hero/         # Local hero slider photos
+storage/app/private/        # Private submission evidence
+TemplateDesignWeb/          # Read-only design reference
+tests/                      # Backend tests
 ```
 
-## Catatan keamanan dan data
+## Security and data notes
 
-- `/admin` dan `/verifikasi` dilindungi middleware `auth`; proteksi frontend bukan satu-satunya akses gate.
-- Bukti pengajuan berada di disk `local`, bukan di `public/`.
-- Endpoint status pengajuan tidak mengirim `contact`, `payload`, ringkasan, atau bukti.
-- Status `unknown` berarti belum diketahui, bukan berarti fasilitas tidak tersedia.
-- Keputusan verifikasi fasilitas tidak mengubah indikator aksesibilitas tanpa bukti.
-- Jangan commit `.env`, kredensial, atau data hasil impor.
-- Migrasi baru diperlukan untuk perubahan skema; jangan mengubah migrasi yang sudah dijalankan.
+- `/admin` and `/verifikasi` are protected by the `auth` middleware; frontend route guards are not the only access control.
+- Submission evidence is stored on the `local` disk, not in `public/`.
+- The public submission-status endpoint does not expose `contact`, `payload`, summaries, or evidence.
+- `unknown` means unknown, not unavailable.
+- Facility verification decisions do not change accessibility indicators without evidence.
+- Do not commit `.env`, credentials, or generated build artifacts.
+- Use a new migration for schema changes; do not edit migrations that have already run.
 
-## Lisensi
+## License
 
-Lisensi proyek belum ditentukan. Repositori belum memiliki file `LICENSE`; nilai `MIT` di `composer.json` adalah bawaan skeleton Laravel dan bukan pernyataan lisensi proyek.
+The project license has not been decided. The repository does not contain a `LICENSE` file; the `MIT` value in `composer.json` comes from the Laravel skeleton and is not a project license statement.
 
 ---
 
 <div align="center">
-<sub>AksesKita — informasi aksesibilitas yang jelas sebelum berangkat.</sub>
+<sub>AksesKita — clear accessibility information before you leave.</sub>
 </div>
