@@ -10,7 +10,7 @@ export const LOCALES = ['id', 'en'];
 const STORAGE_KEY = 'akseskita:locale';
 
 const stored = typeof localStorage === 'undefined' ? null : localStorage.getItem(STORAGE_KEY);
-const locale = LOCALES.includes(stored) ? stored : 'id';
+const locale = LOCALES.includes(stored) ? stored : 'en';
 
 const i18n = createI18n({
     legacy: false,
