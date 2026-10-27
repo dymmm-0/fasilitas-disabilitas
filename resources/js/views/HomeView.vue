@@ -115,14 +115,14 @@ onUnmounted(() => clearInterval(heroTimer));
                 <div>
                     <div class="results-head">
                         <h3 class="display-sm">
-                            {{ status === 'memuat' ? $t('Memuat data fasilitas…') : $t('{0} fasilitas', [results.length]) }}`
+                            {{ status === 'memuat' ? $t('Memuat data fasilitas…') : $t('{0} fasilitas', [results.length]) }}
                         </h3>
                         <RouterLink class="btn btn--sm" to="/kontribusi">{{ $t('Usulkan fasilitas baru') }}</RouterLink>
                     </div>
                     <div v-if="status === 'gagal'" class="notice" role="alert">
                         <b>{{ $t('Gagal memuat data') }}</b>
                         <span><i18n-t keypath="Server tidak mengirim daftar fasilitas ({a}). Muat ulang halaman untuk mencoba lagi." tag="span" scope="global"><template #a>{{ loadError }}</template></i18n-t></span>
-                    </div>
+                    </div>  
                     <FacilityList :facilities="pageFacilities" :selected-id="selectedId" @select="selectFacility" />
                     <nav v-if="results.length" class="pagination" :aria-label="$t('Pagination fasilitas')">
                         <span class="meta"><i18n-t keypath="{a}–{b} dari {c} fasilitas" tag="span" scope="global"><template #a>{{ rangeStart }}</template><template #b>{{ rangeEnd }}</template><template #c>{{ results.length }}</template></i18n-t></span>
