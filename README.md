@@ -27,8 +27,6 @@ AksesKita membantu masyarakat menemukan fasilitas publik dan melihat informasi a
 - Bukti foto pengajuan disimpan di storage privat.
 - Status aksesibilitas memakai tiga nilai: `yes`, `no`, dan `unknown`.
 
-Data fasilitas berasal dari dataset OpenStreetMap Kota Medan. Sebanyak 1.117 baris telah diimpor ke tabel `facilities`. Data yang ditolak tidak ditampilkan di peta publik, tetapi tetap disimpan untuk audit.
-
 ## Rute utama
 
 | Rute | Kegunaan |
@@ -85,12 +83,11 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Jalankan migrasi, seeder, dan impor dataset:
+Jalankan migrasi, seeder, dan build frontend:
 
 ```powershell
 php artisan migrate
 php artisan db:seed
-php artisan facilities:import
 npm run build
 ```
 
@@ -115,31 +112,6 @@ npm run dev
 
 Gunakan `npm run build` sebelum demo atau deployment. Jangan memakai `npm run dev` di produksi.
 
-## Impor dataset
-
-Sumber data bawaan:
-
-```text
-Dataset/akseskita_facilities_medan.csv
-```
-
-Perintah:
-
-```powershell
-# Impor dataset bawaan
-php artisan facilities:import
-
-# Gunakan file CSV lain dengan skema sama
-php artisan facilities:import "path/file.csv"
-
-# Validasi tanpa mengubah database
-php artisan facilities:import --dry-run
-```
-
-Impor bersifat idempoten, tidak menghapus data, dan tidak menimpa fasilitas yang sudah memiliki status verifikasi selain `pending`. Laporan impor disimpan di `storage/app/private/import-reports/`.
-
-Jangan mengubah file CSV bawaan. Perbaikan format dilakukan oleh pembaca dataset.
-
 ## Testing dan format kode
 
 ```powershell
@@ -147,7 +119,6 @@ Jangan mengubah file CSV bawaan. Perbaikan format dilakukan oleh pembaca dataset
 php artisan test
 
 # Satu file atau tes tertentu
-php artisan test tests/Feature/FacilityImportTest.php
 php artisan test --filter=AksesKitaTest
 
 # Cek format PHP
@@ -166,7 +137,7 @@ Belum tersedia: test komponen Vue, test end-to-end, linter JavaScript, dan CI.
 
 ```text
 app/
-├── Console/Commands/       # Import dataset
+├── Console/Commands/       # Perintah aplikasi
 ├── Http/Controllers/       # API, autentikasi, pengajuan, verifikasi
 ├── Jobs/                   # QueueSubmission
 └── Models/                 # Facility, Submission, User, dan model terkait
@@ -186,8 +157,7 @@ resources/
 
 routes/                     # Route API dan web
 public/images/hero/         # Foto lokal slider hero
-Dataset/                    # Dataset fasilitas
-storage/app/private/        # Laporan impor dan bukti pengajuan
+storage/app/private/        # Bukti pengajuan privat
 TemplateDesignWeb/          # Referensi desain, read-only
 tests/                      # Test backend
 ```
